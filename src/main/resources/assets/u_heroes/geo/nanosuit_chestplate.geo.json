@@ -12,7 +12,7 @@
 			},
 			"bones": [
 				{
-					"name": "body",
+					"name": "armorBody",
 					"pivot": [0, 24, 0],
 					"cubes": [
 						{"origin": [-4, 12, -2], "size": [8, 12, 4], "inflate": 0.55, "uv": [0, 0]},
