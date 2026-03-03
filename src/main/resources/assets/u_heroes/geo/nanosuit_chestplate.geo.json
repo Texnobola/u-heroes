@@ -48,6 +48,14 @@
 						{"origin": [4, 12, -2], "size": [1, 4, 4], "uv": [10, 48]},
 						{"origin": [-1.5, 12, -3], "size": [3, 2, 1], "uv": [20, 48]}
 					]
+				},
+				{
+					"name": "armorRightArm",
+					"pivot": [-5, 22, 0]
+				},
+				{
+					"name": "armorLeftArm",
+					"pivot": [5, 22, 0]
 				}
 			]
 		}
