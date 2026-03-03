@@ -22,8 +22,24 @@ public class NanoSuitArmorRenderer extends GeoArmorRenderer<NanoSuitArmorItem> {
     }
     
     @Override
+    public ResourceLocation getTextureLocation(NanoSuitArmorItem animatable) {
+        return switch (this.currentStack.getEquipmentSlot()) {
+            case HEAD -> new ResourceLocation("u_heroes", "textures/entity/armor/nanosuit_helmet.png");
+            case CHEST -> new ResourceLocation("u_heroes", "textures/entity/armor/nanosuit_chestplate.png");
+            case LEGS -> new ResourceLocation("u_heroes", "textures/entity/armor/nanosuit_leggings.png");
+            case FEET -> new ResourceLocation("u_heroes", "textures/entity/armor/nanosuit_boots.png");
+            default -> super.getTextureLocation(animatable);
+        };
+    }
+    
+    @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        if (Minecraft.getInstance().getCameraEntity() == null) return;
-        super.renderToBuffer(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        try {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.getCameraEntity() == null || mc.level == null) return;
+            super.renderToBuffer(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        } catch (NullPointerException ignored) {
+            // Suppress NPE during world transitions
+        }
     }
 }
