@@ -1,0 +1,8 @@
+{
+  "nano_suit_equip": {
+    "sounds": [
+      "minecraft:item.armor.equip_netherite"
+    ],
+    "subtitle": "Nano-Tech Suit Equipped"
+  }
+}
