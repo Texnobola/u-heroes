@@ -82,15 +82,15 @@ public class NanoSuitHandler {
                 }
             }
             
-            // Flux Amplification: 50% bonus regen
-            player.getCapability(FluxCapability.INSTANCE).ifPresent(flux -> {
-                if (flux.getCurrentFlux() < flux.getMaxFlux()) {
-                    float bonusRegen = flux.getRegenRate() * 0.5f / 20.0f;
-                    if (bonusRegen >= 1.0f) {
+            // Flux Amplification: 50% bonus regen (once per second)
+            if (player.tickCount % 20 == 0) {
+                player.getCapability(FluxCapability.INSTANCE).ifPresent(flux -> {
+                    if (flux.getCurrentFlux() < flux.getMaxFlux()) {
+                        float bonusRegen = flux.getRegenRate() * 0.5f;
                         flux.addFlux((int) bonusRegen);
                     }
-                }
-            });
+                });
+            }
         }
     }
     

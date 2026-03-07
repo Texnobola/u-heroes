@@ -131,7 +131,7 @@ public class LaserSwordItem extends SwordItem implements GeoItem {
     
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 0, state -> state.setAndContinue(RawAnimation.begin())));
+        // TODO: add animations in Phase 3.3 / 4.1
     }
     
     @Override
