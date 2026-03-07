@@ -32,12 +32,14 @@ public class NanoSuitArmorRenderer extends GeoArmorRenderer<NanoSuitArmorItem> {
                 isReRender, partialTick, packedLight, packedOverlay,
                 red, green, blue, alpha);
         if (storedBaseModel == null) return;
-        applyPartToBone(storedBaseModel.head,     "armorHead");
-        applyPartToBone(storedBaseModel.body,     "armorBody");
-        applyPartToBone(storedBaseModel.rightArm, "armorRightArm");
-        applyPartToBone(storedBaseModel.leftArm,  "armorLeftArm");
+        
+        // Legs — prepForRender() does not sync these, we must do it manually
         applyPartToBone(storedBaseModel.rightLeg, "armorRightLeg");
         applyPartToBone(storedBaseModel.leftLeg,  "armorLeftLeg");
+        
+        // Boots — different bone names from leggings, also not synced by prepForRender()
+        applyPartToBone(storedBaseModel.rightLeg, "armorRightBoot");
+        applyPartToBone(storedBaseModel.leftLeg,  "armorLeftBoot");
     }
     
     private void applyPartToBone(ModelPart part, String boneName) {
