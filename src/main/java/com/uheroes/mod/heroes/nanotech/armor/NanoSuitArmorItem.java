@@ -58,14 +58,15 @@ public class NanoSuitArmorItem extends ArmorItem implements GeoItem {
     @Override
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
         consumer.accept(new IClientItemExtensions() {
-            private GeoArmorRenderer<?> renderer;
+            private NanoSuitArmorRenderer renderer;
             
             @Override
             public HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
                 if (renderer == null) {
                     renderer = new NanoSuitArmorRenderer();
                 }
-                ((NanoSuitArmorRenderer) renderer).setBaseModel(original);
+                renderer.prepForRender(livingEntity, itemStack, equipmentSlot, original);
+                renderer.setBaseModel(original);
                 return renderer;
             }
         });
