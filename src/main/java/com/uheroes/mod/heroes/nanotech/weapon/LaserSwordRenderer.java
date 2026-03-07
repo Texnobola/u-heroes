@@ -1,6 +1,5 @@
 package com.uheroes.mod.heroes.nanotech.weapon;
 
-import com.uheroes.mod.heroes.nanotech.weapon.LaserSwordItem;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.DefaultedItemGeoModel;
 import software.bernie.geckolib.renderer.GeoItemRenderer;

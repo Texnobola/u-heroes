@@ -29,7 +29,7 @@ side="BOTH"
 [[dependencies.u_heroes]]
 modId="geckolib"
 mandatory=true
-versionRange="[4.4,)"
+versionRange="[4.8,)"
 ordering="NONE"
 side="BOTH"
 

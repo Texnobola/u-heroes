@@ -40,15 +40,4 @@ public class NanoSuitArmorRenderer extends GeoArmorRenderer<NanoSuitArmorItem> {
             }
         });
     }
-    
-    @Override
-    public void prepForRender(LivingEntity entity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> baseModel) {
-        super.prepForRender(entity, itemStack, equipmentSlot, baseModel);
-        this.head.copyFrom(baseModel.head);
-        this.body.copyFrom(baseModel.body);
-        this.rightArm.copyFrom(baseModel.rightArm);
-        this.leftArm.copyFrom(baseModel.leftArm);
-        this.rightLeg.copyFrom(baseModel.rightLeg);
-        this.leftLeg.copyFrom(baseModel.leftLeg);
-    }
 }
