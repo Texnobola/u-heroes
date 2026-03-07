@@ -51,14 +51,14 @@ public class FluxMeterHUD {
         if (fillWidth > 0) {
             int color = interpolateColor(0xFF004D4D, 0xFF00F5FF, fluxPercent);
             
+            graphics.fill(x, y, x + fillWidth, y + BAR_HEIGHT, color);
+            
             if (overcharged) {
                 float pulse = (float) Math.sin(System.currentTimeMillis() / 200.0) * 0.5f + 0.5f;
                 int glowAlpha = (int) (pulse * 100);
                 int glowColor = (glowAlpha << 24) | 0x00FFFFFF;
                 graphics.fill(x, y, x + fillWidth, y + BAR_HEIGHT, glowColor);
             }
-            
-            graphics.fill(x, y, x + fillWidth, y + BAR_HEIGHT, color);
         }
         
         // Border

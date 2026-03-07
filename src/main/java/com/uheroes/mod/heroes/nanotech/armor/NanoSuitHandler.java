@@ -86,7 +86,9 @@ public class NanoSuitHandler {
             player.getCapability(FluxCapability.INSTANCE).ifPresent(flux -> {
                 if (flux.getCurrentFlux() < flux.getMaxFlux()) {
                     float bonusRegen = flux.getRegenRate() * 0.5f / 20.0f;
-                    flux.addFlux((int) Math.ceil(bonusRegen));
+                    if (bonusRegen >= 1.0f) {
+                        flux.addFlux((int) bonusRegen);
+                    }
                 }
             });
         }
