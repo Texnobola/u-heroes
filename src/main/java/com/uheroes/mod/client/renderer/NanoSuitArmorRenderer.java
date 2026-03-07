@@ -4,7 +4,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.uheroes.mod.heroes.nanotech.armor.NanoSuitArmorItem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 
@@ -35,5 +39,16 @@ public class NanoSuitArmorRenderer extends GeoArmorRenderer<NanoSuitArmorItem> {
                 return null;
             }
         });
+    }
+    
+    @Override
+    public void prepForRender(LivingEntity entity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> baseModel) {
+        super.prepForRender(entity, itemStack, equipmentSlot, baseModel);
+        this.head.copyFrom(baseModel.head);
+        this.body.copyFrom(baseModel.body);
+        this.rightArm.copyFrom(baseModel.rightArm);
+        this.leftArm.copyFrom(baseModel.leftArm);
+        this.rightLeg.copyFrom(baseModel.rightLeg);
+        this.leftLeg.copyFrom(baseModel.leftLeg);
     }
 }

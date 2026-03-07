@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/handheld",
-  "textures": {
-    "layer0": "u_heroes:item/laser_sword"
-  }
+  "parent": "builtin/entity"
 }
