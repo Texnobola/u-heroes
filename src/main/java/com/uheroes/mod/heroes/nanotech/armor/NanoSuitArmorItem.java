@@ -65,7 +65,7 @@ public class NanoSuitArmorItem extends ArmorItem implements GeoItem {
                 if (renderer == null) {
                     renderer = new NanoSuitArmorRenderer();
                 }
-                renderer.prepForRender(livingEntity, itemStack, equipmentSlot, original);
+                ((NanoSuitArmorRenderer) renderer).setBaseModel(original);
                 return renderer;
             }
         });
