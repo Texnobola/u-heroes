@@ -35,7 +35,7 @@ public class SaberComboEvents {
 
     @SubscribeEvent
     public static void onAttackEntity(AttackEntityEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
+        Player player = event.getEntity();
         if (player.level().isClientSide()) return;
         if (!(player.getMainHandItem().getItem() instanceof LaserSwordItem)) return;
 
