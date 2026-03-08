@@ -21,41 +21,26 @@ public class SaberBlockAnimation implements IAnimation {
         return active;
     }
 
-    /**
-     * Called once per frame before per-bone transforms.
-     * No per-frame setup needed for a static pose — leave empty.
-     */
     @Override
     public void setupAnim(float tickDelta) {
         // static pose — no per-frame state needed
     }
 
     /**
-     * Called per bone per frame. Return modified store for bones we control,
-     * return store unchanged for everything else (vanilla handles them).
-     *
-     * Vec3f fields are direct public fields: store.x, store.y, store.z
-     * Values are in radians.
+     * Vec3f extends Vector3 where x/y/z are package-private — cannot be set directly.
+     * setX/setY/setZ do not exist either.
+     * Solution: return a NEW Vec3f(x, y, z) for bones we control.
+     * For unmodified bones, return store unchanged.
      */
     @Override
     public Vec3f get3DTransform(String modelName, TransformType type, float tickDelta, Vec3f store) {
         if (type != TransformType.ROTATION) return store;
 
         switch (modelName) {
-            case "rightArm":
-                store.x = -1.3f;
-                store.z = -0.5f;
-                break;
-            case "leftArm":
-                store.x = -1.1f;
-                store.z =  0.6f;
-                break;
-            case "body":
-                store.x =  0.05f;
-                break;
-            // head untouched — free look preserved
+            case "rightArm": return new Vec3f(-1.3f, 0.0f, -0.5f);
+            case "leftArm":  return new Vec3f(-1.1f, 0.0f,  0.6f);
+            case "body":     return new Vec3f( 0.05f, 0.0f, 0.0f);
+            default:         return store;
         }
-
-        return store;
     }
 }
