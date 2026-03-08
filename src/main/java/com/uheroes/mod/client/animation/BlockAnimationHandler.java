@@ -2,8 +2,6 @@ package com.uheroes.mod.client.animation;
 
 import com.uheroes.mod.UHeroesMod;
 import com.uheroes.mod.heroes.nanotech.weapon.LaserSwordItem;
-import dev.kosmx.playerAnim.api.layered.IAnimation;
-import dev.kosmx.playerAnim.api.layered.ModifierLayer;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationAccess;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -16,7 +14,6 @@ import net.minecraftforge.fml.common.Mod;
 public class BlockAnimationHandler {
     
     private static LocalPlayer lastRegisteredPlayer = null;
-    private static final ModifierLayer<IAnimation> BLOCK_LAYER = new ModifierLayer<>();
     
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
@@ -32,7 +29,7 @@ public class BlockAnimationHandler {
         
         if (player != lastRegisteredPlayer) {
             try {
-                PlayerAnimationAccess.getPlayerAnimLayer(player).addAnimLayer(10, BLOCK_LAYER);
+                PlayerAnimationAccess.getPlayerAnimLayer(player).addAnimLayer(10, SaberBlockAnimation.INSTANCE);
                 lastRegisteredPlayer = player;
             } catch (Exception e) {
                 UHeroesMod.LOGGER.warn("Failed to register saber block animation layer: {}", e.getMessage());
@@ -41,15 +38,6 @@ public class BlockAnimationHandler {
         }
         
         boolean shouldBlock = player.isCrouching() && player.getMainHandItem().getItem() instanceof LaserSwordItem;
-        
-        if (shouldBlock) {
-            SaberBlockAnimation.INSTANCE.setActive(true);
-            if (BLOCK_LAYER.getAnimation() != SaberBlockAnimation.INSTANCE) {
-                BLOCK_LAYER.setAnimation(SaberBlockAnimation.INSTANCE);
-            }
-        } else {
-            SaberBlockAnimation.INSTANCE.setActive(false);
-            BLOCK_LAYER.setAnimation(null);
-        }
+        SaberBlockAnimation.INSTANCE.setActive(shouldBlock);
     }
 }

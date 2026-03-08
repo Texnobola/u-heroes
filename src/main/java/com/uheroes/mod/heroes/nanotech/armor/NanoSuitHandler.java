@@ -73,13 +73,13 @@ public class NanoSuitHandler {
             }
             
             // Adaptive Regeneration
-            if (player.getHealth() < player.getMaxHealth() && player.getFoodData().getFoodLevel() > 6) {
+            if (player.getHealth() < player.getMaxHealth() && player.getFoodData().getSaturationLevel() > 0) {
                 player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 120, 0, true, false));
                 
                 // Consume flux every 40 ticks while healing
                 if (player.tickCount % 40 == 0) {
                     if (FluxCapability.consume(player, 1)) {
-                        player.getFoodData().setFoodLevel(player.getFoodData().getFoodLevel() - 1);
+                        player.getFoodData().setSaturation(player.getFoodData().getSaturationLevel() - 1.0f);
                     }
                 }
             }
