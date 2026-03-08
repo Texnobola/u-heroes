@@ -12,34 +12,36 @@ public class SaberBlockAnimation implements IAnimation {
 
     private SaberBlockAnimation() {}
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
+    public void setActive(boolean active) { this.active = active; }
 
     @Override
-    public boolean isActive() {
-        return active;
-    }
+    public boolean isActive() { return active; }
 
     @Override
-    public void setupAnim(float tickDelta) {
-        // static pose — no per-frame state needed
-    }
+    public void setupAnim(float tickDelta) {}
 
     /**
-     * Vec3f extends Vector3 where x/y/z are package-private — cannot be set directly.
-     * setX/setY/setZ do not exist either.
-     * Solution: return a NEW Vec3f(x, y, z) for bones we control.
-     * For unmodified bones, return store unchanged.
+     * Saber guard pose — right hand raised and crossed in front of body,
+     * saber angled diagonally upward as a defensive stance.
+     *
+     * Key difference from bare-hand block:
+     *   rightArm y: rotated inward so arm crosses body toward center
+     *   rightArm z: rolled so the grip faces properly, blade angled up-forward
+     *   leftArm: pulled back as counterbalance
+     *
+     * All values in radians.
      */
     @Override
     public Vec3f get3DTransform(String modelName, TransformType type, float tickDelta, Vec3f store) {
         if (type != TransformType.ROTATION) return store;
 
         switch (modelName) {
-            case "rightArm": return new Vec3f(-1.3f, 0.0f, -0.5f);
-            case "leftArm":  return new Vec3f(-1.1f, 0.0f,  0.6f);
-            case "body":     return new Vec3f( 0.05f, 0.0f, 0.0f);
+            // Right arm: raised forward, crossed inward, rolled so saber points diagonally up
+            case "rightArm": return new Vec3f(-1.2f, 0.4f, -0.9f);
+            // Left arm: slightly raised and pulled back — counterbalance stance
+            case "leftArm":  return new Vec3f(-0.5f, 0.0f,  0.4f);
+            // Body: slight forward lean into the guard
+            case "body":     return new Vec3f( 0.1f, 0.15f, 0.0f);
             default:         return store;
         }
     }
