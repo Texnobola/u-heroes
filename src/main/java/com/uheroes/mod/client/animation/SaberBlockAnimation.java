@@ -1,9 +1,8 @@
 package com.uheroes.mod.client.animation;
 
+import dev.kosmx.playerAnim.api.TransformType;
 import dev.kosmx.playerAnim.api.layered.IAnimation;
-import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
-import dev.kosmx.playerAnim.core.util.Ease;
-import net.minecraft.client.model.geom.ModelPart;
+import dev.kosmx.playerAnim.core.util.Vec3f;
 
 public class SaberBlockAnimation implements IAnimation {
     
@@ -23,27 +22,25 @@ public class SaberBlockAnimation implements IAnimation {
     }
     
     @Override
-    public void setupAnim(float tickDelta) {
-        if (!active) {
-            return;
+    public Vec3f get3DTransform(String modelName, TransformType type, float tickDelta, Vec3f store) {
+        if (type != TransformType.ROTATION) {
+            return store;
         }
         
-        ModelPart rightArm = this.get3DModel().rightArm;
-        ModelPart leftArm = this.get3DModel().leftArm;
-        ModelPart body = this.get3DModel().body;
-        
-        if (rightArm != null) {
-            rightArm.xRot = -1.3f;
-            rightArm.zRot = -0.5f;
+        switch (modelName) {
+            case "rightArm":
+                store.setX(-1.3f);
+                store.setZ(-0.5f);
+                break;
+            case "leftArm":
+                store.setX(-1.1f);
+                store.setZ(0.6f);
+                break;
+            case "body":
+                store.setX(0.05f);
+                break;
         }
         
-        if (leftArm != null) {
-            leftArm.xRot = -1.1f;
-            leftArm.zRot = 0.6f;
-        }
-        
-        if (body != null) {
-            body.xRot = 0.05f;
-        }
+        return store;
     }
 }

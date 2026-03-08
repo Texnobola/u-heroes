@@ -2,6 +2,7 @@ package com.uheroes.mod.client.animation;
 
 import com.uheroes.mod.UHeroesMod;
 import com.uheroes.mod.heroes.nanotech.weapon.LaserSwordItem;
+import dev.kosmx.playerAnim.api.layered.IAnimation;
 import dev.kosmx.playerAnim.api.layered.ModifierLayer;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationAccess;
 import net.minecraft.client.Minecraft;
@@ -14,7 +15,8 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = UHeroesMod.MOD_ID, value = Dist.CLIENT)
 public class BlockAnimationHandler {
     
-    private static final String LAYER_KEY = "u_heroes_saber_block";
+    private static LocalPlayer lastRegisteredPlayer = null;
+    private static final ModifierLayer<IAnimation> BLOCK_LAYER = new ModifierLayer<>();
     
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
@@ -24,31 +26,30 @@ public class BlockAnimationHandler {
         
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
+            lastRegisteredPlayer = null;
             return;
+        }
+        
+        if (player != lastRegisteredPlayer) {
+            try {
+                PlayerAnimationAccess.getPlayerAnimLayer(player).addAnimLayer(10, BLOCK_LAYER);
+                lastRegisteredPlayer = player;
+            } catch (Exception e) {
+                UHeroesMod.LOGGER.warn("Failed to register saber block animation layer: {}", e.getMessage());
+                return;
+            }
         }
         
         boolean shouldBlock = player.isCrouching() && player.getMainHandItem().getItem() instanceof LaserSwordItem;
         
-        try {
-            ModifierLayer<SaberBlockAnimation> animLayer = (ModifierLayer<SaberBlockAnimation>) 
-                PlayerAnimationAccess.getPlayerAnimLayer(player).get(LAYER_KEY);
-            
-            if (animLayer == null) {
-                animLayer = new ModifierLayer<>(SaberBlockAnimation.INSTANCE);
-                PlayerAnimationAccess.getPlayerAnimLayer(player).addAnimLayer(10, LAYER_KEY, animLayer);
+        if (shouldBlock) {
+            SaberBlockAnimation.INSTANCE.setActive(true);
+            if (BLOCK_LAYER.getAnimation() != SaberBlockAnimation.INSTANCE) {
+                BLOCK_LAYER.setAnimation(SaberBlockAnimation.INSTANCE);
             }
-            
-            if (shouldBlock) {
-                SaberBlockAnimation.INSTANCE.setActive(true);
-                if (animLayer.getAnimation() != SaberBlockAnimation.INSTANCE) {
-                    animLayer.setAnimation(SaberBlockAnimation.INSTANCE);
-                }
-            } else {
-                SaberBlockAnimation.INSTANCE.setActive(false);
-                animLayer.setAnimation(null);
-            }
-        } catch (Exception e) {
-            UHeroesMod.LOGGER.warn("Failed to update saber block animation: {}", e.getMessage());
+        } else {
+            SaberBlockAnimation.INSTANCE.setActive(false);
+            BLOCK_LAYER.setAnimation(null);
         }
     }
 }
