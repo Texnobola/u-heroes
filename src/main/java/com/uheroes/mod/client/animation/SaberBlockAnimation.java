@@ -21,27 +21,21 @@ public class SaberBlockAnimation implements IAnimation {
     public void setupAnim(float tickDelta) {}
 
     /**
-     * Saber guard pose — right hand raised and crossed in front of body,
-     * saber angled diagonally upward as a defensive stance.
+     * Saber high guard pose — blade points upward-diagonal in front of body.
      *
-     * Key difference from bare-hand block:
-     *   rightArm y: rotated inward so arm crosses body toward center
-     *   rightArm z: rolled so the grip faces properly, blade angled up-forward
-     *   leftArm: pulled back as counterbalance
-     *
-     * All values in radians.
+     * z was negative (-0.9) → blade pointed DOWN (wrong).
+     * z flipped to positive (+0.7) → rolls arm other direction, blade points UP.
+     * x reduced to -0.8 → arm not as far forward, more natural raised guard.
+     * y 0.35 → arm crossed slightly toward body center.
      */
     @Override
     public Vec3f get3DTransform(String modelName, TransformType type, float tickDelta, Vec3f store) {
         if (type != TransformType.ROTATION) return store;
 
         switch (modelName) {
-            // Right arm: raised forward, crossed inward, rolled so saber points diagonally up
-            case "rightArm": return new Vec3f(-1.2f, 0.4f, -0.9f);
-            // Left arm: slightly raised and pulled back — counterbalance stance
-            case "leftArm":  return new Vec3f(-0.5f, 0.0f,  0.4f);
-            // Body: slight forward lean into the guard
-            case "body":     return new Vec3f( 0.1f, 0.15f, 0.0f);
+            case "rightArm": return new Vec3f(-0.8f,  0.35f,  0.7f);
+            case "leftArm":  return new Vec3f(-0.4f,  0.0f,   0.3f);
+            case "body":     return new Vec3f( 0.08f, 0.15f,  0.0f);
             default:         return store;
         }
     }
