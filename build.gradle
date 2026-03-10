@@ -142,6 +142,11 @@ repositories {
         name = 'Modrinth'
         url = 'https://api.modrinth.com/maven'
     }
+    // AAAParticles
+    maven {
+        name = 'Chloe'
+        url = 'https://maven.chloeprime.com/'
+    }
 }
 
 dependencies {
@@ -167,9 +172,6 @@ dependencies {
     // AAAParticles - Effekseer particle effects
     implementation fg.deobf("maven.modrinth:aaa-particles:1.20.1-1.4.10-forge")
     implementation fg.deobf("maven.modrinth:architectury-api:9.2.14+forge")
-
-    // Photon VFX - particle effects (SOFT DEPENDENCY)
-    compileOnly fg.deobf("curse.maven:photon-871522:5501597")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
