@@ -30,6 +30,12 @@ public class ModNetwork {
             .decoder(FluxSyncPacket::decode)
             .consumerMainThread(FluxSyncPacket::handle)
             .add();
+        
+        CHANNEL.messageBuilder(SaberSlashPacket.class, nextId(), NetworkDirection.PLAY_TO_CLIENT)
+            .encoder(SaberSlashPacket::encode)
+            .decoder(SaberSlashPacket::decode)
+            .consumerMainThread(SaberSlashPacket::handle)
+            .add();
     }
     
     private static int nextId() {
