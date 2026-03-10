@@ -1,10 +1,9 @@
 package com.uheroes.mod.core.network;
 
-import mod.chloeprime.aaaparticles.api.client.effekseer.AAALevel;
-import mod.chloeprime.aaaparticles.api.client.effekseer.ParticleEmitterInfo;
-import net.minecraft.client.Minecraft;
+import com.uheroes.mod.client.ClientParticleHandler;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -30,21 +29,18 @@ public class SaberSlashPacket {
     }
 
     public static SaberSlashPacket decode(FriendlyByteBuf buf) {
-        return new SaberSlashPacket(buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readFloat(), buf.readFloat());
+        return new SaberSlashPacket(
+            buf.readDouble(), buf.readDouble(), buf.readDouble(),
+            buf.readFloat(), buf.readFloat()
+        );
     }
 
     public static void handle(SaberSlashPacket msg, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            var mc = Minecraft.getInstance();
-            if (mc.level == null) return;
-            AAALevel.addParticle(
-                mc.level, false,
-                new ParticleEmitterInfo(new ResourceLocation("u_heroes", "effeks/saber_slash"))
-                    .position(msg.x, msg.y, msg.z)
-                    .rotation(0, msg.yRot, 0)
-                    .scale(msg.scale)
-            );
-        });
+        ctx.get().enqueueWork(() ->
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+                ClientParticleHandler.spawnSaberSlash(msg.x, msg.y, msg.z, msg.yRot, msg.scale)
+            )
+        );
         ctx.get().setPacketHandled(true);
     }
 }
