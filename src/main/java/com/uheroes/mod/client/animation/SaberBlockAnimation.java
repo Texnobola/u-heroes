@@ -19,7 +19,7 @@ public class SaberBlockAnimation implements IAnimation {
         if (type == TransformType.ROTATION) {
             switch (modelName) {
                 case "rightArm":
-                    return new Vec3f((float)Math.toRadians(-82.5), 0.0f, (float)Math.toRadians(70));
+                    return new Vec3f((float)Math.toRadians(-60), 0.0f, (float)Math.toRadians(70));
                 case "leftArm":
                     return new Vec3f((float)Math.toRadians(-101.80868), (float)Math.toRadians(31.94715), (float)Math.toRadians(-6.31274));
             }
