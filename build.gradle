@@ -146,24 +146,6 @@ repositories {
     maven {
         name = 'Chloe'
         url = 'https://maven.chloeprime.cn:4080/releases/'
-        content {
-            includeGroup("mod.chloeprime")
-            includeGroup("cn.chloeprime")
-        }
-    }
-    // Chloe
-    maven {
-        name = 'Chloe'
-        url = 'https://maven.chloeprime.cn:4080/releases/'
-        content {
-            includeGroup("mod.chloeprime")
-            includeGroup("cn.chloeprime")
-        }
-    }
-    // AAAParticles
-    maven {
-        name = 'Chloe'
-        url = 'https://maven.chloeprime.com/'
     }
 }
 
