@@ -11,7 +11,6 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 import java.lang.reflect.Field;
 
@@ -22,11 +21,16 @@ public class HitStopHandler {
     private static Field timerField;
 
     static {
-        try {
-            timerField = ObfuscationReflectionHelper.findField(Minecraft.class, "f_91010_");
-            timerField.setAccessible(true);
-        } catch (Exception e) {
-            UHeroesMod.LOGGER.error("Failed to initialize HitStopHandler reflection: {}", e.getMessage());
+        // Find the Timer field by type scanning instead of SRG name
+        for (Field f : Minecraft.class.getDeclaredFields()) {
+            if (f.getType() == Timer.class) {
+                f.setAccessible(true);
+                timerField = f;
+                break;
+            }
+        }
+        if (timerField == null) {
+            UHeroesMod.LOGGER.error("HitStopHandler: could not find Timer field in Minecraft class");
         }
     }
 
