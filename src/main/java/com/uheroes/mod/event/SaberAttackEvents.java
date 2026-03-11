@@ -7,7 +7,8 @@ import mod.chloeprime.aaaparticles.api.common.AAALevel;
 import mod.chloeprime.aaaparticles.api.common.ParticleEmitterInfo;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -19,8 +20,16 @@ public class SaberAttackEvents {
     );
 
     @SubscribeEvent
-    public static void onLivingHurt(LivingHurtEvent event) {
-        if (!(event.getSource().getEntity() instanceof Player player)) return;
+    public static void onAttackEntity(AttackEntityEvent event) {
+        spawnSlash(event.getEntity());
+    }
+
+    @SubscribeEvent
+    public static void onLeftClickEmpty(PlayerInteractEvent.LeftClickEmpty event) {
+        spawnSlash(event.getEntity());
+    }
+
+    private static void spawnSlash(Player player) {
         if (player.level().isClientSide()) return;
         if (!(player.getMainHandItem().getItem() instanceof LaserSwordItem)) return;
 
