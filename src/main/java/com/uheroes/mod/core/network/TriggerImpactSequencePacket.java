@@ -12,7 +12,7 @@ public class TriggerImpactSequencePacket {
 
     public TriggerImpactSequencePacket() {}
 
-    public void encode(FriendlyByteBuf buf) {
+    public static void encode(TriggerImpactSequencePacket packet, FriendlyByteBuf buf) {
         // Empty packet
     }
 
@@ -20,7 +20,7 @@ public class TriggerImpactSequencePacket {
         return new TriggerImpactSequencePacket();
     }
 
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
+    public static void handle(TriggerImpactSequencePacket packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
                 AsteroidImpactSequence.start();

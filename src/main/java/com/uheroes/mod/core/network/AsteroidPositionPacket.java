@@ -20,26 +20,20 @@ public class AsteroidPositionPacket {
         this.z = pos.getZ();
     }
 
-    public AsteroidPositionPacket(int x, int y, int z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
-
-    public void encode(FriendlyByteBuf buf) {
-        buf.writeInt(x);
-        buf.writeInt(y);
-        buf.writeInt(z);
+    public static void encode(AsteroidPositionPacket packet, FriendlyByteBuf buf) {
+        buf.writeInt(packet.x);
+        buf.writeInt(packet.y);
+        buf.writeInt(packet.z);
     }
 
     public static AsteroidPositionPacket decode(FriendlyByteBuf buf) {
-        return new AsteroidPositionPacket(buf.readInt(), buf.readInt(), buf.readInt());
+        return new AsteroidPositionPacket(new BlockPos(buf.readInt(), buf.readInt(), buf.readInt()));
     }
 
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
+    public static void handle(AsteroidPositionPacket packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-                AsteroidImpactSequence.craterPos = new BlockPos(x, y, z);
+                AsteroidImpactSequence.craterPos = new BlockPos(packet.x, packet.y, packet.z);
             });
         });
         ctx.get().setPacketHandled(true);

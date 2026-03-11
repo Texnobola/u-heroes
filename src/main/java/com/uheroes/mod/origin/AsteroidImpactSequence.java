@@ -49,7 +49,7 @@ public class AsteroidImpactSequence {
         if (tickCounter == 10 && mc.player != null) {
             mc.level.playLocalSound(
                 mc.player.getX(), mc.player.getY(), mc.player.getZ(),
-                SoundEvents.GENERIC_EXPLODE,
+                SoundEvents.ENTITY_GENERIC_EXPLODE,
                 SoundSource.AMBIENT,
                 1.5f, 0.4f, false
             );
@@ -72,7 +72,7 @@ public class AsteroidImpactSequence {
         if (tickCounter == 50 && mc.player != null) {
             mc.level.playLocalSound(
                 mc.player.getX(), mc.player.getY(), mc.player.getZ(),
-                SoundEvents.GENERIC_EXPLODE,
+                SoundEvents.ENTITY_GENERIC_EXPLODE,
                 SoundSource.AMBIENT,
                 2.0f, 0.6f, false
             );
