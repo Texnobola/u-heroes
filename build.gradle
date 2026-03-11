@@ -142,11 +142,6 @@ repositories {
         name = 'Modrinth'
         url = 'https://api.modrinth.com/maven'
     }
-    // Chloe
-    maven {
-        name = 'Chloe'
-        url = 'https://maven.chloeprime.cn:4080/releases/'
-    }
 }
 
 dependencies {
@@ -170,7 +165,7 @@ dependencies {
     runtimeOnly fg.deobf("maven.modrinth:cutscene-api:mc1.20.1-forge-1.6.4")
 
     // AAAParticles - Effekseer particle effects
-    implementation "maven.modrinth:aaa-particles:1.20.1-1.4.10-forge"
+    implementation fg.deobf("maven.modrinth:aaa-particles:1.20.1-1.4.10-forge")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
