@@ -1,14 +1,17 @@
 package com.uheroes.mod.origin;
 
+import com.uheroes.mod.init.ModEntities;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
@@ -17,9 +20,15 @@ public class NanoCreatureItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-            NanoCreatureHandler.grantNanoSuit(serverPlayer);
-            player.getItemInHand(hand).shrink(1);
+        if (!level.isClientSide && level instanceof ServerLevel serverLevel) {
+            Vec3 pos = player.position().add(player.getLookAngle().scale(2.0));
+            NanoCreatureEntity entity = ModEntities.NANO_CREATURE.get()
+                .spawn(serverLevel, null, null, player,
+                    net.minecraft.core.BlockPos.containing(pos),
+                    MobSpawnType.MOB_SUMMONED, false, false);
+            if (entity != null) {
+                player.getItemInHand(hand).shrink(1);
+            }
         }
         return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide);
     }

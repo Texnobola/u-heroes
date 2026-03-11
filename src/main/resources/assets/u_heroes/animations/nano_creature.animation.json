@@ -1,0 +1,53 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.nano_creature.idle": {
+      "loop": true,
+      "animation_length": 2.0,
+      "bones": {
+        "body": {
+          "rotation": {
+            "0.0": [0, 0, 0],
+            "1.0": [0, 15, 0],
+            "2.0": [0, 0, 0]
+          },
+          "position": {
+            "0.0": [0, 0, 0],
+            "1.0": [0, 1, 0],
+            "2.0": [0, 0, 0]
+          }
+        }
+      }
+    },
+    "animation.nano_creature.move": {
+      "loop": true,
+      "animation_length": 0.5,
+      "bones": {
+        "body": {
+          "position": {
+            "0.0": [0, 0, 0],
+            "0.25": [0, 1.5, 0],
+            "0.5": [0, 0, 0]
+          }
+        }
+      }
+    },
+    "animation.nano_creature.merge": {
+      "loop": false,
+      "animation_length": 3.0,
+      "bones": {
+        "body": {
+          "scale": {
+            "0.0": [1, 1, 1],
+            "2.5": [1.5, 1.5, 1.5],
+            "3.0": [0, 0, 0]
+          },
+          "rotation": {
+            "0.0": [0, 0, 0],
+            "3.0": [0, 720, 0]
+          }
+        }
+      }
+    }
+  }
+}

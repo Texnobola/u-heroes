@@ -31,9 +31,36 @@ public class UHeroesMod {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(ModNetwork::init);
+        event.enqueueWork(() -> {
+            net.minecraftforge.event.entity.EntityAttributeCreationEvent.class; // handled by event
+        });
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
         event.enqueueWork(ModKeybinds::registerKeybinds);
+        event.enqueueWork(() -> {
+            net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers reg = null;
+            // Renderer registered via event below
+        });
+    }
+
+    @Mod.EventBusSubscriber(modid = UHeroesMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class ModEvents {
+        @net.minecraftforge.eventbus.api.SubscribeEvent
+        public static void onEntityAttributeCreation(net.minecraftforge.event.entity.EntityAttributeCreationEvent event) {
+            event.put(com.uheroes.mod.init.ModEntities.NANO_CREATURE.get(),
+                com.uheroes.mod.origin.NanoCreatureEntity.createAttributes().build());
+        }
+    }
+
+    @Mod.EventBusSubscriber(modid = UHeroesMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = net.minecraftforge.api.distmarker.Dist.CLIENT)
+    public static class ClientModEvents {
+        @net.minecraftforge.eventbus.api.SubscribeEvent
+        public static void onRegisterRenderers(net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers event) {
+            event.registerEntityRenderer(
+                com.uheroes.mod.init.ModEntities.NANO_CREATURE.get(),
+                com.uheroes.mod.client.renderer.NanoCreatureRenderer::new
+            );
+        }
     }
 }
