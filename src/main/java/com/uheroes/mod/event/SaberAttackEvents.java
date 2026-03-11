@@ -21,11 +21,6 @@ public class SaberAttackEvents {
         new ResourceLocation("u_heroes", "saber_slash")
     );
 
-    private static final double REACH = 1.5;
-    private static final double RIGHT_OFFSET = 0.6;
-    private static final double HEIGHT_OFFSET = 1.1;
-
-    // Fires server-side — hitting an entity
     @Mod.EventBusSubscriber(modid = UHeroesMod.MOD_ID)
     public static class ServerEvents {
         @SubscribeEvent
@@ -34,7 +29,6 @@ public class SaberAttackEvents {
         }
     }
 
-    // Fires client-side only — swing in air
     @Mod.EventBusSubscriber(modid = UHeroesMod.MOD_ID, value = Dist.CLIENT)
     public static class ClientEvents {
         @SubscribeEvent
@@ -48,16 +42,27 @@ public class SaberAttackEvents {
         if (isClientSide) SaberAttackAnimHandler.onSwing();
         if (!(player.getMainHandItem().getItem() instanceof LaserSwordItem)) return;
 
-        float yawRad   = (float) Math.toRadians(player.getYRot());
-        float pitchRad = (float) Math.toRadians(player.getXRot());
+        Vec3 look    = player.getLookAngle();
+        Vec3 eyePos  = player.getEyePosition();
 
-        Vec3 forward = player.getLookAngle();
-        Vec3 right = new Vec3(Math.cos(yawRad), 0, Math.sin(yawRad));
+        // Sword tip: 1.2 blocks forward from eye, 0.45 right, 0.1 down
+        // Use look + right vector so it always tracks where the sword points
+        float yawRad = (float) Math.toRadians(player.getYRot());
+        // right = perpendicular to look on the horizontal plane
+        Vec3 right = new Vec3(
+             Math.cos(yawRad),
+             0,
+             Math.sin(yawRad)
+        ).normalize();
 
-        Vec3 origin = player.position()
-            .add(0, HEIGHT_OFFSET, 0)
-            .add(forward.scale(REACH))
-            .add(right.scale(RIGHT_OFFSET));
+        Vec3 swordTip = eyePos
+            .add(look.scale(1.2))           // 1.2 blocks ahead along look
+            .add(right.scale(0.45))         // 0.45 right (sword hand side)
+            .subtract(0, 0.1, 0);           // slightly lower than eye
+
+        // Rotation: yaw from player facing, pitch from look angle
+        float yaw   = (float) Math.toRadians(player.getYRot());
+        float pitch = (float) Math.toRadians(player.getXRot());
 
         int currentCombo = FluxMeterHUD.comboIndex;
         float scale = switch (currentCombo) {
@@ -70,8 +75,8 @@ public class SaberAttackEvents {
         AAALevel.addParticle(
             player.level(), false,
             SABER_SLASH.clone()
-                .position(origin.x, origin.y, origin.z)
-                .rotation(pitchRad, (float) Math.toRadians(player.getYRot()), 0)
+                .position(swordTip.x, swordTip.y, swordTip.z)
+                .rotation(pitch, yaw, 0)
                 .scale(scale)
         );
     }

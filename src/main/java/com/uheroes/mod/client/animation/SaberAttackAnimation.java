@@ -1,65 +1,55 @@
 package com.uheroes.mod.client.animation;
 
+import com.mojang.math.Axis;
+import com.mojang.math.Vector3f;
+import com.uheroes.mod.UHeroesMod;
 import dev.kosmx.playerAnim.api.TransformType;
 import dev.kosmx.playerAnim.api.layered.IAnimation;
 import dev.kosmx.playerAnim.core.util.Vec3f;
+import net.minecraft.client.renderer.PoseStack;
 
 /**
- * Three saber attack animations with windup → strike → recovery phases.
+ * Three saber attacks with windup → strike → recovery, tick-based timing.
  *
- * Type 0 — Horizontal slash (right to left sweep)
- * Type 1 — Overhead diagonal slam (top-right down to bottom-left)
- * Type 2 — Forward thrust / stab
- *
- * Phase speeds (progress per frame at ~60fps):
- *   Windup   — 0.04  (~25 frames, ~0.42s) slow wind-back
- *   Strike   — 0.30  (~3-4 frames)        snappy impact
- *   Recovery — 0.028 (~36 frames, ~0.6s)  slow follow-through
+ * ANGLE LIMITS enforced to prevent arm-in-body clipping:
+ *   Pitch: -120° to +60°   (was -155 which clipped through torso)
+ *   Yaw:    -50° to +55°   (was ±85 which rotated arm inside body)
+ *   Roll:   -25° to +25°
  */
 public class SaberAttackAnimation implements IAnimation {
 
     public static final SaberAttackAnimation INSTANCE = new SaberAttackAnimation();
     private SaberAttackAnimation() {}
 
-    // ── State ───────────────────────────────────────────────────
-    private boolean active = false;
-    private int attackType = 0;
-
+    // ── Phase timing (ticks at 20/s) ────────────────────────────
     private static final int PHASE_WINDUP   = 0;
     private static final int PHASE_STRIKE   = 1;
     private static final int PHASE_RECOVERY = 2;
+    private static final int WINDUP_TICKS   = 8;
+    private static final int STRIKE_TICKS   = 3;
+    private static final int RECOVERY_TICKS = 14;
 
-    private int   phase     = PHASE_WINDUP;
-    private float phaseT    = 0f;   // 0 → 1 within each phase
+    // ── State ────────────────────────────────────────────────────
+    private boolean active     = false;
+    private int     attackType = 0;
+    private int     phase      = PHASE_WINDUP;
+    private int     phaseTick  = 0;
+    private float   phaseT     = 0f;  // interpolated 0→1, set in setupAnim
 
-    private static final float WINDUP_SPEED   = 0.040f;
-    private static final float STRIKE_SPEED   = 0.300f;
-    private static final float RECOVERY_SPEED = 0.028f;
-
-    // ── Control ─────────────────────────────────────────────────
+    // ── Public API ───────────────────────────────────────────────
     public void play(int type) {
-        this.attackType = type;
-        this.phase      = PHASE_WINDUP;
-        this.phaseT     = 0f;
-        this.active     = true;
+        attackType = type;
+        phase      = PHASE_WINDUP;
+        phaseTick  = 0;
+        phaseT     = 0f;
+        active     = true;
     }
 
-    @Override public boolean isActive() { return active; }
-
-    // ── Tick ────────────────────────────────────────────────────
-    @Override
-    public void setupAnim(float tickDelta) {
+    public void tick() {
         if (!active) return;
-
-        float speed = switch (phase) {
-            case PHASE_WINDUP   -> WINDUP_SPEED;
-            case PHASE_STRIKE   -> STRIKE_SPEED;
-            default             -> RECOVERY_SPEED;
-        };
-
-        phaseT += speed;
-        if (phaseT >= 1f) {
-            phaseT = 0f;
+        phaseTick++;
+        if (phaseTick >= phaseDuration()) {
+            phaseTick = 0;
             phase++;
             if (phase > PHASE_RECOVERY) {
                 active = false;
@@ -68,65 +58,94 @@ public class SaberAttackAnimation implements IAnimation {
         }
     }
 
-    // ── Easing ──────────────────────────────────────────────────
-    /** Smooth-step — used for windup and recovery */
-    private float smooth(float t) { return t * t * (3f - 2f * t); }
+    public int  getPhase()      { return phase; }
+    public float getPhaseT()    { return phaseT; }
+    public int  getAttackType() { return attackType; }
 
-    /** Ease-out cubic — strike snaps in and decelerates at end */
-    private float easeOut(float t) { float u = 1f - t; return 1f - u * u * u; }
+    @Override public boolean isActive() { return active; }
 
-    private float lerp(float a, float b, float t) { return a + (b - a) * t; }
-
-    // ── Bone helper ─────────────────────────────────────────────
-    /**
-     * Blend between three keyframes: rest → windup → strike → recovery → rest
-     * Returns the correct value for the current phase.
-     */
-    private float key(float rest, float windup, float strike) {
-        return switch (phase) {
-            case PHASE_WINDUP   -> lerp(rest,   windup, smooth(phaseT));
-            case PHASE_STRIKE   -> lerp(windup, strike, easeOut(phaseT));
-            default /*RECOVERY*/-> lerp(strike, rest,   smooth(phaseT));
-        };
+    @Override
+    public void setupAnim(float partialTick) {
+        if (!active) return;
+        phaseT = Math.min((phaseTick + partialTick) / phaseDuration(), 1f);
     }
 
-    // ── Main transform ──────────────────────────────────────────
+    // ── Third-person bone transforms ─────────────────────────────
     @Override
-    public Vec3f get3DTransform(String modelName, TransformType type,
-                                float tickDelta, Vec3f store) {
+    public Vec3f get3DTransform(String bone, TransformType type,
+                                float partialTick, Vec3f store) {
         if (!active) return store;
-
         return switch (attackType) {
-            case 0 -> horizontalSlash(modelName, type, store);
-            case 1 -> overheadSlam   (modelName, type, store);
-            case 2 -> thrustStab     (modelName, type, store);
+            case 0 -> horizontalSlash(bone, type, store);
+            case 1 -> overheadSlam   (bone, type, store);
+            case 2 -> thrustStab     (bone, type, store);
             default -> store;
         };
     }
 
-    // ────────────────────────────────────────────────────────────
-    // Type 0 — Horizontal Slash  (right → left sweep)
-    //   Windup:   right arm swings back-right, body rotates right
-    //   Strike:   arm sweeps hard left across body, body snaps left
-    //   Recovery: slow return to neutral
-    // ────────────────────────────────────────────────────────────
+    // ── First-person PoseStack transform ─────────────────────────
+    /**
+     * Call this from RenderHandEvent (main hand only) to animate
+     * the first-person arm. Applies rotations relative to the hand pivot.
+     */
+    public void applyFirstPersonTransform(PoseStack ps) {
+        if (!active) return;
+        // Pivot point: move to wrist, rotate, move back
+        ps.translate(0.56f, -0.52f, -0.72f);
+        switch (attackType) {
+            case 0 -> applyFP_HorizontalSlash(ps);
+            case 1 -> applyFP_OverheadSlam(ps);
+            case 2 -> applyFP_ThrustStab(ps);
+        }
+        ps.translate(-0.56f, 0.52f, 0.72f);
+    }
+
+    private void applyFP_HorizontalSlash(PoseStack ps) {
+        // Windup: pull right; Strike: sweep left; Recovery: return
+        float yaw   = rad(key(0, -45,  50));
+        float pitch = rad(key(0, -15,  10));
+        float roll  = rad(key(0, -20,  15));
+        ps.mulPose(Axis.YP.rotation(yaw));
+        ps.mulPose(Axis.XP.rotation(pitch));
+        ps.mulPose(Axis.ZP.rotation(roll));
+    }
+
+    private void applyFP_OverheadSlam(PoseStack ps) {
+        // Windup: raise high; Strike: slam down
+        float pitch = rad(key(-5, -100,  45));
+        float yaw   = rad(key( 0,  -20,  15));
+        float roll  = rad(key( 0,  -15,  20));
+        ps.mulPose(Axis.XP.rotation(pitch));
+        ps.mulPose(Axis.YP.rotation(yaw));
+        ps.mulPose(Axis.ZP.rotation(roll));
+    }
+
+    private void applyFP_ThrustStab(PoseStack ps) {
+        // Windup: pull back; Strike: thrust forward
+        float pitch = rad(key(-5,  20, -75));
+        float z     = key(0f, 0.1f, -0.25f); // subtle forward push
+        ps.mulPose(Axis.XP.rotation(pitch));
+        ps.translate(0, 0, z);
+    }
+
+    // ── Type 0 — Horizontal Slash ────────────────────────────────
     private Vec3f horizontalSlash(String bone, TransformType type, Vec3f store) {
         if (type == TransformType.ROTATION) {
             return switch (bone) {
                 case "rightArm" -> new Vec3f(
-                    rad(key(-20,  -30,  20)),   // pitch: slight droop in windup, rise on strike
-                    rad(key(  0,  -70,  80)),   // yaw:   pull right, sweep hard left
-                    rad(key(  0,  -30,  20))    // roll:  tilt back, snap forward
+                    rad(key(-10, -25,  15)),  // pitch
+                    rad(key(  0, -48,  52)),  // yaw  — SAFE range ±55°
+                    rad(key(  0, -20,  15))   // roll
                 );
                 case "leftArm" -> new Vec3f(
-                    rad(key(  0,  -30, -15)),
-                    rad(key(  0,   20, -20)),
-                    rad(key(  0,   15,  -5))
+                    rad(key(  0, -20, -10)),
+                    rad(key(  0,  18, -18)),
+                    rad(key(  0,  12,  -5))
                 );
                 case "body" -> new Vec3f(
-                    rad(key(  0,    5,   5)),
-                    rad(key(  0,   30, -25)),   // body coils right, uncoils left
-                    rad(key(  0,    0,   0))
+                    rad(key(  0,   4,   4)),
+                    rad(key(  0,  22, -20)),
+                    rad(key(  0,   0,   0))
                 );
                 default -> store;
             };
@@ -134,79 +153,82 @@ public class SaberAttackAnimation implements IAnimation {
         return store;
     }
 
-    // ────────────────────────────────────────────────────────────
-    // Type 1 — Overhead Diagonal Slam  (top-right → bottom-left)
-    //   Windup:   arm lifts high and tilts right, body leans back
-    //   Strike:   arm hammers diagonally down-left, fast
-    //   Recovery: arm hangs low, body straightens
-    // ────────────────────────────────────────────────────────────
+    // ── Type 1 — Overhead Slam ───────────────────────────────────
     private Vec3f overheadSlam(String bone, TransformType type, Vec3f store) {
         if (type == TransformType.ROTATION) {
             return switch (bone) {
                 case "rightArm" -> new Vec3f(
-                    rad(key(-20, -160,  60)),   // pitch: swings from high up to slammed down
-                    rad(key(  0,  -30,  20)),   // yaw:   right to slightly left
-                    rad(key(  0,  -20,  30))    // roll
+                    rad(key(-10, -115,  55)),  // pitch  — was -155, now -115 (safe)
+                    rad(key(  0,  -25,  18)),
+                    rad(key(  0,  -18,  25))
                 );
                 case "leftArm" -> new Vec3f(
-                    rad(key(  0,  -50, -15)),   // left arm raises for balance in windup
-                    rad(key(  0,  -15,  10)),
-                    rad(key(  0,   20,   5))
+                    rad(key(  0,  -40, -12)),
+                    rad(key(  0,  -12,  10)),
+                    rad(key(  0,   18,   5))
                 );
                 case "body" -> new Vec3f(
-                    rad(key(  0,  -15,  20)),   // body arches back in windup, crunches on slam
-                    rad(key(  0,   20, -10)),
+                    rad(key(  0,  -12,  16)),
+                    rad(key(  0,   18, -10)),
                     rad(key(  0,    0,   0))
                 );
                 default -> store;
             };
         }
         if (type == TransformType.POSITION && bone.equals("rightArm")) {
-            // arm lifts up in windup, slams down on strike
-            float y = key(0f, -2.5f, 1.5f);
-            return new Vec3f(0f, y, 0f);
+            return new Vec3f(0f, key(0f, -2f, 1.2f), 0f);
         }
         return store;
     }
 
-    // ────────────────────────────────────────────────────────────
-    // Type 2 — Thrust / Stab  (lunge straight forward)
-    //   Windup:   both arms pull back to hip, body leans back
-    //   Strike:   arms extend fully forward, body lunges
-    //   Recovery: slow draw back
-    // ────────────────────────────────────────────────────────────
+    // ── Type 2 — Thrust / Stab ───────────────────────────────────
     private Vec3f thrustStab(String bone, TransformType type, Vec3f store) {
         if (type == TransformType.ROTATION) {
             return switch (bone) {
                 case "rightArm" -> new Vec3f(
-                    rad(key(-20,   30, -100)),  // pulls down in windup, then stabs forward hard
-                    rad(key(  0,   15,  -10)),
-                    rad(key(  0,  -15,  -10))
+                    rad(key(-10,  22, -85)),  // pitch — was -100, now -85
+                    rad(key(  0,  12,  -8)),
+                    rad(key(  0, -12,  -8))
                 );
                 case "leftArm" -> new Vec3f(
-                    rad(key(  0,   20,  -80)),
-                    rad(key(  0,  -15,   10)),
-                    rad(key(  0,   15,   10))
+                    rad(key(  0,  18, -70)),
+                    rad(key(  0, -12,   8)),
+                    rad(key(  0,  12,   8))
                 );
                 case "body" -> new Vec3f(
-                    rad(key(  0,   15,  -20)),  // body leans back in windup, lunges forward
-                    rad(key(  0,    0,    0)),
-                    rad(key(  0,    0,    0))
+                    rad(key(  0,  12, -16)),
+                    rad(key(  0,   0,   0)),
+                    rad(key(  0,   0,   0))
                 );
                 default -> store;
             };
         }
         if (type == TransformType.POSITION) {
-            if (bone.equals("rightArm")) {
-                float z = key(0f, 1.5f, -3f);  // pull back then lunge forward
-                return new Vec3f(0f, 0f, z);
-            }
-            if (bone.equals("leftArm")) {
-                float z = key(0f, 1.2f, -2.5f);
-                return new Vec3f(0f, 0f, z);
-            }
+            if (bone.equals("rightArm")) return new Vec3f(0f, 0f, key(0f, 0.8f, -2f));
+            if (bone.equals("leftArm"))  return new Vec3f(0f, 0f, key(0f, 0.7f, -1.8f));
         }
         return store;
+    }
+
+    // ── Util ─────────────────────────────────────────────────────
+    private int phaseDuration() {
+        return switch (phase) {
+            case PHASE_WINDUP -> WINDUP_TICKS;
+            case PHASE_STRIKE -> STRIKE_TICKS;
+            default           -> RECOVERY_TICKS;
+        };
+    }
+
+    private float smooth(float t)  { return t * t * (3f - 2f * t); }
+    private float easeOut(float t) { float u = 1f-t; return 1f - u*u*u; }
+    private float lerp(float a, float b, float t) { return a + (b-a)*t; }
+
+    private float key(float rest, float windupPeak, float strikePeak) {
+        return switch (phase) {
+            case PHASE_WINDUP  -> lerp(rest,       windupPeak, smooth(phaseT));
+            case PHASE_STRIKE  -> lerp(windupPeak, strikePeak, easeOut(phaseT));
+            default            -> lerp(strikePeak, rest,       smooth(phaseT));
+        };
     }
 
     private float rad(float deg) { return (float) Math.toRadians(deg); }
