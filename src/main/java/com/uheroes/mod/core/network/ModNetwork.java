@@ -9,14 +9,11 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
-/**
- * Network handler for U-Heroes mod packets.
- */
 public class ModNetwork {
     private static final String PROTOCOL_VERSION = "1";
     private static SimpleChannel CHANNEL;
     private static int packetId = 0;
-    
+
     public static void init() {
         CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(UHeroesMod.MOD_ID, "main"),
@@ -24,41 +21,24 @@ public class ModNetwork {
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals
         );
-        
+
         CHANNEL.messageBuilder(FluxSyncPacket.class, nextId(), NetworkDirection.PLAY_TO_CLIENT)
             .encoder(FluxSyncPacket::encode)
             .decoder(FluxSyncPacket::decode)
             .consumerMainThread(FluxSyncPacket::handle)
             .add();
-        
-        CHANNEL.messageBuilder(SaberSlashPacket.class, nextId(), NetworkDirection.PLAY_TO_CLIENT)
-            .encoder(SaberSlashPacket::encode)
-            .decoder(SaberSlashPacket::decode)
-            .consumerMainThread(SaberSlashPacket::handle)
-            .add();
     }
-    
-    private static int nextId() {
-        return packetId++;
-    }
-    
-    /**
-     * Sends a packet to a specific player.
-     */
+
+    private static int nextId() { return packetId++; }
+
     public static <MSG> void sendToPlayer(MSG packet, ServerPlayer player) {
         CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
-    
-    /**
-     * Sends a packet to the server.
-     */
+
     public static <MSG> void sendToServer(MSG packet) {
         CHANNEL.sendToServer(packet);
     }
-    
-    /**
-     * Sends a packet to all players tracking an entity.
-     */
+
     public static <MSG> void sendToAllTracking(MSG packet, Entity entity) {
         CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), packet);
     }

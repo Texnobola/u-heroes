@@ -1,7 +1,7 @@
 package com.uheroes.mod.client;
 
-import mod.chloeprime.aaaparticles.api.client.effekseer.AAALevel;
-import mod.chloeprime.aaaparticles.api.client.effekseer.ParticleEmitterInfo;
+import mod.chloeprime.aaaparticles.api.common.AAALevel;
+import mod.chloeprime.aaaparticles.api.common.ParticleEmitterInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 
