@@ -21,6 +21,10 @@ public class ModCreativeTab {
                 output.accept(ModItems.NANO_CHESTPLATE.get());
                 output.accept(ModItems.NANO_LEGGINGS.get());
                 output.accept(ModItems.NANO_BOOTS.get());
+                output.accept(ModBlocks.NANO_ALLOY_BLOCK.get());
+                output.accept(ModItems.NANO_ALLOY_FRAGMENT.get());
+                output.accept(ModItems.LIFE_ESSENCE.get());
+                output.accept(ModItems.NANO_CREATURE.get());
             })
             .build());
 

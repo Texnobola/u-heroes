@@ -29,5 +29,10 @@
   "status.u_heroes.suit_repair": "§b[Suit] §7Auto-repair active",
   "status.u_heroes.adaptive_regen": "§b[Suit] §7Adaptive Regeneration active",
   "status.u_heroes.mode_switched": "§bMode: %s",
-  "status.u_heroes.insufficient_flux": "§cInsufficient Neural Flux"
+  "status.u_heroes.insufficient_flux": "§cInsufficient Neural Flux",
+  "block.u_heroes.nano_alloy_block": "Nano Alloy Block",
+  "item.u_heroes.nano_alloy_fragment": "Nano Alloy Fragment",
+  "item.u_heroes.life_essence": "Life Essence",
+  "item.u_heroes.nano_creature": "Nano Creature",
+  "item.u_heroes.nano_creature.tooltip": "Something stirs within..."
 }

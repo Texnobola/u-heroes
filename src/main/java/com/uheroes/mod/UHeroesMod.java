@@ -19,6 +19,7 @@ public class UHeroesMod {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ModItems.register(modEventBus);
+        ModBlocks.register(modEventBus);
         ModEntities.register(modEventBus);
         ModSounds.register(modEventBus);
         ModParticles.register(modEventBus);
