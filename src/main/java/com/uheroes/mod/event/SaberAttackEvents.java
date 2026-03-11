@@ -4,6 +4,7 @@ import com.uheroes.mod.UHeroesMod;
 import com.uheroes.mod.client.animation.SaberAttackAnimHandler;
 import com.uheroes.mod.client.hud.FluxMeterHUD;
 import com.uheroes.mod.heroes.nanotech.weapon.LaserSwordItem;
+import com.uheroes.mod.init.ModSounds;
 import mod.chloeprime.aaaparticles.api.common.AAALevel;
 import mod.chloeprime.aaaparticles.api.common.ParticleEmitterInfo;
 import net.minecraft.resources.ResourceLocation;
@@ -25,7 +26,15 @@ public class SaberAttackEvents {
     public static class ServerEvents {
         @SubscribeEvent
         public static void onAttackEntity(AttackEntityEvent event) {
-            spawnSlash(event.getEntity(), false);
+            Player player = event.getEntity();
+            if (player.getMainHandItem().getItem() instanceof LaserSwordItem) {
+                player.level().playSound(null,
+                    player.blockPosition(),
+                    ModSounds.LASER_SWORD_HIT.get(),
+                    net.minecraft.sounds.SoundSource.PLAYERS,
+                    1.0f, 1.0f);
+            }
+            spawnSlash(player, false);
         }
     }
 
@@ -33,6 +42,14 @@ public class SaberAttackEvents {
     public static class ClientEvents {
         @SubscribeEvent
         public static void onLeftClickEmpty(PlayerInteractEvent.LeftClickEmpty event) {
+            Player player = event.getEntity();
+            if (player.getMainHandItem().getItem() instanceof LaserSwordItem) {
+                player.level().playSound(player,
+                    player.blockPosition(),
+                    ModSounds.LASER_SWORD_SWING.get(),
+                    net.minecraft.sounds.SoundSource.PLAYERS,
+                    0.8f, 1.0f);
+            }
             spawnSlash(event.getEntity(), true);
         }
     }

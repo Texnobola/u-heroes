@@ -21,6 +21,8 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = UHeroesMod.MOD_ID)
 public class NanoSuitHandler {
     
+    private static final java.util.Map<java.util.UUID, Integer> prevPieceCount = new java.util.HashMap<>();
+    
     /**
      * Counts how many Nano Suit pieces the player is wearing.
      */
@@ -49,6 +51,17 @@ public class NanoSuitHandler {
         
         Player player = event.player;
         int pieces = getNanoSuitPieceCount(player);
+        
+        int prev = prevPieceCount.getOrDefault(player.getUUID(), 0);
+        if (pieces > prev) {
+            // Player just equipped a new Nano piece
+            player.level().playSound(null,
+                player.blockPosition(),
+                com.uheroes.mod.init.ModSounds.NANO_SUIT_EQUIP.get(),
+                net.minecraft.sounds.SoundSource.PLAYERS,
+                1.0f, 1.0f);
+        }
+        prevPieceCount.put(player.getUUID(), pieces);
         
         if (pieces == 0) {
             return;

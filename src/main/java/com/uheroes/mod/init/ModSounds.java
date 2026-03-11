@@ -9,10 +9,17 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class ModSounds {
-    public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, UHeroesMod.MOD_ID);
+    public static final DeferredRegister<SoundEvent> SOUNDS =
+        DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, UHeroesMod.MOD_ID);
 
     public static final RegistryObject<SoundEvent> NANO_SUIT_EQUIP = SOUNDS.register("nano_suit_equip",
         () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(UHeroesMod.MOD_ID, "nano_suit_equip")));
+
+    public static final RegistryObject<SoundEvent> LASER_SWORD_SWING = SOUNDS.register("laser_sword_swing",
+        () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(UHeroesMod.MOD_ID, "laser_sword_swing")));
+
+    public static final RegistryObject<SoundEvent> LASER_SWORD_HIT = SOUNDS.register("laser_sword_hit",
+        () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(UHeroesMod.MOD_ID, "laser_sword_hit")));
 
     public static void register(IEventBus eventBus) {
         SOUNDS.register(eventBus);

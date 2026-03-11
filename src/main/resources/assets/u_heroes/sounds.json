@@ -1,8 +1,14 @@
 {
   "nano_suit_equip": {
-    "sounds": [
-      "minecraft:item.armor.equip_netherite"
-    ],
+    "sounds": [ { "name": "u_heroes:nano_suit_equip", "volume": 1.0, "pitch": 1.0 } ],
     "subtitle": "Nano-Tech Suit Equipped"
+  },
+  "laser_sword_swing": {
+    "sounds": [ { "name": "u_heroes:laser_sword_swing", "volume": 0.8, "pitch": 1.0 } ],
+    "subtitle": "Laser Sword Swings"
+  },
+  "laser_sword_hit": {
+    "sounds": [ { "name": "u_heroes:laser_sword_hit", "volume": 1.0, "pitch": 1.0 } ],
+    "subtitle": "Laser Sword Hits"
   }
 }
