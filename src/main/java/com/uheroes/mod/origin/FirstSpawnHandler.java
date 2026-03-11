@@ -1,6 +1,9 @@
 package com.uheroes.mod.origin;
 
 import com.uheroes.mod.UHeroesMod;
+import com.uheroes.mod.core.network.AsteroidPositionPacket;
+import com.uheroes.mod.core.network.ModNetwork;
+import com.uheroes.mod.core.network.TriggerImpactSequencePacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -37,12 +40,11 @@ public class FirstSpawnHandler {
 
             UHeroesMod.LOGGER.info("[U-Heroes] Asteroid crater generated at {}", craterPos);
 
-            // Send message to player
-            player.sendSystemMessage(
-                net.minecraft.network.chat.Component.literal(
-                    "§b[U-Heroes] §fSomething crashed nearby... you should investigate."
-                )
-            );
+            // Send crater position to client
+            ModNetwork.sendToPlayer(new AsteroidPositionPacket(craterPos), player);
+
+            // Trigger cinematic sequence on client
+            ModNetwork.sendToPlayer(new TriggerImpactSequencePacket(), player);
         });
     }
 }

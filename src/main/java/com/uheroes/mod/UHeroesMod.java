@@ -29,14 +29,22 @@ public class UHeroesMod {
         modEventBus.addListener(this::clientSetup);
     }
 
-private void commonSetup(final FMLCommonSetupEvent event) {
-    event.enqueueWork(ModNetwork::init);
-}
+    private void commonSetup(final FMLCommonSetupEvent event) {
+        event.enqueueWork(ModNetwork::init);
+        event.enqueueWork(() -> {
+            net.minecraftforge.event.entity.EntityAttributeCreationEvent.class; // handled by event
+        });
+    }
+
     private void clientSetup(final FMLClientSetupEvent event) {
         event.enqueueWork(ModKeybinds::registerKeybinds);
         event.enqueueWork(() -> {
             net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers reg = null;
             // Renderer registered via event below
+        });
+        // Register cinematic sequence event listeners
+        event.enqueueWork(() -> {
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(com.uheroes.mod.origin.AsteroidImpactSequence.class);
         });
     }
 
