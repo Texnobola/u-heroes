@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 public class ClientParticleHandler {
 
     private static final ParticleEmitterInfo SABER_SLASH = new ParticleEmitterInfo(
-        new ResourceLocation("u_heroes", "effeks/saber_slash")
+        new ResourceLocation("u_heroes", "saber_slash")
     );
 
     public static void spawnSaberSlash(double x, double y, double z, float yRot, float scale) {

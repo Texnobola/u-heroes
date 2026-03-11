@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.Mod;
 public class SaberAttackEvents {
 
     private static final ParticleEmitterInfo SABER_SLASH = new ParticleEmitterInfo(
-        new ResourceLocation("u_heroes", "effeks/saber_slash")
+        new ResourceLocation("u_heroes", "saber_slash")
     );
 
     @SubscribeEvent
