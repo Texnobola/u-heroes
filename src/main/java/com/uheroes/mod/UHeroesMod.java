@@ -29,13 +29,9 @@ public class UHeroesMod {
         modEventBus.addListener(this::clientSetup);
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event) {
-        event.enqueueWork(ModNetwork::init);
-        event.enqueueWork(() -> {
-            net.minecraftforge.event.entity.EntityAttributeCreationEvent.class; // handled by event
-        });
-    }
-
+private void commonSetup(final FMLCommonSetupEvent event) {
+    event.enqueueWork(ModNetwork::init);
+}
     private void clientSetup(final FMLClientSetupEvent event) {
         event.enqueueWork(ModKeybinds::registerKeybinds);
         event.enqueueWork(() -> {
