@@ -7,6 +7,7 @@ import mod.chloeprime.aaaparticles.api.common.AAALevel;
 import mod.chloeprime.aaaparticles.api.common.ParticleEmitterInfo;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -18,6 +19,10 @@ public class SaberAttackEvents {
     private static final ParticleEmitterInfo SABER_SLASH = new ParticleEmitterInfo(
         new ResourceLocation("u_heroes", "saber_slash")
     );
+
+    private static final double REACH = 1.5;
+    private static final double RIGHT_OFFSET = 0.6;
+    private static final double HEIGHT_OFFSET = 1.1;
 
     @SubscribeEvent
     public static void onAttackEntity(AttackEntityEvent event) {
@@ -33,6 +38,22 @@ public class SaberAttackEvents {
         if (player.level().isClientSide()) return;
         if (!(player.getMainHandItem().getItem() instanceof LaserSwordItem)) return;
 
+        float yawRad   = (float) Math.toRadians(player.getYRot());
+        float pitchRad = (float) Math.toRadians(player.getXRot());
+
+        Vec3 forward = player.getLookAngle();
+
+        Vec3 right = new Vec3(
+            Math.cos(yawRad),
+            0,
+            Math.sin(yawRad)
+        );
+
+        Vec3 origin = player.position()
+            .add(0, HEIGHT_OFFSET, 0)
+            .add(forward.scale(REACH))
+            .add(right.scale(RIGHT_OFFSET));
+
         int currentCombo = FluxMeterHUD.comboIndex;
         float scale = switch (currentCombo) {
             case 7 -> 1.2f;
@@ -44,8 +65,8 @@ public class SaberAttackEvents {
         AAALevel.addParticle(
             player.level(), false,
             SABER_SLASH.clone()
-                .position(player.getX(), player.getY() + 1.0, player.getZ())
-                .rotation(0, (float) Math.toRadians(player.getYRot()), 0)
+                .position(origin.x, origin.y, origin.z)
+                .rotation(pitchRad, (float) Math.toRadians(player.getYRot()), 0)
                 .scale(scale)
         );
     }
