@@ -1,6 +1,7 @@
 package com.uheroes.mod;
 
 import com.uheroes.mod.core.network.ModNetwork;
+import com.uheroes.mod.core.loot.ModLootModifiers;
 import com.uheroes.mod.init.*;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -24,6 +25,7 @@ public class UHeroesMod {
         ModSounds.register(modEventBus);
         ModParticles.register(modEventBus);
         ModCreativeTab.register(modEventBus);
+        ModLootModifiers.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::clientSetup);
