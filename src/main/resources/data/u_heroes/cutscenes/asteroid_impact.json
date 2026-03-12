@@ -1,0 +1,124 @@
+{
+  "version": 0,
+  "length": {
+    "type": "ticks",
+    "length": 180
+  },
+  "start_transition": {
+    "type": "cutscenes:no_op"
+  },
+  "end_transition": {
+    "type": "cutscenes:no_op"
+  },
+  "path": {
+    "segments": [
+      {
+        "type": "cutscenes:bezier",
+        "start": [0, 90, -50],
+        "control_a": [-15, 65, -20],
+        "control_b": [8, 28, 18],
+        "end": [12, 7, 48]
+      }
+    ]
+  },
+  "rotation": {
+    "segments": [
+      {
+        "type": "cutscenes:look_at_point",
+        "point": [0, 2, 0]
+      }
+    ]
+  },
+  "block_movement": true,
+  "hide_hand": true,
+  "effects": [
+    {
+      "type": "cutscenes:hide_gui",
+      "start": 0,
+      "end": 180
+    },
+    {
+      "type": "cutscenes:rectangle",
+      "start": 0,
+      "end": 180,
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 0.07,
+      "color": "000000"
+    },
+    {
+      "type": "cutscenes:rectangle",
+      "start": 0,
+      "end": 180,
+      "x": 0,
+      "y": 0.93,
+      "width": 1,
+      "height": 0.07,
+      "color": "000000"
+    },
+    {
+      "type": "cutscenes:rectangle",
+      "start": 0,
+      "end": 25,
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "color": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": {"type": "cutscenes:lerp", "from": 1, "to": 0}
+      }
+    },
+    {
+      "type": "cutscenes:rectangle",
+      "start": 73,
+      "end": 108,
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "color": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": {"type": "cutscenes:lerp", "from": 1, "to": 0}
+      }
+    },
+    {
+      "type": "cutscenes:play_sound",
+      "start": 75,
+      "end": 76,
+      "sound": "minecraft:entity.generic.explode",
+      "source": "master",
+      "volume": 2.0,
+      "pitch": 0.5
+    },
+    {
+      "type": "cutscenes:text",
+      "start": 115,
+      "end": 175,
+      "text": {"text": "— 3 years ago —", "color": "white"},
+      "x": 0.5,
+      "y": 0.85,
+      "centered": true
+    },
+    {
+      "type": "cutscenes:rectangle",
+      "start": 155,
+      "end": 180,
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "color": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": {"type": "cutscenes:lerp", "from": 0, "to": 1}
+      }
+    }
+  ]
+}

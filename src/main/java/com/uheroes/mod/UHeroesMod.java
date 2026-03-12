@@ -43,7 +43,7 @@ public class UHeroesMod {
         });
         // Register cinematic sequence event listeners
         event.enqueueWork(() -> {
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(com.uheroes.mod.origin.AsteroidImpactSequence.class);
+            
         });
     }
 

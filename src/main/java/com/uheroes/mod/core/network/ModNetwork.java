@@ -27,18 +27,6 @@ public class ModNetwork {
             .decoder(FluxSyncPacket::decode)
             .consumerMainThread(FluxSyncPacket::handle)
             .add();
-
-        CHANNEL.messageBuilder(AsteroidPositionPacket.class, nextId(), NetworkDirection.PLAY_TO_CLIENT)
-            .encoder(AsteroidPositionPacket::encode)
-            .decoder(AsteroidPositionPacket::decode)
-            .consumerMainThread(AsteroidPositionPacket::handle)
-            .add();
-
-        CHANNEL.messageBuilder(TriggerImpactSequencePacket.class, nextId(), NetworkDirection.PLAY_TO_CLIENT)
-            .encoder(TriggerImpactSequencePacket::encode)
-            .decoder(TriggerImpactSequencePacket::decode)
-            .consumerMainThread(TriggerImpactSequencePacket::handle)
-            .add();
     }
 
     private static int nextId() { return packetId++; }
