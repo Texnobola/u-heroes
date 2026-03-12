@@ -12,7 +12,7 @@ public class NanoCreatureModel extends GeoModel<NanoCreatureEntity> {
 
     @Override
     public ResourceLocation getTextureResource(NanoCreatureEntity entity) {
-        return new ResourceLocation("u_heroes", "textures/entity/nano_creature.png");
+        return new ResourceLocation("u_heroes", "textures/entity/armor/nano_creature.png");
     }
 
     @Override

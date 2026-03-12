@@ -15,6 +15,7 @@ public class SaberAttackAnimHandler {
 
     private static LocalPlayer lastPlayer = null;
     private static int swingCounter = 0;
+    public static int lastSwingIndex = 0; // 0,1,2 — which of the 3 attacks fired last
 
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
@@ -39,7 +40,8 @@ public class SaberAttackAnimHandler {
         if (player == null) return;
         if (!(player.getMainHandItem().getItem() instanceof LaserSwordItem)) return;
 
-        SaberAttackAnimation.INSTANCE.play(swingCounter % 3);
+        lastSwingIndex = swingCounter % 3;
+        SaberAttackAnimation.INSTANCE.play(lastSwingIndex);
         swingCounter++;
     }
 }

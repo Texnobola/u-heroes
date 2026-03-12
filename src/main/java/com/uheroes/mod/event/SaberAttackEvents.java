@@ -89,11 +89,20 @@ public class SaberAttackEvents {
             default -> 1.0f;
         };
 
+        // Vary roll per swing so slash direction matches animation
+        // swing 0 = diagonal upper-right to lower-left, 1 = horizontal, 2 = diagonal upper-left to lower-right
+        float roll = switch (SaberAttackAnimHandler.lastSwingIndex) {
+            case 0 -> (float) Math.toRadians(-50f);
+            case 1 -> (float) Math.toRadians(10f);
+            case 2 -> (float) Math.toRadians(50f);
+            default -> 0f;
+        };
+
         AAALevel.addParticle(
             player.level(), false,
             SABER_SLASH.clone()
                 .position(swordTip.x, swordTip.y, swordTip.z)
-                .rotation(pitch, yaw, 0)
+                .rotation(pitch, yaw, roll)
                 .scale(scale)
         );
     }

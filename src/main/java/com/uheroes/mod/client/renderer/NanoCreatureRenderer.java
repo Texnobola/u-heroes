@@ -14,6 +14,6 @@ public class NanoCreatureRenderer extends GeoEntityRenderer<NanoCreatureEntity> 
 
     @Override
     public ResourceLocation getTextureLocation(NanoCreatureEntity entity) {
-        return new ResourceLocation("u_heroes", "textures/entity/nano_creature.png");
+        return new ResourceLocation("u_heroes", "textures/entity/armor/nano_creature.png");
     }
 }
