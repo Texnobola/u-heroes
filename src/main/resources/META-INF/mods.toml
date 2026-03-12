@@ -62,7 +62,7 @@ ordering="NONE"
 side="CLIENT"
 
 [[dependencies.u_heroes]]
-modId="cutscenes"
+modId="cutscene_api"
 mandatory=true
 versionRange="[1.6.5,)"
 ordering="NONE"
