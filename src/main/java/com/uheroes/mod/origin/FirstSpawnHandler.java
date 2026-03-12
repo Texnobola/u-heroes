@@ -30,8 +30,10 @@ public class FirstSpawnHandler {
         if (data.getBoolean(FLAG)) return;
         data.putBoolean(FLAG, true);
 
-        // Delay by 1 tick so world is fully loaded
-        serverLevel.getServer().execute(() -> {
+        // Delay 40 ticks server-side so player connection is fully established
+        new Thread(() -> {
+            try { Thread.sleep(2000); } catch (Exception ignored) {}
+            serverLevel.getServer().execute(() -> {
             BlockPos spawnPos = player.getRespawnPosition() != null
                 ? player.getRespawnPosition()
                 : serverLevel.getSharedSpawnPos();
@@ -46,5 +48,6 @@ public class FirstSpawnHandler {
             // Trigger cinematic sequence on client
             ModNetwork.sendToPlayer(new TriggerImpactSequencePacket(), player);
         });
+        }).start();
     }
 }

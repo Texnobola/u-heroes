@@ -23,7 +23,7 @@ public class TriggerImpactSequencePacket {
     public static void handle(TriggerImpactSequencePacket packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-                AsteroidImpactSequence.start();
+                AsteroidImpactSequence.startDelayed(80); // wait 4s for world to fully load
             });
         });
         ctx.get().setPacketHandled(true);

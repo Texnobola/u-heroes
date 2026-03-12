@@ -31,6 +31,7 @@ public class AsteroidImpactSequence {
     private static int tickCounter = 0;
     private static float shakeIntensity = 0f;
     private static float fadeAlpha = 0f;
+    private static int pendingDelay = -1;
     private static final Random RAND = new Random();
 
     public static void start() {
@@ -38,12 +39,35 @@ public class AsteroidImpactSequence {
         tickCounter = 0;
         shakeIntensity = 0f;
         fadeAlpha = 0f;
+        pendingDelay = -1;
+    }
+
+    // Call this from the packet — waits for world to fully load before starting
+    public static void startDelayed(int ticks) {
+        pendingDelay = ticks;
+        active = false;
+        tickCounter = 0;
+        shakeIntensity = 0f;
+        fadeAlpha = 0f;
     }
 
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || !active) return;
+        if (event.phase != TickEvent.Phase.END) return;
 
+        // Handle pending delay — wait for world to be ready
+        if (pendingDelay >= 0) {
+            Minecraft _mc = Minecraft.getInstance();
+            if (_mc.player != null && _mc.level != null) {
+                pendingDelay--;
+                if (pendingDelay <= 0) {
+                    start();
+                }
+            }
+            return;
+        }
+
+        if (!active) return;
         tickCounter++;
         Minecraft mc = Minecraft.getInstance();
 
