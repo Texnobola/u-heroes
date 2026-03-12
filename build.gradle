@@ -156,10 +156,7 @@ dependencies {
 
     // Player Animator - player body animations
     implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:1.0.2-rc1+1.20")
-
-    // Cloth Config - config GUI
-    implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:11.1.118")
-
+    
     // Cutscene API - cinematic scenes (SOFT DEPENDENCY)
     compileOnly fg.deobf("maven.modrinth:cutscene-api:mc1.20.1-forge-1.6.4")
     runtimeOnly fg.deobf("maven.modrinth:cutscene-api:mc1.20.1-forge-1.6.4")
