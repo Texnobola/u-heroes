@@ -158,8 +158,8 @@ dependencies {
     implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:1.0.2-rc1+1.20")
     
     // Cutscene API - cinematic scenes (SOFT DEPENDENCY)
-    compileOnly fg.deobf("maven.modrinth:cutscene-api:mc1.20.1-forge-1.6.4")
-    runtimeOnly fg.deobf("maven.modrinth:cutscene-api:mc1.20.1-forge-1.6.4")
+    compileOnly fg.deobf("maven.modrinth:cutscene-api:mc1.20.1-forge-1.6.5")
+runtimeOnly fg.deobf("maven.modrinth:cutscene-api:mc1.20.1-forge-1.6.5")
 
     // AAAParticles - Effekseer particle effects
     implementation fg.deobf("maven.modrinth:aaa-particles:1.20.1-1.4.10-forge")

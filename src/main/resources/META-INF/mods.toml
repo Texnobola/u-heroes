@@ -35,14 +35,14 @@ side="BOTH"
 
 [[dependencies.u_heroes]]
 modId="curios"
-mandatory=true
+mandatory=false
 versionRange="[5.9.0,)"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.u_heroes]]
 modId="caelus"
-mandatory=true
+mandatory=false
 versionRange="[3.2.0,)"
 ordering="NONE"
 side="BOTH"
@@ -63,7 +63,7 @@ side="CLIENT"
 
 [[dependencies.u_heroes]]
 modId="cutscenes"
-mandatory=false
-versionRange="[1.6.0,)"
+mandatory=true
+versionRange="[1.6.5,)"
 ordering="NONE"
 side="BOTH"
