@@ -16,6 +16,8 @@ import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 
 import java.util.Random;
@@ -47,11 +49,11 @@ public class AsteroidImpactSequence {
 
         // (0.5s = 10 ticks) Distant rumble
         if (tickCounter == 10 && mc.player != null) {
-            mc.level.playLocalSound(
+            net.minecraft.sounds.SoundEvent _snd1 = ForgeRegistries.SOUND_EVENTS
+                .getValue(new ResourceLocation("entity.generic.explode"));
+            if (_snd1 != null) mc.level.playLocalSound(
                 mc.player.getX(), mc.player.getY(), mc.player.getZ(),
-                SoundEvents.ENTITY_GENERIC_EXPLODE,
-                SoundSource.AMBIENT,
-                1.5f, 0.4f, false
+                _snd1, SoundSource.AMBIENT, 1.5f, 0.4f, false
             );
         }
 
@@ -70,11 +72,11 @@ public class AsteroidImpactSequence {
 
         // (2.5s = 50 ticks) Impact sound
         if (tickCounter == 50 && mc.player != null) {
-            mc.level.playLocalSound(
+            net.minecraft.sounds.SoundEvent _snd2 = ForgeRegistries.SOUND_EVENTS
+                .getValue(new ResourceLocation("entity.generic.explode"));
+            if (_snd2 != null) mc.level.playLocalSound(
                 mc.player.getX(), mc.player.getY(), mc.player.getZ(),
-                SoundEvents.ENTITY_GENERIC_EXPLODE,
-                SoundSource.AMBIENT,
-                2.0f, 0.6f, false
+                _snd2, SoundSource.AMBIENT, 2.0f, 0.6f, false
             );
         }
 
