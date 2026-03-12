@@ -1,77 +1,47 @@
 # Contributing to U-Heroes
 
-Thank you for your interest in contributing to U-Heroes! This document provides guidelines for contributing to the project.
-
 ## 🚫 Current Status
 
-**U-Heroes is currently in closed development.** We are not accepting external contributions at this time.
+U-Heroes is in active closed development. External code contributions are not accepted yet, but bug reports and feature suggestions are always welcome.
 
 ## 🐛 Bug Reports
 
-If you find a bug, please report it by:
-
-1. Checking if the issue already exists in our [Issue Tracker](https://github.com/yourusername/u-heroes/issues)
-2. Creating a new issue with:
-   - Clear title describing the bug
-   - Minecraft version and mod version
+1. Check [existing issues](https://github.com/Texnobola/u-heroes/issues) first
+2. Create a new issue with:
+   - Minecraft version: 1.20.1 / Forge 47.4.10
+   - Mod version
    - Steps to reproduce
    - Expected vs actual behavior
-   - Crash logs (if applicable)
-   - Screenshots/videos (if relevant)
+   - Crash log or `latest.log` from `.minecraft/logs/`
+   - Screenshots or video if relevant
 
 ## 💡 Feature Requests
 
-We welcome feature suggestions! Please:
-
 1. Check existing issues to avoid duplicates
-2. Create a new issue with the `enhancement` label
-3. Describe the feature clearly
-4. Explain why it would benefit the mod
-5. Consider how it fits with existing features
+2. Open an issue with the `enhancement` label
+3. Describe the feature and how it fits the U-Heroes power fantasy theme
 
-## 📋 Code Standards
+## 📋 Code Standards (for future contributors)
 
-For future reference when contributions are accepted:
+### Java
+- Java 17, Forge 1.20.1 conventions
+- Follow existing package structure (`init`, `heroes`, `core`, `client`, `origin`)
+- DeferredRegister for all registrations
+- Client-only code inside `@OnlyIn(Dist.CLIENT)` or client packages
+- Use `ForgeRegistries` lookups instead of hardcoded field references
 
-### Java Code
-- Use Java 17 features where appropriate
-- Follow existing package structure
-- Document all public methods with Javadoc
-- Use meaningful variable and method names
-- No magic numbers - use constants
-- Proper null checks and error handling
+### Assets
+- GeckoLib models: arm bones must be separate from body bones
+- Textures: `textures/entity/armor/` for entity textures
+- Sounds: `.ogg` format, registered via `ModSounds`
 
-### Minecraft/Forge
-- Use DeferredRegister for all registrations
-- Client code only in client packages
-- Server logic only on server side
-- Proper packet sync for multiplayer
-- Use Component.translatable() for all text
-
-### Localization
-- ALL text must have entries in both en_us.json AND uz_uz.json
-- Use descriptive translation keys
-- Follow existing key naming patterns
-
-### Commit Messages
-- Use clear, descriptive commit messages
-- Start with verb (Add, Fix, Update, Remove)
-- Reference issue numbers when applicable
-
-## 🔒 Code of Conduct
-
-- Be respectful and constructive
-- No harassment or discrimination
-- Keep discussions on-topic
-- Help create a welcoming community
+### Commits
+- Start with a verb: `Add`, `Fix`, `Update`, `Remove`, `Refactor`
+- Example: `Fix saber slash direction not syncing with animation`
+- Reference issues when applicable: `Fix #12`
 
 ## 📞 Contact
 
-For questions or discussions:
-- Open an issue on GitHub
-- Join our Discord server (link in README)
-- Email: [your-email@example.com]
-
----
-
-**Note**: These guidelines may change as the project evolves. Check back regularly for updates.
+- GitHub Issues: [github.com/Texnobola/u-heroes/issues](https://github.com/Texnobola/u-heroes/issues)
+- Discord:  https://discord.gg/MyKBmdXY
+- Email: pixeluzpro@gmail.com

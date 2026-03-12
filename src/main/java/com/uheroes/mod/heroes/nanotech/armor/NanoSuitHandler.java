@@ -85,14 +85,18 @@ public class NanoSuitHandler {
                 repairArmor(player);
             }
             
-            // Adaptive Regeneration
-            if (player.getHealth() < player.getMaxHealth() && player.getFoodData().getSaturationLevel() > 0) {
-                player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 120, 0, true, false));
-                
+            // Adaptive Regeneration: Flux-powered healing (no saturation cost)
+            if (player.getHealth() < player.getMaxHealth()) {
                 // Consume flux every 40 ticks while healing
                 if (player.tickCount % 40 == 0) {
-                    if (FluxCapability.consume(player, 1)) {
-                        player.getFoodData().setSaturation(player.getFoodData().getSaturationLevel() - 1.0f);
+                    if (FluxCapability.consume(player, 2)) {
+                        // Regeneration II (stronger healing)
+                        player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 80, 1, true, false));
+                        // Restore saturation instead of consuming it
+                        player.getFoodData().setSaturation(Math.min(
+                            player.getFoodData().getSaturationLevel() + 1.0f,
+                            player.getFoodData().getFoodLevel()
+                        ));
                     }
                 }
             }

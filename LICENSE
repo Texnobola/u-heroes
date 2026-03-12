@@ -1,20 +1,32 @@
-Copyright (c) 2026 U-Heroes Development Team
+# U-Heroes Mod License
+Copyright (c) 2026 Texnobola. All Rights Reserved.
 
-All Rights Reserved
+## Permissions
+You ARE allowed to:
+- Download and play this mod privately
+- Include this mod in modpacks (free or paid), with credit and a link to the official page
+- Share screenshots and videos featuring this mod (YouTube, TikTok, etc.)
+- Report bugs and suggest features
 
-This software and associated documentation files (the "Software") are proprietary 
-and confidential. Unauthorized copying, distribution, modification, public display, 
-or public performance of this Software, via any medium, is strictly prohibited.
+## Restrictions
+You are NOT allowed to:
+- Redistribute the mod files on any platform other than official sources
+- Modify, decompile, or reverse engineer the source code or assets
+- Use models, textures, sounds, or code from this mod in other projects
+- Claim ownership or authorship of this mod or any part of it
+- Upload this mod to CurseForge, Modrinth, or any other platform without written permission
 
-The Software is provided for personal use only. You may:
-- Download and play the mod in Minecraft
-- Share links to official download pages
+## Derivative Works
+Pull requests and contributions to the official repository are welcome.
+By submitting a contribution, you agree to transfer all rights of that
+contribution to Texnobola.
 
-You may NOT:
-- Redistribute the mod files
-- Modify or create derivative works
-- Use the mod in modpacks without explicit permission
-- Reverse engineer or decompile the mod
-- Use any assets (models, textures, code) in other projects
+## Disclaimer
+This mod is not affiliated with Mojang Studios or Microsoft.
+Minecraft is a trademark of Mojang Studios.
+This mod depends on open-source libraries (Forge, GeckoLib, PlayerAnimator)
+which retain their own respective licenses.
 
-For licensing inquiries, please contact: [pixeluzpro@gmail.com]
+## Contact
+For permissions, collabs, or inquiries: pixeluzpro@gmail.com
+Discord: https://discord.gg/MyKBmdXY

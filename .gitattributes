@@ -1,5 +1,29 @@
-# Disable autocrlf on generated files, they always generate with LF
-# Add any extra files or paths here to make git stop saying they
-# are changed when only line endings change.
+# Auto-detect text files
+* text=auto
+
+# Force LF for all source and data files
+*.java text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.properties text eol=lf
+*.txt text eol=lf
+*.md text eol=lf
+*.gradle text eol=lf
+*.gradle.kts text eol=lf
+*.xml text eol=lf
+*.yml text eol=lf
+
+# Forge generated
 src/generated/**/.cache/cache text eol=lf
 src/generated/**/*.json text eol=lf
+
+# Binary files — no line ending conversion
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.jar binary
+*.zip binary
+*.ogg binary
+*.wav binary
+*.mp3 binary
