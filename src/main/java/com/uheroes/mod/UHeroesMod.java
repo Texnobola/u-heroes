@@ -31,9 +31,6 @@ public class UHeroesMod {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(ModNetwork::init);
-        event.enqueueWork(() -> {
-            net.minecraftforge.event.entity.EntityAttributeCreationEvent.class; // handled by event
-        });
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
