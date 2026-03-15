@@ -33,11 +33,6 @@
   "hide_hand": true,
   "effects": [
     {
-      "type": "cutscenes:hide_gui",
-      "start": 0,
-      "end": 180
-    },
-    {
       "type": "cutscenes:rectangle",
       "start": 0,
       "end": 180,
