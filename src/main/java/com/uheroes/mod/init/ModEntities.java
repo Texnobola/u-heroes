@@ -1,6 +1,7 @@
 package com.uheroes.mod.init;
 
 import com.uheroes.mod.UHeroesMod;
+import com.uheroes.mod.origin.AsteroidEntity;
 import com.uheroes.mod.origin.NanoCreatureEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -18,6 +19,14 @@ public class ModEntities {
             .<NanoCreatureEntity>of(NanoCreatureEntity::new, MobCategory.CREATURE)
             .sized(0.6f, 0.6f)
             .build("nano_creature"));
+
+    public static final RegistryObject<EntityType<AsteroidEntity>> ASTEROID =
+        ENTITIES.register("asteroid", () -> EntityType.Builder
+            .<AsteroidEntity>of(AsteroidEntity::new, MobCategory.MISC)
+            .sized(0.5f, 0.5f)   // Small hitbox — visuals are handled by GeckoLib model
+            .clientTrackingRange(128)
+            .updateInterval(1)   // Sync position every tick for smooth flight
+            .build("asteroid"));
 
     public static void register(IEventBus eventBus) {
         ENTITIES.register(eventBus);

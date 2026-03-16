@@ -1,10 +1,4 @@
 {
   "type": "u_heroes:life_essence_from_leaves",
-  "conditions": [
-    {
-      "condition": "minecraft:block_state_property",
-      "block": "minecraft:oak_leaves",
-      "properties": {}
-    }
-  ]
+  "conditions": []
 }

@@ -37,22 +37,15 @@ public class UHeroesMod {
 
     private void clientSetup(final FMLClientSetupEvent event) {
         event.enqueueWork(ModKeybinds::registerKeybinds);
-        event.enqueueWork(() -> {
-            net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers reg = null;
-            // Renderer registered via event below
-        });
-        // Register cinematic sequence event listeners
-        event.enqueueWork(() -> {
-            
-        });
     }
 
     @Mod.EventBusSubscriber(modid = UHeroesMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ModEvents {
         @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void onEntityAttributeCreation(net.minecraftforge.event.entity.EntityAttributeCreationEvent event) {
-            event.put(com.uheroes.mod.init.ModEntities.NANO_CREATURE.get(),
+            event.put(ModEntities.NANO_CREATURE.get(),
                 com.uheroes.mod.origin.NanoCreatureEntity.createAttributes().build());
+            // AsteroidEntity extends Entity, not LivingEntity — no attributes needed
         }
     }
 
@@ -61,8 +54,12 @@ public class UHeroesMod {
         @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void onRegisterRenderers(net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(
-                com.uheroes.mod.init.ModEntities.NANO_CREATURE.get(),
+                ModEntities.NANO_CREATURE.get(),
                 com.uheroes.mod.client.renderer.NanoCreatureRenderer::new
+            );
+            event.registerEntityRenderer(
+                ModEntities.ASTEROID.get(),
+                com.uheroes.mod.client.renderer.AsteroidRenderer::new
             );
         }
     }

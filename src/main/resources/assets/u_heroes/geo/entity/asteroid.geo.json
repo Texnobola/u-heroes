@@ -1,0 +1,36 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.asteroid",
+        "texture_width": 64,
+        "texture_height": 64,
+        "visible_bounds_width": 50,
+        "visible_bounds_height": 50,
+        "visible_bounds_offset": [0, 0, 0]
+      },
+      "bones": [
+        {
+          "name": "root",
+          "pivot": [0, 0, 0],
+          "cubes": [
+            {"origin": [-160, -160, -160], "size": [320, 320, 320], "uv": [0, 0]},
+            {"origin": [-200,  -80,  -80], "size": [ 60, 160, 160], "uv": [0, 0]},
+            {"origin": [ 140,  -80,  -80], "size": [ 60, 160, 160], "uv": [0, 0]},
+            {"origin": [ -80,  140,  -80], "size": [160,  60, 160], "uv": [0, 0]},
+            {"origin": [ -80, -200,  -80], "size": [160,  60, 160], "uv": [0, 0]},
+            {"origin": [ -80,  -80,  140], "size": [160, 160,  60], "uv": [0, 0]},
+            {"origin": [ -80,  -80, -200], "size": [160, 160,  60], "uv": [0, 0]},
+            {"origin": [-220,  -40,  -40], "size": [ 50,  80,  80], "uv": [0, 0]},
+            {"origin": [  20,  130,  -24], "size": [ 80,  50,  48], "uv": [0, 0]},
+            {"origin": [ -24,  -40,  148], "size": [ 48, 160,  60], "uv": [0, 0]},
+            {"origin": [-100, -220,  -50], "size": [ 90,  60,  60], "uv": [0, 0]},
+            {"origin": [ 100,  100,   80], "size": [ 60,  60,  60], "uv": [0, 0]},
+            {"origin": [-170, -170,   60], "size": [ 70,  70,  50], "uv": [0, 0]}
+          ]
+        }
+      ]
+    }
+  ]
+}

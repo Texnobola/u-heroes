@@ -1,0 +1,21 @@
+{
+  "name": "Nano Alloy Fragment",
+  "category": "u_heroes:nano_alloy",
+  "icon": "u_heroes:nano_alloy_fragment",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Nano Alloy Fragments$() are the refined form of Nano Alloy Blocks. Raw blocks must be smelted in a furnace to break down the outer crust and release the pure nanotech-infused metal inside.$(br2)Fragments are the primary crafting material for all nanotech equipment."
+    },
+    {
+      "type": "patchouli:smelting",
+      "recipe": "u_heroes:nano_alloy_fragment_from_smelting",
+      "text": "Smelt a Nano Alloy Block to obtain fragments. The process takes longer than normal smelting due to the material's density."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Uses:$()$(br)Nano Alloy Fragments are used to craft:$(br)- The Nanosuit helmet, chestplate, leggings, and boots$(br)- The Laser Sword$(br2)Treat them as you would netherite — rare and precious. The asteroid will not fall twice."
+    }
+  ]
+}

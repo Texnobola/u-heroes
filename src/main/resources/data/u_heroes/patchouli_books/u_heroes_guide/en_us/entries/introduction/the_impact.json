@@ -1,0 +1,24 @@
+{
+  "name": "The Impact",
+  "category": "u_heroes:introduction",
+  "icon": "minecraft:flint_and_steel",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Three years ago, a blazing object tore through the sky and slammed into the earth near civilization. The explosion leveled trees, shattered stone, and left a smoldering crater where fields once stood.$(br2)When the smoke cleared, something unusual was embedded in the ground around the impact site: strange metallic fragments, cooling from white-hot to deep cyan."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Scientists were baffled. The material was like nothing known on Earth — impossibly dense, yet lightweight. It resonated faintly with biological tissue, as if it were designed to interact with living organisms.$(br2)They called it $(bold)Nano Alloy$()."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Governments scrambled to secure the crash site. But before they arrived, something else emerged from the crater: a swarm of tiny, self-replicating machines — nanobots — woven from the alloy itself.$(br2)They were not hostile. They were searching for something."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "One of those machines found $(italic)you$().$(br2)A single NanoCreature approached, studied you for a moment, and then merged with your body. You blacked out.$(br2)When you woke up, you felt different. Stronger. Something had changed in your cells — in your very biology.$(br2)You are no longer entirely human."
+    }
+  ]
+}

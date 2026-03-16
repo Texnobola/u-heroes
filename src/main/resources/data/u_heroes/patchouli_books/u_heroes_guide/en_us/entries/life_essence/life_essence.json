@@ -1,0 +1,25 @@
+{
+  "name": "Life Essence",
+  "category": "u_heroes:life_essence",
+  "icon": "u_heroes:life_essence",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Life Essence$() is a faint biological energy that accumulates in the leaves of trees. Since the asteroid impact, the nanobots that drifted through the atmosphere have begun bonding with plant life, concentrating this energy in foliage.$(br2)To the naked eye it is invisible, but the nanobots in your body can sense it."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "u_heroes:life_essence",
+      "text": "Rarely dropped when breaking any type of leaf block. The nanobots in your system extract it automatically."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Obtaining:$()$(br)Life Essence has a $(bold)2% chance$() to drop from any leaf block when broken — by hand, axe, shears, or any other tool.$(br2)To farm it efficiently, grow large trees with many leaves and harvest them. A large oak or jungle tree can yield several essences per harvest."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Uses:$()$(br)Life Essence is consumed by your nanosuit to power its active abilities. Without it, certain suit functions will be unavailable.$(br2)Always keep a supply on hand. The essences stack up to 64 and are relatively lightweight to carry.$(br2)$(italic)Future research may reveal additional applications for this material.$() "
+    }
+  ]
+}

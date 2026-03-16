@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NLN",
+    "LBL",
+    "NLN"
+  ],
+  "key": {
+    "N": {"item": "u_heroes:nano_alloy_fragment"},
+    "L": {"item": "u_heroes:life_essence"},
+    "B": {"item": "minecraft:book"}
+  },
+  "result": {
+    "item": "patchouli:guide_book",
+    "nbt": "{\"patchouli:book\": \"u_heroes:u_heroes_guide\"}"
+  }
+}

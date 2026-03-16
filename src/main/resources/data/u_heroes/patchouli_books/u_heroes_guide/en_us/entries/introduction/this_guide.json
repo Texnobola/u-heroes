@@ -1,0 +1,16 @@
+{
+  "name": "This Guide",
+  "category": "u_heroes:introduction",
+  "icon": "minecraft:writable_book",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "This field guide was compiled from recovered research notes and firsthand experience with the nanotech.$(br2)It covers the materials left by the asteroid impact, how to process them, and how to harness the technology they contain.$(br2)Read carefully. The knowledge here may save your life."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)A note on safety:$()$(br)Nano Alloy fragments are safe to handle with bare hands. However, prolonged direct contact with raw ore may cause mild disorientation in individuals who have undergone nanobot integration.$(br2)Life Essence, once extracted, must be stored carefully — it degrades when exposed to direct sunlight for extended periods."
+    }
+  ]
+}

@@ -160,6 +160,10 @@ dependencies {
     // Cutscene API - cinematic scenes (SOFT DEPENDENCY)
     implementation fg.deobf("maven.modrinth:cutscene-api:mc1.20.1-forge-1.6.5")
 
+    implementation fg.deobf("vazkii.patchouli:Patchouli:1.20.1-84-FORGE")
+
+
+
     // AAAParticles - Effekseer particle effects
     implementation fg.deobf("maven.modrinth:aaa-particles:1.20.1-1.4.10-forge")
     implementation fg.deobf("maven.modrinth:architectury-api:9.2.14+forge")
