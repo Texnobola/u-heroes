@@ -1,9 +1,6 @@
 {
   "version": 0,
-  "length": {
-    "type": "ticks",
-    "length": 180
-  },
+  "length": 180,
   "start_transition": {
     "type": "cutscenes:no_op"
   },
@@ -30,7 +27,6 @@
     ]
   },
   "block_movement": true,
-  "hide_hand": true,
   "effects": [
     {
       "type": "cutscenes:rectangle",
@@ -87,18 +83,16 @@
       "start": 75,
       "end": 76,
       "sound": "minecraft:entity.generic.explode",
-      "source": "master",
       "volume": 2.0,
       "pitch": 0.5
     },
     {
-      "type": "cutscenes:text",
+      "type": "cutscenes:appearing_text",
       "start": 115,
       "end": 175,
       "text": {"text": "— 3 years ago —", "color": "white"},
       "x": 0.5,
-      "y": 0.85,
-      "centered": true
+      "y": 0.85
     },
     {
       "type": "cutscenes:rectangle",
