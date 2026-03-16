@@ -1,16 +1,31 @@
 {
   "name": "U-Heroes: Field Guide",
-  "landing_text": "A guide to the technology left behind by the asteroid impact. Study it well — the nanotech within these pages may be your only advantage.",
-  "version": "1",
+  "landing_text": "A comprehensive guide to the extraterrestrial technology left behind by the asteroid impact. Master the nanotech within these pages—your survival depends on it.",
+  "version": "2",
   "use_resource_pack": true,
   "index_icon": "u_heroes:nano_alloy_fragment",
-  "text_color": "000000",
-  "header_color": "1a1a2e",
+  "text_color": "0a0e27",
+  "header_color": "00d4ff",
   "nameplate_color": "ffffff",
-  "link_color": "0077cc",
-  "link_hover_color": "00aaff",
+  "link_color": "00ff88",
+  "link_hover_color": "00ffcc",
   "open_sound": "item.book.page_turn",
   "flip_sound": "item.book.page_turn",
-  "pauseGame": true,
-  "show_progress": false
+  "fling_sound": "item.book.page_turn",
+  "pause_game": true,
+  "show_progress": true,
+  "categories": [
+    "u_heroes:introduction",
+    "u_heroes:nano_alloy",
+    "u_heroes:life_essence",
+    "u_heroes:equipment",
+    "u_heroes:abilities",
+    "u_heroes:crafting",
+    "u_heroes:lore"
+  ],
+  "macros": {
+    "nanotech": "$(l:u_heroes:nano_alloy)Nanotech$(/l)",
+    "essence": "$(l:u_heroes:life_essence)Life Essence$(/l)",
+    "warning": "$(bold)⚠$() "
+  }
 }

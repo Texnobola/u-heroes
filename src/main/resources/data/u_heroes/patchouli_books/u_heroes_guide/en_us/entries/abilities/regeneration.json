@@ -1,0 +1,24 @@
+{
+  "name": "Nanobot Regeneration",
+  "category": "u_heroes:abilities",
+  "icon": "minecraft:golden_apple",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Nanobot Regeneration$() is the suit's passive healing system. The nanobots integrated into your biological structure continuously repair cellular damage, restoring your health over time.$(br2)This ability runs automatically when the suit is active and gradually consumes $(l:u_heroes:life_essence)Life Essence$(/l)."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)How Regeneration Works:$()$(br)The nanobots identify damaged cells and reconstruct them using energy extracted from Life Essence. Healing intensifies during recovery periods when you are not under immediate stress.$(br2)$(bold)Regeneration Speed:$()$(br)- $(bold)Normal Recovery:$() 1 health point every 2 seconds (essence cost: minimal)$(br)- $(bold)Intensive Healing:$() Accelerates when essence is abundant"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Essence Consumption:$()$(br)Regeneration is relatively efficient compared to active abilities like Nano Dash. However, maintaining this passive benefit over extended periods requires a steady essence supply.$(br2)- Low essence = slow regen$(br)- High essence = accelerated healing$(br)- Zero essence = regen halts entirely"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Strategic Value:$()$(br)Regeneration transforms combat dynamics. Attrition becomes less favorable to enemies. However, this is not invincible armor — burst damage can still overwhelm the healing rate.$(br2)Use the healing system to survive skirmishes. Use Nano Dash to avoid lethal encounters. Combine both for true tactical superiority."
+    }
+  ]
+}

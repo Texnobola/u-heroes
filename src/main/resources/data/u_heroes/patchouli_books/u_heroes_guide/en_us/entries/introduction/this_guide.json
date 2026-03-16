@@ -6,11 +6,31 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "This field guide was compiled from recovered research notes and firsthand experience with the nanotech.$(br2)It covers the materials left by the asteroid impact, how to process them, and how to harness the technology they contain.$(br2)Read carefully. The knowledge here may save your life."
+      "text": "This field guide was compiled from recovered research notes, salvaged government documents, and firsthand experience with extraterrestrial nanotech integration.$(br2)It covers:$(br)- The materials left by the asteroid impact$(br)- How to process and refine them$(br)- How to craft advanced nanotech equipment$(br)- How to survive as an enhanced being"
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)A note on safety:$()$(br)Nano Alloy fragments are safe to handle with bare hands. However, prolonged direct contact with raw ore may cause mild disorientation in individuals who have undergone nanobot integration.$(br2)Life Essence, once extracted, must be stored carefully — it degrades when exposed to direct sunlight for extended periods."
+      "text": "$(bold)Intended Audience:$()$(br)This guide assumes you are already integrated with nanobots. If you are not, your situation is $(italic)extremely$() dire. Most unintegrated humans near the impact zone do not survive first contact.$(br2)If you are reading this, assume you have been chosen — whether deliberately or by chance — to carry the technological legacy of the asteroid."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Organization:$()$(br)The guide is divided into five main sections:$(br)- $(bold)Introduction:$() Context and survival basics you are reading now$(br)- $(bold)Nano Alloy:$() Materials and raw resources$(br)- $(bold)Life Essence:$() The power source for all nanotech$(br)- $(bold)Equipment:$() Nanosuit armor and protective gear"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Continued Organization:$()$(br)- $(bold)Abilities & Powers:$() Special functions unlocked by your suit$(br)- $(bold)Advanced Crafting:$() Complex recipes and material synthesis$(br)- $(bold)Lore & History:$() Understanding what the nanobots are and where they came from"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Safety Advisory:$()$(br)Nano Alloy fragments are safe to handle with bare hands. However, prolonged direct contact with raw ore deposits may cause mild disorientation in individuals with nanobot integration — a sign that your system is resonating with the material's frequency.$(br2)This effect is temporary and not dangerous, but it impairs judgment. Avoid working with raw ore when fatigued or vulnerable."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Storage & Degradation:$()$(br)Life Essence, once extracted, must be stored carefully in your inventory:$(br)- Essence degrades when exposed to direct sunlight for extended periods if stored separately from activated suits$(br)- Essence keeps indefinitely in inventory or within active nanosuit reserves$(br)- Essence is most stable when used immediately or stored in dark areas"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Final Note:$()$(br)Read carefully. Understand what you have become. Master the technology at your disposal.$(br2)The nanobots have given you power beyond ordinary humanity. Whether you use that power for survival, community, or something far greater… that choice is yours alone.$(br2)$(bold)Welcome to the new world.$() "
     }
   ]
 }

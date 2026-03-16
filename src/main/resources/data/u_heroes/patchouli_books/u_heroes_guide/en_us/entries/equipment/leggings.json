@@ -1,0 +1,25 @@
+{
+  "name": "Nanosuit Leggings",
+  "category": "u_heroes:equipment",
+  "icon": "u_heroes:nanosuit_leggings",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)The Nanosuit Leggings$() enhance your lower body with nano-reinforced durability and mobility augmentation. Integrated into your body through NanoCreature fusion, they enable enhanced movement while protecting your legs and lower torso.$(br2)$(bold)Protection Level:$() Equivalent to Netherite"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "u_heroes:nanosuit_leggings",
+      "text": "Lower body protection with integrated mobility enhancement modules."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Enhancements:$()$(br)- $(bold)Increased Speed:$() Faster movement and sprint duration$(br)- $(bold)Fall Protection:$() Significantly reduces fall damage$(br)- $(bold)Muscle Augmentation:$() Boost jumping and climbing capability"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Usage Tips:$()$(br)The leggings work synergistically with the helmet and boots for optimal performance. The full suit grants bonuses exceeding the sum of individual pieces when all are fused.$(br2)Wearing the leggings without the helmet reduces their effectiveness, as the command processing system needed for full motor augmentation is offline."
+    }
+  ]
+}

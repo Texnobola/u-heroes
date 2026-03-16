@@ -1,0 +1,32 @@
+{
+  "name": "The Asteroid: Impact Analysis",
+  "category": "u_heroes:lore",
+  "icon": "minecraft:deepslate",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)The Asteroid Impact$() remains one of the most significant events in recorded history. Every aspect of human civilization changed the moment it struck.$(br2)What we understand about it (and what we can only speculate):"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Impact Characteristics:$()$(br)- $(bold)Size:$() Estimated 50-100 meters in diameter$(br)- $(bold)Composition:$() Primarily Nano Alloy with internal nanite payload$(br)- $(bold)Velocity:$() High-speed impact suggesting interstellar origin$(br)- $(bold)Distribution:$() Fragments scattered across 50+ mile radius$(br)- $(bold)Crater:$() Massive, geologically altered landscape"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Immediate Consequences:$()$(br)- Massive explosion (estimated megatons range)$(br)- Atmospheric disruption across entire continent$(br)- Temporary climate effects (dust, ash, dimmed light)$(br)- Geological stress and minor quakes$(br)- Nanobot dispersal through atmosphere and fallout"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Long-Term Effects:$()$(br)$(br)$(bold)Environmental:$()$(br)- Nano Alloy fragments enriched soil with extraterrestrial elements$(br)- Plant contamination gave rise to Life Essence phenomena$(br)- Nanobots bonded with ecosystems globally$(br2)$(bold)Sociological:$()$(br)- Governments scrambled for control of crash site$(br)- Military conflict over resources$(br)- Society fractured between integrated and unintegrated populations"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)The Present Era:$()$(br)Three years post-impact, our world has stabilized into a new equilibrium. Integrated humans and unintegrated humans coexist, though tensions persist.$(br2)Nano Alloy resources are finite (in the short term). Life Essence seems renewable. The nanobots continue their agenda — we simply don't know what that agenda ultimately is."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Predictions & Unknowns:$()$(br)- Will more asteroids arrive?$(br)- Do nanobots have a collective consciousness directing them?$(br)- What is their ultimate purpose in partnering with us?$(br)- Can integration be reversed?$(br)- Will the technology eventually spread to all humanity?$(br2)$(italic)The answers lie in the future we're building right now.$() "
+    }
+  ]
+}

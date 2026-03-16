@@ -1,0 +1,24 @@
+{
+  "name": "Nano Dash",
+  "category": "u_heroes:abilities",
+  "icon": "minecraft:feather",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Nano Dash$() is an active ability that channels your suit's movement augmentation into a rapid directional burst. This short-range teleport-like movement allows tactical repositioning, evasion, and offensive positioning.$(br2)Activation: $(bold)Crouch while sprinting and release$()$(br)Cost: 1 $(l:u_heroes:life_essence)Life Essence$(/l) per dash"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Movement Profile:$()$(br)- $(bold)Distance:$() Approximately 15 blocks per dash$(br)- $(bold)Direction:$() Forward, diagonal, or lateral based on movement input$(br)- $(bold)Speed:$() Instantaneous repositioning with brief cooldown$(br)- $(bold)No Knockback:$() You maintain momentum control"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Combat Applications:$()$(br)- Quick evasion from incoming attacks$(br)- Close-quarters repositioning against melee enemies$(br)- Escape from hazardous terrain$(br)- Tactical approach angles for ranged weapons$(br)- Breaking pursuit from enemy swarms"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Advanced Tactics:$()$(br)The dash has a brief cooldown between uses. Chaining dashes requires precise essence management and timing.$(br2)Smart use: Dash to high ground, dash through narrow gaps, dash away from danger. Wasteful use: Dashing randomly burns essence without strategic benefit.$(br2)Master this ability. It may save your life."
+    }
+  ]
+}

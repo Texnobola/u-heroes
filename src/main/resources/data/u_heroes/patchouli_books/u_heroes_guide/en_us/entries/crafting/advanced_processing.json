@@ -1,0 +1,28 @@
+{
+  "name": "Advanced Material Processing",
+  "category": "u_heroes:crafting",
+  "icon": "minecraft:blast_furnace",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Advanced Processing$() involves techniques beyond basic furnace smelting. These methods enable the refinement of materials into specialized forms for various applications.$(br2)Access to advanced processing typically requires established infrastructure and significant resource investment."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Essence Refinement:$()$(br)Raw Life Essence drops from leaves can be refined into concentrated forms through advanced processing:$(br)- Concentrated Essence: 5x raw essence → synthesized essence$(br)- Essence Crystals: 10x concentrated → crystallized form$(br2)Concentrated essence drains slower from suits. Crystals are valuable for trading and specialized applications."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Alloy Enhancement:$()$(br)Nano Alloy Fragments can be processed and combined with other materials to create enhanced forms:$(br)- Purified Fragments: Remove impurities through heat treatment$(br)- Resonant Forms: Bond with crystalline materials for enhancement$(br)- Concentrated Essence Integration: Combine essence with alloy for synergy$(br2)Experimentation unlocks new possibilities."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Specialized Component Creation:$()$(br)Advanced processing can extract and refine specific components:$(br)- Energy conduits from Life Essence$(br)- Structural reinforcements from Nano Alloy$(br)- Resonance modulators from hybrid materials$(br2)These components serve purposes beyond traditional crafting."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Research Potential:$()$(br)The asteroid's technology is vast and largely unexplored. Continued experimentation with different material combinations, processing temperatures, and techniques may reveal new capabilities.$(br2)Keep detailed notes on successful and failed experiments. Share knowledge with other integrated beings. Collective research accelerates discovery for everyone."
+    }
+  ]
+}

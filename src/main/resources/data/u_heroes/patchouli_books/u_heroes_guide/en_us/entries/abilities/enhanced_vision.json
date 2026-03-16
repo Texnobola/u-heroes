@@ -1,0 +1,24 @@
+{
+  "name": "Enhanced Vision",
+  "category": "u_heroes:abilities",
+  "icon": "minecraft:ender_eye",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Enhanced Vision$() is a passive ability granted by the nanosuit helmet. Once activated through the suit's systems, your eyes are augmented with nanobot-powered light sensors that pierce through complete darkness.$(br2)This ability consumes nominal amounts of $(l:u_heroes:life_essence)Life Essence$(/l) during operation."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)How It Works:$()$(br)The nanobots in your optic nerve system convert ambient radiation and heat signatures into visible light. Your enhanced perception allows you to navigate through caves, dark forests, and underground structures as if it were broad daylight.$(br2)No torches. No disadvantage. Pure tactical advantage."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Strategic Applications:$()$(br)- Cave exploration without light sources$(br)- Nocturnal navigation and evasion$(br)- Detection of thermal patterns in creatures$(br)- Stealth operations in darkness$(br2)The ability continues indefinitely while the suit is active and you maintain sufficient essence reserves."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Warning:$()$(br)Even with enhanced vision, certain hazards like lava and enemy attacks remain lethal. Enhanced vision does not guarantee safety — only better awareness of your surroundings.$(br2)Use this advantage wisely."
+    }
+  ]
+}

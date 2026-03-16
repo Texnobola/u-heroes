@@ -6,20 +6,28 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "$(bold)Life Essence$() is a faint biological energy that accumulates in the leaves of trees. Since the asteroid impact, the nanobots that drifted through the atmosphere have begun bonding with plant life, concentrating this energy in foliage.$(br2)To the naked eye it is invisible, but the nanobots in your body can sense it."
+      "text": "$(bold)Life Essence$() is a faint biological energy that concentrates in the foliage of living plants. Since the asteroid impact, the nanobots that drifted through the atmosphere have begun bonding with plant life, amplifying and centralizing this natural energy in the leaves.$(br2)To the naked eye it is invisible. Only your integrated nanobots can sense and absorb it."
     },
     {
       "type": "patchouli:spotlight",
       "item": "u_heroes:life_essence",
-      "text": "Rarely dropped when breaking any type of leaf block. The nanobots in your system extract it automatically."
+      "text": "Rarely dropped when breaking any type of leaf block. The nanobots in your integrated system extract it automatically and store it for use."
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Obtaining:$()$(br)Life Essence has a $(bold)2% chance$() to drop from any leaf block when broken — by hand, axe, shears, or any other tool.$(br2)To farm it efficiently, grow large trees with many leaves and harvest them. A large oak or jungle tree can yield several essences per harvest."
+      "text": "$(bold)Acquisition Methods:$()$(br)$(bold)Method 1 - Leaf Farming:$()$(br)Breaking any leaf block has a $(bold)2% chance$() to drop a Life Essence. Use any tool (axe is fastest) or break by hand.$(br2)$(bold)Method 2 - Efficient Harvesting:$()$(br)Large trees contain many leaves. A fully grown oak or jungle tree yields 3-8 essences per complete harvest. Replant for infinite supply."
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Uses:$()$(br)Life Essence is consumed by your nanosuit to power its active abilities. Without it, certain suit functions will be unavailable.$(br2)Always keep a supply on hand. The essences stack up to 64 and are relatively lightweight to carry.$(br2)$(italic)Future research may reveal additional applications for this material.$() "
+      "text": "$(bold)Primary Function:$()$(br)Life Essence powers your nanosuit's active abilities and passive enhancements. Without it, your suit enters a dormant state.$(br2)- $(l:u_heroes:regeneration)Health Regeneration$(/l): Consumes essence continuously$(br)- $(l:u_heroes:nano_dash)Nano Dash$(/l): Costs 1 essence per activation$(br)- $(l:u_heroes:enhanced_vision)Enhanced Vision$(/l): Drains essence slowly during use"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Storage & Management:$()$(br)Life Essences stack up to 64 per inventory slot. Your suit maintains an internal reserve that drains with each action.$(br2)$(bold)Essence Mechanics:$()$(br)- Monitor your essence bar in the HUD$(br)- Essence depletes faster during active combat and ability use$(br)- Regenerates slowly through farming and absorption$(br)- Strategic conservation extends operational time in the field"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Advanced Applications:$()$(br)Ongoing research suggests Life Essence may have other applications beyond suit power. Some theories propose it could be used for:$(br)- Crafting advanced nanotech components$(br)- Enhancing weapon properties$(br)- Creating healing potions or elixirs$(br2)$(italic)Future discoveries await those who experiment.$() "
     }
   ]
 }

@@ -1,0 +1,28 @@
+{
+  "name": "Smelting Protocol",
+  "category": "u_heroes:crafting",
+  "icon": "minecraft:furnace",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Smelting Nano Alloy Blocks$() is the fundamental material processing technique. No refinement of Nano Alloy materials can proceed without breaking down raw blocks through furnace processing.$(br2)Master this process. Refine it. Optimize it."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Smelting Setup:$()$(br)1. Construct or locate a furnace$(br)2. Mine/collect Nano Alloy Blocks from the impact site$(br)3. Break blocks with diamond+ pickaxe$(br)4. Place blocks in furnace's input slot$(br)5. Provide fuel (coal, wood, etc.)$(br)6. Wait 20 seconds per block$(br)7. Collect fragments from output slot"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Fuel Efficiency:$()$(br)- Coal: 80 seconds per piece (efficient)$(br)- Charcoal: 80 seconds per piece (renewable if wood farming)$(br)- Lava buckets: Continuous smelting (best for high volume)$(br)- Wooden tools: Fast burn but wasteful$(br2)For serious fragment production, consider an automated furnace setup with hopper feeding."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Scaling Production:$()$(br)A single furnace is limiting. Consider:$(br)- Building 3-5 furnaces in parallel for batch processing$(br)- Using hoppers to feed furnaces automatically$(br)- Creating a storage system for ore and fragments$(br)- Establishing a dedicated smelting area near the impact site$(br2)Efficiency compounds. Small improvements multiply over time."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Yield Optimization:$()$(br)Each Nano Alloy Block yields 4-5 fragments through smelting. Individual yields vary, but averages suggest approximately 4.5 fragments per block.$(br2)Plan your mining operation according to your material needs. Fragment consumption varies by individual use case and crafting goals.$(br2)Track your usage patterns to develop efficient mining schedules."
+    }
+  ]
+}

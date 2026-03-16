@@ -6,16 +6,24 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "$(bold)Nano Alloy Blocks$() are dense chunks of extraterrestrial metal scattered across the land by the asteroid impact. They can be found on the surface within roughly 50 blocks of the crash site.$(br2)They glow faintly cyan — a sign of the active nanobots still dormant inside the material."
+      "text": "$(bold)Nano Alloy Blocks$() are dense chunks of extraterrestrial metal scattered across the land by the asteroid impact. They can be found on the surface within roughly 50 blocks of the crash site.$(br2)They glow faintly with a deep cyan luminescence — a sign of the active nanobots still dormant inside the material. The glow intensifies at night, making blocks easier to locate in darkness."
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Mining:$()$(br)Nano Alloy Blocks require a $(bold)diamond pickaxe or better$() to mine. Using a weaker tool will yield nothing.$(br2)The blocks are extremely hard (hardness 5, blast resistance 8) and cannot be moved by explosions."
+      "text": "$(bold)Block Properties:$()$(br)- $(bold)Hardness:$() 5 (harder than obsidian)$(br)- $(bold)Blast Resistance:$() 8 (extremely resistant to explosions)$(br)- $(bold)Luminosity:$() Emits light level 6 (visible but not bright)$(br2)The extreme durability makes these blocks ideal for construction, though their rarity generally discourages decorative use."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Mining Requirements:$()$(br)Nano Alloy Blocks require a $(bold)diamond pickaxe or better$() to mine. Attempting harvest with stone, iron, or wooden tools yields nothing — the blocks are simply too hard.$(br2)If you lack a diamond pickaxe, farming $(l:u_heroes:life_essence)Life Essence$(/l) and trading with advanced NPCs is more efficient than wasting time on unrewarding mining attempts."
     },
     {
       "type": "patchouli:spotlight",
       "item": "u_heroes:nano_alloy_block",
-      "text": "Found scattered around the crater site. Requires a diamond pickaxe to harvest."
+      "text": "Found scattered around the crater site. Requires diamond pickaxe or better. Simply punch these blocks — no special tools needed beyond basic mining pickaxe requirements."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Processing:$()$(br)Raw blocks cannot be used directly in crafting recipes. They must be $(l:u_heroes:nano_alloy_fragment)smelted in a furnace$(/l) to break down the outer crust and release pure $(bold)Nano Alloy Fragments$().$(br2)The separation process consumes significant heat and time but is efficient — one block yields multiple fragments."
     }
   ]
 }

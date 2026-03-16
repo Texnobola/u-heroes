@@ -1,0 +1,29 @@
+{
+  "name": "Nanosuit Helmet",
+  "category": "u_heroes:equipment",
+  "icon": "u_heroes:nanosuit_helmet",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)The Nanosuit Helmet$() is the command center of your nanotech integration. Fused with your body through integration with NanoCreatures, it provides critical protection and processing capability for your enhanced form.$(br2)$(bold)Protection Level:$() Equivalent to Netherite"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "u_heroes:nanosuit_helmet",
+      "text": "The helmet serves as the primary processing unit for your nanosuit's integrated systems."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Features:$()$(br)- $(bold)Enhanced Vision:$() See in darkness as if it were day$(br)- $(bold)Threat Detection:$() Highlighted hostile creatures through walls$(br)- $(bold)Nanobot Coordination:$() Manages all suit functions and abilities"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Energy Requirements:$()$(br)The helmet's systems drain Life Essence over time during use. The drain accelerates when active abilities are engaged.$(br2)Always maintain a supply of $(l:u_heroes:life_essence)Life Essence$(/l) to keep your suit operational."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "The helmet is the anchor point of your nanosuit integration. It cannot be removed — it is fused with your very being. Your nanosuit integration and the helmet are one and the same.$(br2)$(italic)You are the weapon. The armor is only the shell.$() "
+    }
+  ]
+}

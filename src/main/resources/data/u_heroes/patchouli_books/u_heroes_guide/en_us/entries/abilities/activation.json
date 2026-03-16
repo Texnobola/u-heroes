@@ -1,0 +1,24 @@
+{
+  "name": "Suit Activation & Deactivation",
+  "category": "u_heroes:abilities",
+  "icon": "minecraft:redstone_torch",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Suit Activation$() is the fundamental ability for engaging your nanosuit's integrated systems. The suit must be fully equipped (helmet, chestplate, leggings, boots) to activate its enhanced functions.$(br2)$(bold)Activation Method:$() Equip all armor pieces and press the designated suit toggle key while looking at the sky"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Active vs. Inactive States:$()$(br)$(bold)When Active:$()$(br)- All nano-enhancements are operational$(br)- Health regeneration runs continuously$(br)- Enhanced vision is available$(br)- Dash ability can be triggered$(br)- Full armor protection applies"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)When Inactive:$()$(br)- Standard human abilities only$(br)- No nano-enhancements or special abilities$(br)- No passive health regeneration$(br)- Full armor protection still applies$(br)- Essence consumption stops$(br2)You may deactivate at any time by pressing the toggle key again. Some players deactivate to conserve essence when safety is assured."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Energy Management:$()$(br)The activated suit continuously draws power from your $(l:u_heroes:life_essence)Life Essence$(/l) reserves. Strategic activation and deactivation extends your operational time in the field.$(br2)Monitor your essence bar. Running dry with the suit active is dangerous — consider deactivating or returning to base to farm more essence."
+    }
+  ]
+}

@@ -6,16 +6,24 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "$(bold)Nano Alloy Fragments$() are the refined form of Nano Alloy Blocks. Raw blocks must be smelted in a furnace to break down the outer crust and release the pure nanotech-infused metal inside.$(br2)Fragments are the primary crafting material for all nanotech equipment."
+      "text": "$(bold)Nano Alloy Fragments$() are the refined, usable form of Nano Alloy Blocks. Raw blocks are useless in crafting — they must be smelted in a standard furnace to break down the outer crust and release the pure nanotech-infused metal inside.$(br2)Fragments are the primary crafting material for all nanotech equipment and are as precious as netherite."
     },
     {
       "type": "patchouli:smelting",
       "recipe": "u_heroes:nano_alloy_fragment_from_smelting",
-      "text": "Smelt a Nano Alloy Block to obtain fragments. The process takes longer than normal smelting due to the material's density."
+      "text": "Smelt a Nano Alloy Block to obtain fragments. The smelting process takes longer than standard ore processing (20 seconds vs. 10 seconds for iron/diamond) due to the material's density and the precision required to separate the nanobots from the crust."
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Uses:$()$(br)Nano Alloy Fragments are used to craft:$(br)- The Nanosuit helmet, chestplate, leggings, and boots$(br)- The Laser Sword$(br2)Treat them as you would netherite — rare and precious. The asteroid will not fall twice."
+      "text": "$(bold)Yield & Efficiency:$()$(br)One Nano Alloy Block yields $(bold)4-5 Fragments$() when smelted, depending on the block's specific nanobot concentration. Using a furnace with efficiency enchantments does not increase yield.$(br2)Each fragment is roughly equivalent in value to netherite ingots — treat them with appropriate respect and care."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Crafting Applications:$()$(br)Nano Alloy Fragments are used to craft:$(br)- Nanosuit helmet, chestplate, leggings, and boots (4 fragments per piece)$(br)- Laser Sword (12 fragments + exotic materials)$(br)- Advanced machinery and tech components$(br2)Plan your crafting carefully. Resources are not infinite."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Storage & Handling:$()$(br)Fragments stack up to 64 per slot and maintain their properties indefinitely. They are inert when not integrated into a living organism — the nanobots within are dormant.$(br2)Never sell these fragments. Never waste them. $(bold)The asteroid will not fall twice.$() This material is your only pathway to true power."
     }
   ]
 }

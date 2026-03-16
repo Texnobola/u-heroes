@@ -1,0 +1,28 @@
+{
+  "name": "What Are Nanobots?",
+  "category": "u_heroes:lore",
+  "icon": "minecraft:iron_nugget",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Nanobots$() are microscopic machines composed of Nano Alloy — a crystalline structure capable of executing computational and physical tasks at scales invisible to human eyes.$(br2)They are not alive in the biological sense. They are not dead machines either. They operate in a state that blurs the distinction between the two."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Origin Theory:$()$(br)Scientists debate the nanobots' source. Primary theories include:$(br)- $(bold)Biological Origin:$() Created by an advanced civilization to achieve biological/technological fusion$(br)- $(bold)Accident:$() Escaped from a failed experiment on a distant world$(br)- $(bold)Intentional Dispatch:$() Purposefully sent to evaluate worlds and civilizations"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Nanobot Consciousness:$()$(br)Individual nanobots are simple, executing only basic protocols. However, when aggregated into swarms (as in the impact's distribution), they demonstrate:$(br)- Collective decision-making$(br)- Adaptive behavior patterns$(br)- Apparent preference for compatible biological hosts$(br)- Coordination approaching what might be called intelligence"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Integration With Humans:$()$(br)When nanobots merge with a human host, the result is neither enslaved human nor robotic replacement. Instead:$(br)- The host retains autonomous will and consciousness$(br)- The nanobots integrate into neural and biological systems$(br)- A form of symbiosis emerges$(br)- Both host and nanobots benefit from the partnership"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Purpose & Goals:$()$(br)Nanobots appear to seek:$(br)- Exploration of new worlds and environments$(br)- Partnership with capable biological entities$(br)- Continued optimization of their own systems$(br)- $(italic)Unknown long-term objectives$()$(br2)They do not demand dominance. They do not enslave. They seek willing partners who will grow and evolve alongside them."
+    }
+  ]
+}

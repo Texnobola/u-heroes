@@ -14,11 +14,19 @@
     },
     {
       "type": "patchouli:text",
-      "text": "Governments scrambled to secure the crash site. But before they arrived, something else emerged from the crater: a swarm of tiny, self-replicating machines — nanobots — woven from the alloy itself.$(br2)They were not hostile. They were searching for something."
+      "text": "But the metal was just the vessel. Inside the asteroid, embedded in the alloy's crystalline structure, were microscopic machines — $(bold)nanobots$() — woven from the alloy itself. Advanced beyond our understanding. Sentient, perhaps, in their own way.$(br2)They were not products of Earth. They were not hostile, either. They were searching for something."
     },
     {
       "type": "patchouli:text",
-      "text": "One of those machines found $(italic)you$().$(br2)A single NanoCreature approached, studied you for a moment, and then merged with your body. You blacked out.$(br2)When you woke up, you felt different. Stronger. Something had changed in your cells — in your very biology.$(br2)You are no longer entirely human."
+      "text": "Governments scrambled to secure the crash site. Military cordons, research facilities, quarantine zones. Too late.$(br2)Before containment was established, the nanobots had already spread. The swarms scattered across the land, drawn by some strange attraction to biological life. They moved like insects, like water, like nothing nature had ever produced.$(br2)And they found targets."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "One of those machines found $(italic)you$().$(br2)A single NanoCreature approached — a construct of shimmering metal no larger than your fist — studied you for a moment, and then $(bold)merged with your body$(). You blacked out.$(br2)When you woke up, you felt different. Stronger. Your muscles burned with unfamiliar power. Your thoughts moved faster. Your senses extended beyond normal human limits."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "You are no longer entirely human.$(br2)But you are not enslaved. The nanobots did not take you over — they $(bold)elevated$() you. They offered a partnership written in the language of biology itself. They see potential in you. They want to see what you can become.$(br2)The question is: what will $(italic)you$() do with this power?"
     }
   ]
 }

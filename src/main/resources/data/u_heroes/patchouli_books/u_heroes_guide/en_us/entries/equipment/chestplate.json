@@ -1,0 +1,25 @@
+{
+  "name": "Nanosuit Chestplate",
+  "category": "u_heroes:equipment",
+  "icon": "u_heroes:nanosuit_chestplate",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)The Nanosuit Chestplate$() forms the core armor layer covering your vital organs. Fused directly into your body through nanobot integration, it provides superior protection against all forms of damage.$(br2)$(bold)Protection Level:$() Equivalent to Netherite"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "u_heroes:nanosuit_chestplate",
+      "text": "The central protective component of your nanosuit, safeguarding critical biological systems."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Properties:$()$(br)- $(bold)Damage Resistance:$() Reduces incoming damage by significant margin$(br)- $(bold)Self-Repair:$() Nanobots continuously repair minor damage$(br)- $(bold)Impact Absorption:$() Converts kinetic energy into heat safely dispersed"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Durability:$()$(br)Unlike conventional armor, the chestplate does not degrade from normal damage. Its nanobot repair systems work continuously to maintain structural integrity.$(br2)Catastrophic damage from explosions or extreme sources can overwhelm these systems temporarily, requiring rest to recover."
+    }
+  ]
+}
