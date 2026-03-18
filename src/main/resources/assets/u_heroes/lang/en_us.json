@@ -34,5 +34,19 @@
   "item.u_heroes.nano_alloy_fragment": "Nano Alloy Fragment",
   "item.u_heroes.life_essence": "Life Essence",
   "item.u_heroes.nano_creature": "Nano Creature",
-  "item.u_heroes.nano_creature.tooltip": "Something stirs within..."
+  "item.u_heroes.nano_creature.tooltip": "Something stirs within...",
+
+  "entity.u_heroes.ava": "AVA",
+  "status.u_heroes.ava_online": "§b[AVA] §fSystem online. Orbital link established.",
+  "status.u_heroes.ava_shield_on": "§b[AVA] §fBarrier matrix active.",
+  "status.u_heroes.ava_shield_off": "§b[AVA] §7Barrier matrix offline.",
+  "status.u_heroes.ava_low_flux": "§c[AVA] §7Neural Flux critically low.",
+  "status.u_heroes.ava_blocked": "§b[AVA] §7Projectile intercepted.",
+
+  "key.u_heroes.ava_shield": "AVA: Hold Shield",
+  "key.u_heroes.booster_dash": "Booster: Dash",
+  "key.u_heroes.jetpack": "Booster: Jetpack",
+  "key.u_heroes.power_punch": "Booster: Power Punch",
+  "key.u_heroes.scanner": "Analysis: Scan Target",
+  "key.categories.u_heroes": "U-Heroes"
 }

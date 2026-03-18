@@ -21,6 +21,15 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> LASER_SWORD_HIT = SOUNDS.register("laser_sword_hit",
         () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(UHeroesMod.MOD_ID, "laser_sword_hit")));
 
+    public static final RegistryObject<SoundEvent> AVA_ACTIVATE = SOUNDS.register("ava_activate",
+        () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(UHeroesMod.MOD_ID, "ava_activate")));
+
+    public static final RegistryObject<SoundEvent> AVA_SHIELD_ON = SOUNDS.register("ava_shield_on",
+        () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(UHeroesMod.MOD_ID, "ava_shield_on")));
+
+    public static final RegistryObject<SoundEvent> AVA_BLOCK = SOUNDS.register("ava_block",
+        () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(UHeroesMod.MOD_ID, "ava_block")));
+
     public static void register(IEventBus eventBus) {
         SOUNDS.register(eventBus);
     }

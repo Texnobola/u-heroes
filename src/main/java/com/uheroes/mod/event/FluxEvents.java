@@ -4,6 +4,8 @@ import com.uheroes.mod.UHeroesMod;
 import com.uheroes.mod.core.flux.FluxCapability;
 import com.uheroes.mod.core.flux.FluxProvider;
 import com.uheroes.mod.core.flux.NeuralFlux;
+import com.uheroes.mod.heroes.nanotech.ava.AVACapability;
+import com.uheroes.mod.heroes.nanotech.ava.AVAData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
@@ -14,71 +16,72 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 /**
- * Event handlers for Neural Flux capability system.
+ * Event handlers for Neural Flux and AVA capability systems.
  */
 @Mod.EventBusSubscriber(modid = UHeroesMod.MOD_ID)
 public class FluxEvents {
-    
-    /**
-     * Registers the Neural Flux capability.
-     */
+
+    // ─── Capability registration ──────────────────────────────────────────────
+
     @SubscribeEvent
     public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
         event.register(NeuralFlux.class);
+        event.register(AVAData.class);
     }
-    
-    /**
-     * Attaches Neural Flux capability to all players.
-     */
+
     @SubscribeEvent
     public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof Player) {
-            FluxProvider provider = new FluxProvider();
-            event.addCapability(FluxCapability.ID, provider);
-            event.addListener(provider::invalidateCaps);
-        }
+        if (!(event.getObject() instanceof Player)) return;
+
+        FluxProvider fluxProvider = new FluxProvider();
+        event.addCapability(FluxCapability.ID, fluxProvider);
+        event.addListener(fluxProvider::invalidateCaps);
+
+        AVACapability.Provider avaProvider = new AVACapability.Provider();
+        event.addCapability(AVACapability.ID, avaProvider);
+        event.addListener(avaProvider::invalidateCaps);
     }
-    
-    /**
-     * Copies Neural Flux data on player death/respawn and dimension change.
-     */
+
+    // ─── Death / respawn copy ─────────────────────────────────────────────────
+
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
-        Player oldPlayer = event.getOriginal();
-        Player newPlayer = event.getEntity();
-        
-        oldPlayer.reviveCaps();
-        
-        oldPlayer.getCapability(FluxCapability.INSTANCE).ifPresent(oldFlux -> {
-            newPlayer.getCapability(FluxCapability.INSTANCE).ifPresent(newFlux -> {
-                newFlux.copyFrom(oldFlux);
-            });
-        });
-        
-        oldPlayer.invalidateCaps();
+        Player old = event.getOriginal();
+        Player neo = event.getEntity();
+
+        old.reviveCaps();
+
+        old.getCapability(FluxCapability.INSTANCE).ifPresent(oldFlux ->
+            neo.getCapability(FluxCapability.INSTANCE).ifPresent(newFlux ->
+                newFlux.copyFrom(oldFlux)));
+
+        old.getCapability(AVACapability.INSTANCE).ifPresent(oldAva ->
+            neo.getCapability(AVACapability.INSTANCE).ifPresent(newAva ->
+                newAva.copyFrom(oldAva)));
+
+        old.invalidateCaps();
     }
-    
-    /**
-     * Ticks Neural Flux for all players (server-side only).
-     */
+
+    // ─── Per-tick logic ───────────────────────────────────────────────────────
+
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && !event.player.level().isClientSide) {
-            event.player.getCapability(FluxCapability.INSTANCE).ifPresent(flux -> {
-                flux.tick();
-                
-                // Sync to client every 5 ticks
-                if (event.player.tickCount % 5 == 0 && event.player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
-                    com.uheroes.mod.core.network.ModNetwork.sendToPlayer(
-                        new com.uheroes.mod.core.network.FluxSyncPacket(
-                            flux.getCurrentFlux(),
-                            flux.getMaxFlux(),
-                            flux.isOvercharged()
-                        ),
-                        serverPlayer
-                    );
-                }
-            });
-        }
+        if (event.phase != TickEvent.Phase.END || event.player.level().isClientSide) return;
+
+        Player player = event.player;
+
+        // Flux tick + sync
+        player.getCapability(FluxCapability.INSTANCE).ifPresent(flux -> {
+            flux.tick();
+            if (player.tickCount % 5 == 0 && player instanceof net.minecraft.server.level.ServerPlayer sp) {
+                com.uheroes.mod.core.network.ModNetwork.sendToPlayer(
+                    new com.uheroes.mod.core.network.FluxSyncPacket(
+                        flux.getCurrentFlux(), flux.getMaxFlux(), flux.isOvercharged()),
+                    sp);
+            }
+        });
+
+        // AVA cooldown tick
+        player.getCapability(AVACapability.INSTANCE).ifPresent(AVAData::tickCooldown);
     }
 }

@@ -10,5 +10,17 @@
   "laser_sword_hit": {
     "sounds": [ { "name": "u_heroes:laser_sword_hit", "volume": 1.0, "pitch": 1.0 } ],
     "subtitle": "Laser Sword Hits"
+  },
+  "ava_activate": {
+    "sounds": [ { "name": "u_heroes:ava_activate", "volume": 0.9, "pitch": 1.0 } ],
+    "subtitle": "AVA Online"
+  },
+  "ava_shield_on": {
+    "sounds": [ { "name": "u_heroes:ava_shield_on", "volume": 1.0, "pitch": 0.9 } ],
+    "subtitle": "AVA Shield Active"
+  },
+  "ava_block": {
+    "sounds": [ { "name": "u_heroes:ava_block", "volume": 1.0, "pitch": 1.1 } ],
+    "subtitle": "AVA Deflects"
   }
 }

@@ -45,6 +45,8 @@ public class UHeroesMod {
         public static void onEntityAttributeCreation(net.minecraftforge.event.entity.EntityAttributeCreationEvent event) {
             event.put(ModEntities.NANO_CREATURE.get(),
                 com.uheroes.mod.origin.NanoCreatureEntity.createAttributes().build());
+            event.put(ModEntities.AVA.get(),
+                com.uheroes.mod.heroes.nanotech.ava.AVAEntity.createAttributes().build());
             // AsteroidEntity extends Entity, not LivingEntity — no attributes needed
         }
     }
@@ -60,6 +62,11 @@ public class UHeroesMod {
             event.registerEntityRenderer(
                 ModEntities.ASTEROID.get(),
                 com.uheroes.mod.client.renderer.AsteroidRenderer::new
+            );
+            // AVA uses Minecraft's default invisible renderer until GeckoLib model is ready
+            event.registerEntityRenderer(
+                ModEntities.AVA.get(),
+                net.minecraft.client.renderer.entity.NoopRenderer::new
             );
         }
     }

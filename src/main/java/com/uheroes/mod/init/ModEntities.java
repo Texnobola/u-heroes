@@ -1,6 +1,7 @@
 package com.uheroes.mod.init;
 
 import com.uheroes.mod.UHeroesMod;
+import com.uheroes.mod.heroes.nanotech.ava.AVAEntity;
 import com.uheroes.mod.origin.AsteroidEntity;
 import com.uheroes.mod.origin.NanoCreatureEntity;
 import net.minecraft.world.entity.EntityType;
@@ -19,6 +20,15 @@ public class ModEntities {
             .<NanoCreatureEntity>of(NanoCreatureEntity::new, MobCategory.CREATURE)
             .sized(0.6f, 0.6f)
             .build("nano_creature"));
+
+    public static final RegistryObject<EntityType<AVAEntity>> AVA =
+        ENTITIES.register("ava", () -> EntityType.Builder
+            .<AVAEntity>of(AVAEntity::new, MobCategory.MISC)
+            .sized(0.5f, 0.5f)
+            .clientTrackingRange(32)
+            .updateInterval(1)
+            .noSummon()
+            .build("ava"));
 
     public static final RegistryObject<EntityType<AsteroidEntity>> ASTEROID =
         ENTITIES.register("asteroid", () -> EntityType.Builder

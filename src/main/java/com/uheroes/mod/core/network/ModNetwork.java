@@ -27,6 +27,18 @@ public class ModNetwork {
             .decoder(FluxSyncPacket::decode)
             .consumerMainThread(FluxSyncPacket::handle)
             .add();
+
+        CHANNEL.messageBuilder(AVAShieldPacket.class, nextId(), NetworkDirection.PLAY_TO_SERVER)
+            .encoder(AVAShieldPacket::encode)
+            .decoder(AVAShieldPacket::decode)
+            .consumerMainThread(AVAShieldPacket::handle)
+            .add();
+
+        CHANNEL.messageBuilder(BoosterPacket.class, nextId(), NetworkDirection.PLAY_TO_SERVER)
+            .encoder(BoosterPacket::encode)
+            .decoder(BoosterPacket::decode)
+            .consumerMainThread(BoosterPacket::handle)
+            .add();
     }
 
     private static int nextId() { return packetId++; }
