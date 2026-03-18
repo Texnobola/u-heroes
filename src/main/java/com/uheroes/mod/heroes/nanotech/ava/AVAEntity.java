@@ -15,6 +15,11 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.*;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -52,7 +57,8 @@ import java.util.UUID;
  * model/texture is ready. Add {@code @GeoEntityMarker} and register
  * a {@code GeckoLibUtil.createInstanceCache(this)} for animations.
  */
-public class AVAEntity extends Mob {
+public class AVAEntity extends Mob implements GeoEntity {
+    private final AnimatableInstanceCache animCache = GeckoLibUtil.createInstanceCache(this);
 
     // ─── Constants ───────────────────────────────────────────────────────────
     private static final String NBT_OWNER          = "AVAOwnerUUID";
@@ -340,4 +346,19 @@ public class AVAEntity extends Mob {
     @Override public boolean isInvulnerableTo(net.minecraft.world.damagesource.DamageSource source) { return true; }
     @Override public boolean removeWhenFarAway(double dist) { return false; }
     @Override protected void registerGoals() { /* no vanilla AI — all logic above */ }
+
+    // ─── GeckoLib ─────────────────────────────────────────────────────────────
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar registrar) {
+        registrar.add(new AnimationController<>(this, "ava_ctrl", 4, state -> {
+            // "idle" plays while AVA exists — retract/deploy wired separately
+            state.getController().setAnimation(
+                RawAnimation.begin().thenLoop("idle"));
+            return PlayState.CONTINUE;
+        }));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() { return animCache; }
 }
