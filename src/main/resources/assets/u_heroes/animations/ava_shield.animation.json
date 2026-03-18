@@ -1,219 +1,86 @@
 {
   "format_version": "1.12.0",
   "animations": {
-    "idle": {
+    "animation.ava.idle": {
       "loop": true,
-      "duration": 4.0,
+      "animation_length": 4.0,
       "bones": {
         "sphere_scale": {
-          "scale": [
-            { "time": 0.0, "value": [1.00, 1.00, 1.00] },
-            { "time": 2.0, "value": [1.01, 1.01, 1.01] },
-            { "time": 4.0, "value": [1.00, 1.00, 1.00] }
-          ]
+          "scale": {
+            "0.0":  [1.00, 1.00, 1.00],
+            "2.0":  [1.01, 1.01, 1.01],
+            "4.0":  [1.00, 1.00, 1.00]
+          }
         },
         "core": {
-          "scale": [
-            { "time": 0.0, "value": [0.99, 0.99, 0.99] },
-            { "time": 2.0, "value": [1.02, 1.02, 1.02] },
-            { "time": 4.0, "value": [0.99, 0.99, 0.99] }
-          ]
+          "scale": {
+            "0.0":  [0.99, 0.99, 0.99],
+            "2.0":  [1.02, 1.02, 1.02],
+            "4.0":  [0.99, 0.99, 0.99]
+          }
         },
         "ring_1": {
-          "rotation": [
-            { "time": 0.0, "value": [0.0, 0.0, 0.0] },
-            { "time": 4.0, "value": [0.0, 0.0, 360.0] }
-          ]
+          "rotation": {
+            "0.0":  [0, 0, 0],
+            "4.0":  [0, 0, 360]
+          }
         },
         "ring_2": {
-          "rotation": [
-            { "time": 0.0, "value": [0.0, 0.0, 0.0] },
-            { "time": 4.0, "value": [0.0, 0.0, -540.0] }
-          ]
+          "rotation": {
+            "0.0":  [0, 0, 0],
+            "4.0":  [0, 0, -540]
+          }
         },
         "ring_3": {
-          "rotation": [
-            { "time": 0.0, "value": [0.0, 0.0, 0.0] },
-            { "time": 4.0, "value": [0.0, 0.0, 720.0] }
-          ]
+          "rotation": {
+            "0.0":  [0, 0, 0],
+            "4.0":  [0, 0, 720]
+          }
         },
         "hex_segments": {
-          "scale": [
-            { "time": 0.0, "value": [1.00, 1.00, 1.00] },
-            { "time": 1.0, "value": [1.03, 1.03, 1.03] },
-            { "time": 2.0, "value": [1.00, 1.00, 1.00] }
-          ]
+          "scale": {
+            "0.0":  [1.00, 1.00, 1.00],
+            "1.0":  [1.03, 1.03, 1.03],
+            "2.0":  [1.00, 1.00, 1.00],
+            "3.0":  [1.03, 1.03, 1.03],
+            "4.0":  [1.00, 1.00, 1.00]
+          }
         }
-      },
-      "events": [
-        { "time": 0.0, "name": "particle:ava_shield_idle_hum" }
-      ]
+      }
     },
-
-    "deploy": {
+    "animation.ava.deploy": {
       "loop": false,
-      "duration": 0.6,
+      "animation_length": 0.6,
       "bones": {
         "sphere_scale": {
-          "scale": [
-            { "time": 0.0, "value": [0.00, 0.00, 0.00] },
-            { "time": 0.12, "value": [1.10, 1.10, 1.10] },
-            { "time": 0.36, "value": [0.95, 0.95, 0.95] },
-            { "time": 0.6, "value": [1.00, 1.00, 1.00] }
-          ]
-        },
-        "ring_1": {
-          "rotation": [
-            { "time": 0.0, "value": [0.0, 0.0, 0.0] },
-            { "time": 0.25, "value": [0.0, 0.0, 180.0] },
-            { "time": 0.6, "value": [0.0, 0.0, 360.0] }
-          ]
-        },
-        "ring_2": {
-          "rotation": [
-            { "time": 0.0, "value": [0.0, 0.0, 0.0] },
-            { "time": 0.25, "value": [0.0, 0.0, -240.0] },
-            { "time": 0.6, "value": [0.0, 0.0, -540.0] }
-          ]
+          "scale": {
+            "0.00": [0.00, 0.00, 0.00],
+            "0.12": [1.10, 1.10, 1.10],
+            "0.36": [0.95, 0.95, 0.95],
+            "0.60": [1.00, 1.00, 1.00]
+          }
         },
         "core": {
-          "scale": [
-            { "time": 0.0, "value": [0.6, 0.6, 0.6] },
-            { "time": 0.06, "value": [1.25, 1.25, 1.25] },
-            { "time": 0.18, "value": [1.00, 1.00, 1.00] }
-          ]
+          "scale": {
+            "0.00": [0.60, 0.60, 0.60],
+            "0.06": [1.25, 1.25, 1.25],
+            "0.18": [1.00, 1.00, 1.00]
+          }
         }
-      },
-      "events": [
-        { "time": 0.04, "name": "particle:ava_shield_deploy_burst" },
-        { "time": 0.06, "name": "sound:ava_deploy" },
-        { "time": 0.12, "name": "particle:ava_shield_grid_ignite" }
-      ]
+      }
     },
-
-    "parry": {
+    "animation.ava.retract": {
       "loop": false,
-      "duration": 0.5,
+      "animation_length": 0.45,
       "bones": {
         "sphere_scale": {
-          "scale": [
-            { "time": 0.0, "value": [1.00, 1.00, 1.00] },
-            { "time": 0.06, "value": [1.12, 1.12, 1.12] },
-            { "time": 0.14, "value": [0.98, 0.98, 0.98] },
-            { "time": 0.28, "value": [1.00, 1.00, 1.00] }
-          ]
-        },
-        "ring_1": {
-          "rotation": [
-            { "time": 0.0, "value": [0.0, 0.0, 0.0] },
-            { "time": 0.08, "value": [0.0, 0.0, 360.0] },
-            { "time": 0.24, "value": [0.0, 0.0, 540.0] }
-          ]
-        },
-        "hex_segments": {
-          "scale": [
-            { "time": 0.0, "value": [1.0, 1.0, 1.0] },
-            { "time": 0.04, "value": [1.3, 1.3, 1.3] },
-            { "time": 0.12, "value": [1.0, 1.0, 1.0] }
-          ]
+          "scale": {
+            "0.00":  [1.00, 1.00, 1.00],
+            "0.25":  [0.85, 0.85, 0.85],
+            "0.45":  [0.00, 0.00, 0.00]
+          }
         }
-      },
-      "events": [
-        { "time": 0.02, "name": "sound:ava_parry" },
-        { "time": 0.03, "name": "particle:ava_shield_parry_shock" },
-        { "time": 0.10, "name": "event:parry_hit" }
-      ]
-    },
-
-    "sphere_expand": {
-      "loop": false,
-      "duration": 0.5,
-      "bones": {
-        "sphere_scale": {
-          "scale": [
-            { "time": 0.0, "value": [1.0, 1.0, 1.0] },
-            { "time": 0.5, "value": [1.5, 1.5, 1.5] }
-          ]
-        },
-        "ring_1": {
-          "rotation": [
-            { "time": 0.0, "value": [0.0, 0.0, 0.0] },
-            { "time": 0.5, "value": [0.0, 0.0, 240.0] }
-          ]
-        },
-        "ring_2": {
-          "rotation": [
-            { "time": 0.0, "value": [0.0, 0.0, 0.0] },
-            { "time": 0.5, "value": [0.0, 0.0, -360.0] }
-          ]
-        },
-        "holo_plane_front": {
-          "scale": [
-            { "time": 0.0, "value": [1.0, 1.0, 1.0] },
-            { "time": 0.5, "value": [0.8, 0.8, 0.8] }
-          ]
-        }
-      },
-      "events": [
-        { "time": 0.05, "name": "particle:ava_shield_sphere_on" },
-        { "time": 0.25, "name": "particle:ava_shield_sphere_hum" }
-      ]
-    },
-
-    "blaster_fire": {
-      "loop": false,
-      "duration": 0.18,
-      "bones": {
-        "core": {
-          "position": [
-            { "time": 0.0, "value": [0.0, 0.0, 0.0] },
-            { "time": 0.03, "value": [0.0, 0.0, -0.12] },
-            { "time": 0.12, "value": [0.0, 0.0, 0.02] }
-          ],
-          "scale": [
-            { "time": 0.0, "value": [1.0, 1.0, 1.0] },
-            { "time": 0.03, "value": [1.25, 1.25, 1.25] },
-            { "time": 0.06, "value": [1.0, 1.0, 1.0] }
-          ]
-        },
-        "ring_3": {
-          "rotation": [
-            { "time": 0.0, "value": [0.0, 0.0, 0.0] },
-            { "time": 0.06, "value": [0.0, 0.0, 180.0] },
-            { "time": 0.12, "value": [0.0, 0.0, 360.0] }
-          ]
-        }
-      },
-      "events": [
-        { "time": 0.02, "name": "particle:ava_shield_core_muzzle" },
-        { "time": 0.03, "name": "sound:core_blaster_shot" },
-        { "time": 0.05, "name": "event:blaster_shot" }
-      ]
-    },
-
-    "retract": {
-      "loop": false,
-      "duration": 0.45,
-      "bones": {
-        "sphere_scale": {
-          "scale": [
-            { "time": 0.0, "value": [1.00, 1.00, 1.00] },
-            { "time": 0.25, "value": [0.85, 0.85, 0.85] },
-            { "time": 0.45, "value": [0.00, 0.00, 0.00] }
-          ]
-        },
-        "core": {
-          "scale": [
-            { "time": 0.0, "value": [1.00, 1.00, 1.00] },
-            { "time": 0.18, "value": [0.75, 0.75, 0.75] },
-            { "time": 0.45, "value": [0.40, 0.40, 0.40] }
-          ]
-        }
-      },
-      "events": [
-        { "time": 0.02, "name": "particle:ava_shield_retract_fade" },
-        { "time": 0.06, "name": "sound:ava_recall" }
-      ]
+      }
     }
   }
 }

@@ -354,7 +354,7 @@ public class AVAEntity extends Mob implements GeoEntity {
         registrar.add(new AnimationController<>(this, "ava_ctrl", 4, state -> {
             // "idle" plays while AVA exists — retract/deploy wired separately
             state.getController().setAnimation(
-                RawAnimation.begin().thenLoop("idle"));
+                RawAnimation.begin().thenLoop("animation.ava.idle"));
             return PlayState.CONTINUE;
         }));
     }
