@@ -13,35 +13,41 @@ public class ModKeybinds {
 
     private static final String CATEGORY = "key.categories.u_heroes";
 
+    /** Hold to expand AVA's shield sphere. */
     public static final KeyMapping AVA_SHIELD = new KeyMapping(
         "key.u_heroes.ava_shield",
         com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM,
-        GLFW.GLFW_KEY_R,
-        CATEGORY);
+        GLFW.GLFW_KEY_R, CATEGORY);
 
+    /** Horizontal burst dash in look direction. */
     public static final KeyMapping BOOSTER_DASH = new KeyMapping(
         "key.u_heroes.booster_dash",
         com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM,
-        GLFW.GLFW_KEY_V,
-        CATEGORY);
+        GLFW.GLFW_KEY_V, CATEGORY);
 
+    /** Hold while airborne for jetpack thrust. */
     public static final KeyMapping JETPACK = new KeyMapping(
         "key.u_heroes.jetpack",
         com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM,
-        GLFW.GLFW_KEY_SPACE,
-        CATEGORY);
+        GLFW.GLFW_KEY_SPACE, CATEGORY);
 
+    /** Flux-charged gauntlet power punch. */
     public static final KeyMapping POWER_PUNCH = new KeyMapping(
         "key.u_heroes.power_punch",
         com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM,
-        GLFW.GLFW_KEY_G,
-        CATEGORY);
+        GLFW.GLFW_KEY_G, CATEGORY);
 
+    /** Scan target entity for combat analysis. */
     public static final KeyMapping SCANNER = new KeyMapping(
         "key.u_heroes.scanner",
         com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM,
-        GLFW.GLFW_KEY_Z,
-        CATEGORY);
+        GLFW.GLFW_KEY_Z, CATEGORY);
+
+    /** Cycle AVA's visual size (Small → Medium → Large). */
+    public static final KeyMapping AVA_RESIZE = new KeyMapping(
+        "key.u_heroes.ava_resize",
+        com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM,
+        GLFW.GLFW_KEY_N, CATEGORY);
 
     @SubscribeEvent
     public static void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {
@@ -50,9 +56,8 @@ public class ModKeybinds {
         event.register(JETPACK);
         event.register(POWER_PUNCH);
         event.register(SCANNER);
+        event.register(AVA_RESIZE);
     }
 
-    /** Called from UHeroesMod.clientSetup — kept for compatibility but now a no-op.
-     *  Registration happens via RegisterKeyMappingsEvent above. */
-    public static void registerKeybinds() { /* no-op — handled by event */ }
+    public static void registerKeybinds() { /* handled by event */ }
 }

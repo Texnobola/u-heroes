@@ -12,10 +12,6 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-/**
- * Client-side keybind polling. Sends C→S packets on state changes.
- * Shield and jetpack send only on press/release transitions to avoid flooding.
- */
 @Mod.EventBusSubscriber(modid = UHeroesMod.MOD_ID, value = Dist.CLIENT)
 public class KeybindInputHandler {
 
@@ -30,31 +26,31 @@ public class KeybindInputHandler {
         if (mc.player == null || mc.level == null || mc.screen != null) return;
 
         if (!NanoSuitHandler.isWearingFullNanoSuit(mc.player)) {
-            // Key was held when suit removed — send release packets
-            if (prevShieldHeld)  { ModNetwork.sendToServer(new AVAShieldPacket(false)); prevShieldHeld  = false; }
+            if (prevShieldHeld)  { ModNetwork.sendToServer(new AVAShieldPacket(false)); prevShieldHeld = false; }
             if (prevJetpackHeld) { ModNetwork.sendToServer(new BoosterPacket(BoosterPacket.Action.JETPACK_OFF)); prevJetpackHeld = false; }
             return;
         }
 
         // Dash (tap)
-        while (ModKeybinds.BOOSTER_DASH.consumeClick()) {
+        while (ModKeybinds.BOOSTER_DASH.consumeClick())
             ModNetwork.sendToServer(new BoosterPacket(BoosterPacket.Action.DASH));
-        }
 
         // Power Punch (tap)
-        while (ModKeybinds.POWER_PUNCH.consumeClick()) {
+        while (ModKeybinds.POWER_PUNCH.consumeClick())
             ModNetwork.sendToServer(new BoosterPacket(BoosterPacket.Action.POWER_PUNCH));
-        }
 
-        // AVA Shield (hold — send on change only)
+        // AVA resize cycle (tap) — N key
+        while (ModKeybinds.AVA_RESIZE.consumeClick())
+            ModNetwork.sendToServer(new BoosterPacket(BoosterPacket.Action.AVA_RESIZE));
+
+        // AVA Shield (hold → change only)
         boolean shieldNow = ModKeybinds.AVA_SHIELD.isDown();
         if (shieldNow != prevShieldHeld) {
             ModNetwork.sendToServer(new AVAShieldPacket(shieldNow));
             prevShieldHeld = shieldNow;
         }
 
-        // Jetpack (hold — send on change only)
-        // player.jumping is protected; we relay the key state via packet instead
+        // Jetpack (hold → change only)
         boolean jetpackNow = ModKeybinds.JETPACK.isDown();
         if (jetpackNow != prevJetpackHeld) {
             ModNetwork.sendToServer(new BoosterPacket(

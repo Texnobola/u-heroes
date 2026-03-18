@@ -6,35 +6,27 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-/**
- * Sent CLIENT → SERVER for booster ability triggers and jetpack state changes.
- */
 public class BoosterPacket {
 
-    public enum Action { DASH, POWER_PUNCH, JETPACK_ON, JETPACK_OFF }
+    public enum Action { DASH, POWER_PUNCH, JETPACK_ON, JETPACK_OFF, AVA_RESIZE }
 
     private final Action action;
-
     public BoosterPacket(Action action) { this.action = action; }
 
-    public static void encode(BoosterPacket pkt, FriendlyByteBuf buf) {
-        buf.writeEnum(pkt.action);
-    }
-
-    public static BoosterPacket decode(FriendlyByteBuf buf) {
-        return new BoosterPacket(buf.readEnum(Action.class));
-    }
+    public static void encode(BoosterPacket pkt, FriendlyByteBuf buf) { buf.writeEnum(pkt.action); }
+    public static BoosterPacket decode(FriendlyByteBuf buf) { return new BoosterPacket(buf.readEnum(Action.class)); }
 
     public static void handle(BoosterPacket pkt, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
-
+            var bh = com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.class;
             switch (pkt.action) {
                 case DASH        -> com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.triggerDash(player);
                 case POWER_PUNCH -> com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.triggerPowerPunch(player);
                 case JETPACK_ON  -> com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.setJetpackActive(player.getUUID(), true);
                 case JETPACK_OFF -> com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.setJetpackActive(player.getUUID(), false);
+                case AVA_RESIZE  -> com.uheroes.mod.heroes.nanotech.ava.AVAEntity.cycleSize(player);
             }
         });
         ctx.get().setPacketHandled(true);
