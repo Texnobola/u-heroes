@@ -11,7 +11,12 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 /**
- * Sent CLIENT → SERVER on AVA shield key press/release.
+ * C→S: sent when the AVA shield key (R) is pressed or released.
+ *
+ * <p>On press: AVA enters intercept mode — slides to the orbit angle
+ * that interposes her between the player and the nearest threat.
+ *
+ * <p>On release: AVA resumes normal orbit.
  */
 public class AVAShieldPacket {
 
@@ -35,13 +40,13 @@ public class AVAShieldPacket {
             player.getCapability(AVACapability.INSTANCE).ifPresent(ava -> {
                 ava.setShieldHeld(pkt.held);
 
-                // Push state to the live AVA entity using UUID overload directly
                 ava.getAvaUUID().ifPresent(id -> {
-                    if (player.level() instanceof ServerLevel level) {
-                        Entity entity = level.getEntities().get(id); // UUID overload — no lambda
-                        if (entity instanceof AVAEntity avaEntity) {
-                            avaEntity.setShieldActive(pkt.held);
-                        }
+                    if (!(player.level() instanceof ServerLevel level)) return;
+                    Entity entity = level.getEntities().get(id);
+                    if (entity instanceof AVAEntity avaEntity) {
+                        avaEntity.setShieldActive(pkt.held);
+                        // R press → AVA moves to face the threat direction
+                        avaEntity.setInterceptMode(pkt.held, player);
                     }
                 });
             });

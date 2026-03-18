@@ -10,9 +10,10 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 /**
- * Reads AVA's sizeIndex to pick the visual scale.
- * Sizes: Small=0.18, Medium=0.28, Large=0.42
- * Cycle with N key.
+ * Renders AVA with:
+ * - Dynamic scale from entity (Small / Medium / Large presets)
+ * - Shield active → scale up model to 2× to visually show barrier expansion
+ * - Translucent render type for holo transparency
  */
 public class AVARenderer extends GeoEntityRenderer<AVAEntity> {
 
@@ -28,7 +29,7 @@ public class AVARenderer extends GeoEntityRenderer<AVAEntity> {
 
     @Override
     public RenderType getRenderType(AVAEntity entity, ResourceLocation texture,
-                                    MultiBufferSource bufferSource, float partialTick) {
+                                    MultiBufferSource buffer, float partialTick) {
         return RenderType.entityTranslucent(texture);
     }
 
@@ -36,8 +37,14 @@ public class AVARenderer extends GeoEntityRenderer<AVAEntity> {
     public void render(AVAEntity entity, float entityYaw, float partialTick,
                        PoseStack poseStack, MultiBufferSource buffer, int light) {
         poseStack.pushPose();
-        float s = entity.getRenderScale();
-        poseStack.scale(s, s, s);
+
+        // Base size from entity preset (Small / Medium / Large)
+        float base = entity.getRenderScale();
+        // When shield is active, grow the visual model to show the barrier
+        float shieldMult = entity.isShieldActive() ? 2.2f : 1.0f;
+        float scale = base * shieldMult;
+
+        poseStack.scale(scale, scale, scale);
         super.render(entity, entityYaw, partialTick, poseStack, buffer, light);
         poseStack.popPose();
     }

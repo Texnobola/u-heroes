@@ -65,7 +65,7 @@ public class AVAEffects {
     public static void spawnOrbitTrail(LivingEntity ava, float yaw, float pitch) {
         Vec3 pos = ava.position().add(0, ava.getBbHeight() * 0.5, 0);
         AAALevel.addParticle(
-            ava.level(), true,
+            ava.level(), false,
             ORBIT_TRAIL.clone()
                 .position(pos.x, pos.y, pos.z)
                 .rotation(pitch, yaw, 0f)
@@ -90,7 +90,7 @@ public class AVAEffects {
         for (int i = 0; i < 4; i++) {
             float roll = (float) Math.toRadians(i * 90.0);
             AAALevel.addParticle(
-                ava.level(), true,
+                ava.level(), false,
                 SHIELD_PULSE.clone()
                     .position(pos.x, pos.y, pos.z)
                     .rotation(0f, roll, roll)
@@ -120,7 +120,7 @@ public class AVAEffects {
 
         // Primary large ring facing the impact direction
         AAALevel.addParticle(
-            ava.level(), true,
+            ava.level(), false,
             BLOCK_DEFLECT.clone()
                 .position(pos.x, pos.y, pos.z)
                 .rotation(pitch, yaw, 0f)
@@ -131,7 +131,7 @@ public class AVAEffects {
         for (int i = 1; i <= 3; i++) {
             float roll = (float) Math.toRadians(i * 45.0);
             AAALevel.addParticle(
-                ava.level(), true,
+                ava.level(), false,
                 BLOCK_DEFLECT.clone()
                     .position(pos.x, pos.y, pos.z)
                     .rotation(pitch, yaw, roll)

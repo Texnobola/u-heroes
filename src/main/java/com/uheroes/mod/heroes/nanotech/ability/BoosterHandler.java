@@ -18,11 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Server-side booster ability logic.
- * Jetpack state is tracked here and set via BoosterPacket (JETPACK_ON/OFF)
- * because player.jumping is protected in LivingEntity and unreachable from here.
- */
 @Mod.EventBusSubscriber(modid = UHeroesMod.MOD_ID)
 public class BoosterHandler {
 
@@ -33,23 +28,22 @@ public class BoosterHandler {
     private static final int CD_DASH  = 12;
     private static final int CD_PUNCH = 20;
 
-    private static final Map<UUID, Integer> dashCooldowns   = new HashMap<>();
-    private static final Map<UUID, Integer> punchCooldowns  = new HashMap<>();
-    /** Server-side jetpack active flags — set by client packets */
-    private static final Map<UUID, Boolean> jetpackActive   = new HashMap<>();
+    private static final Map<UUID, Integer> dashCooldowns  = new HashMap<>();
+    private static final Map<UUID, Integer> punchCooldowns = new HashMap<>();
+    private static final Map<UUID, Boolean> jetpackActive  = new HashMap<>();
 
-    // ─── Jetpack state (set from BoosterPacket) ───────────────────────────────
+    // ─── Jetpack state ────────────────────────────────────────────────────────
 
-    public static void setJetpackActive(UUID playerId, boolean active) {
-        if (active) jetpackActive.put(playerId, true);
-        else        jetpackActive.remove(playerId);
+    public static void setJetpackActive(UUID id, boolean active) {
+        if (active) jetpackActive.put(id, true);
+        else        jetpackActive.remove(id);
     }
 
     public static boolean isJetpackActive(Player player) {
         return jetpackActive.getOrDefault(player.getUUID(), false);
     }
 
-    // ─── Ability triggers ─────────────────────────────────────────────────────
+    // ─── Dash ─────────────────────────────────────────────────────────────────
 
     public static void triggerDash(Player player) {
         if (!NanoSuitHandler.isWearingFullNanoSuit(player)) return;
@@ -58,62 +52,79 @@ public class BoosterHandler {
 
         Vec3 look = player.getLookAngle().multiply(1, 0, 1).normalize();
         Vec3 cur  = player.getDeltaMovement();
-        player.setDeltaMovement(cur.x + look.x * 1.4, cur.y, cur.z + look.z * 1.4);
+        player.setDeltaMovement(cur.x + look.x * 1.6, cur.y + 0.1, cur.z + look.z * 1.6);
         player.hurtMarked = true;
-
         setCooldown(dashCooldowns, player, CD_DASH);
 
-        if (player.level() instanceof ServerLevel sl) {
-            // SoundEvents.WIND_CHARGE_BURST added in 1.21 — use TRIDENT_THROW for 1.20.1
+        if (player.level() instanceof ServerLevel sl)
             sl.playSound(null, player.blockPosition(),
                 SoundEvents.TRIDENT_THROW, SoundSource.PLAYERS, 0.8f, 1.5f);
-        }
     }
 
+    // ─── Power Punch ─────────────────────────────────────────────────────────
+
+    /**
+     * Brutally launches enemies in the look direction.
+     * Horizontal scale 4.5, upward component 1.2 — throws them across the arena.
+     */
     public static void triggerPowerPunch(Player player) {
         if (!NanoSuitHandler.isWearingFullNanoSuit(player)) return;
         if (onCooldown(punchCooldowns, player)) return;
         if (!FluxCapability.consume(player, FLUX_PUNCH)) return;
 
         Vec3 look = player.getLookAngle();
-        player.setDeltaMovement(player.getDeltaMovement().add(look.scale(0.7)));
+        // Player lunge
+        player.setDeltaMovement(player.getDeltaMovement().add(look.scale(0.8)));
         player.hurtMarked = true;
 
-        AABB hitBox = player.getBoundingBox().expandTowards(look.scale(3.0)).inflate(0.6);
-        player.level().getEntitiesOfClass(LivingEntity.class, hitBox, e -> e != player && e.isAlive())
-            .forEach(e -> {
-                e.hurt(player.damageSources().playerAttack(player), 10.0f);
-                e.setDeltaMovement(e.getDeltaMovement().add(look.scale(1.4)));
-                e.hurtMarked = true;
-            });
+        // Hit entities in a 4-block cone
+        AABB hitBox = player.getBoundingBox()
+            .expandTowards(look.scale(4.0)).inflate(0.8);
+
+        player.level().getEntitiesOfClass(LivingEntity.class, hitBox,
+            e -> e != player && e.isAlive()
+        ).forEach(e -> {
+            e.hurt(player.damageSources().playerAttack(player), 14.0f);
+            // Massive launch: horizontal 4.5 + upward 1.2
+            Vec3 launch = look.multiply(4.5, 0, 4.5).add(0, 1.2, 0);
+            e.setDeltaMovement(launch);
+            e.hurtMarked = true;
+        });
 
         setCooldown(punchCooldowns, player, CD_PUNCH);
 
-        if (player.level() instanceof ServerLevel sl) {
+        if (player.level() instanceof ServerLevel sl)
             sl.playSound(null, player.blockPosition(),
-                SoundEvents.IRON_GOLEM_ATTACK, SoundSource.PLAYERS, 0.9f, 1.6f);
-        }
+                SoundEvents.IRON_GOLEM_ATTACK, SoundSource.PLAYERS, 1.0f, 0.8f);
     }
 
-    /** Called every tick from NanoSuitHandler when jetpackActive[player] == true. */
+    // ─── Jetpack ──────────────────────────────────────────────────────────────
+
+    /**
+     * Direct Y-velocity override every tick — no lerp, no gravity accumulation.
+     * Player holds Jetpack key (Space) → stays at fixed upward velocity.
+     * Sneak → descend. Gravity is defeated by overriding Y each tick directly.
+     */
     public static void tickJetpack(Player player) {
         if (!NanoSuitHandler.isWearingFullNanoSuit(player)) return;
-        if (player.onGround()) return;   // onGround() — correct 1.20.1 spelling
+        if (player.onGround()) return;
 
         if (!FluxCapability.consume(player, FLUX_JETPACK_TICK)) {
+            // Out of flux — graceful deceleration
             Vec3 m = player.getDeltaMovement();
-            player.setDeltaMovement(m.x * 0.88, m.y * 0.78, m.z * 0.88);
+            player.setDeltaMovement(m.x * 0.90, m.y * 0.80, m.z * 0.90);
             return;
         }
 
         Vec3 m = player.getDeltaMovement();
-        double targetY = player.isCrouching() ? -0.08 : 0.22;
-        player.setDeltaMovement(m.x, m.y + (targetY - m.y) * 0.28, m.z);
+        // Direct set — overrides gravity completely each tick
+        double vy = player.isCrouching() ? -0.20 : 0.28;
+        player.setDeltaMovement(m.x, vy, m.z);
         player.fallDistance = 0;
         player.resetFallDistance();
     }
 
-    // ─── Per-tick cooldown decay ──────────────────────────────────────────────
+    // ─── Cooldown tick ────────────────────────────────────────────────────────
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -126,7 +137,7 @@ public class BoosterHandler {
     private static boolean onCooldown(Map<UUID, Integer> map, Player p) {
         return map.getOrDefault(p.getUUID(), 0) > 0;
     }
-    private static void setCooldown(Map<UUID, Integer> map, Player p, int ticks) {
-        map.put(p.getUUID(), ticks);
+    private static void setCooldown(Map<UUID, Integer> map, Player p, int t) {
+        map.put(p.getUUID(), t);
     }
 }
