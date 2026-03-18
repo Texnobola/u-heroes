@@ -7,20 +7,15 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 /**
- * Sent CLIENT → SERVER when the player presses a booster keybind.
- *
- * <p>The server validates Flux availability and applies the movement/damage
- * impulse authoritatively.
+ * Sent CLIENT → SERVER for booster ability triggers and jetpack state changes.
  */
 public class BoosterPacket {
 
-    public enum Action { DASH, POWER_PUNCH }
+    public enum Action { DASH, POWER_PUNCH, JETPACK_ON, JETPACK_OFF }
 
     private final Action action;
 
     public BoosterPacket(Action action) { this.action = action; }
-
-    // ─── Codec ────────────────────────────────────────────────────────────────
 
     public static void encode(BoosterPacket pkt, FriendlyByteBuf buf) {
         buf.writeEnum(pkt.action);
@@ -30,8 +25,6 @@ public class BoosterPacket {
         return new BoosterPacket(buf.readEnum(Action.class));
     }
 
-    // ─── Handler ──────────────────────────────────────────────────────────────
-
     public static void handle(BoosterPacket pkt, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
@@ -40,6 +33,8 @@ public class BoosterPacket {
             switch (pkt.action) {
                 case DASH        -> com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.triggerDash(player);
                 case POWER_PUNCH -> com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.triggerPowerPunch(player);
+                case JETPACK_ON  -> com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.setJetpackActive(player.getUUID(), true);
+                case JETPACK_OFF -> com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.setJetpackActive(player.getUUID(), false);
             }
         });
         ctx.get().setPacketHandled(true);

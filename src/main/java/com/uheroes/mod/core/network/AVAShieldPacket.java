@@ -11,18 +11,13 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 /**
- * Sent CLIENT → SERVER every time the AVA shield key is pressed or released.
- *
- * <p>The server updates AVAData.shieldHeld and pushes the state directly to
- * the linked AVAEntity. This keeps the shield fully authoritative on the server.
+ * Sent CLIENT → SERVER on AVA shield key press/release.
  */
 public class AVAShieldPacket {
 
     private final boolean held;
 
     public AVAShieldPacket(boolean held) { this.held = held; }
-
-    // ─── Codec ────────────────────────────────────────────────────────────────
 
     public static void encode(AVAShieldPacket pkt, FriendlyByteBuf buf) {
         buf.writeBoolean(pkt.held);
@@ -32,8 +27,6 @@ public class AVAShieldPacket {
         return new AVAShieldPacket(buf.readBoolean());
     }
 
-    // ─── Handler ──────────────────────────────────────────────────────────────
-
     public static void handle(AVAShieldPacket pkt, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
@@ -42,12 +35,10 @@ public class AVAShieldPacket {
             player.getCapability(AVACapability.INSTANCE).ifPresent(ava -> {
                 ava.setShieldHeld(pkt.held);
 
-                // Push state to the live AVA entity
+                // Push state to the live AVA entity using UUID overload directly
                 ava.getAvaUUID().ifPresent(id -> {
                     if (player.level() instanceof ServerLevel level) {
-                        Entity entity = level.getEntity(
-                            level.getEntities().get(e -> e.getUUID().equals(id))
-                                .findFirst().map(Entity::getId).orElse(-1));
+                        Entity entity = level.getEntities().get(id); // UUID overload — no lambda
                         if (entity instanceof AVAEntity avaEntity) {
                             avaEntity.setShieldActive(pkt.held);
                         }

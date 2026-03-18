@@ -1,3 +1,4 @@
+import com.uheroes.mod.heroes.nanotech.ability.BoosterHandler;
 package com.uheroes.mod.heroes.nanotech.armor;
 
 import com.uheroes.mod.UHeroesMod;
@@ -113,7 +114,7 @@ public class NanoSuitHandler {
 
             // Jetpack: continuous thrust when player is jumping mid-air
             // (player.jumping is the vanilla flag synced from client movement packets)
-            if (player.jumping && !player.isOnGround()) {
+            if (BoosterHandler.isJetpackActive(player) && !player.onGround()) {
                 com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.tickJetpack(player);
             }
         }

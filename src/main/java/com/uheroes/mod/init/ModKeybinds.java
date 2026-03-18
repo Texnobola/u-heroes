@@ -1,57 +1,58 @@
 package com.uheroes.mod.init;
 
-import com.mojang.blaze3d.platform.InputConstants;
+import com.uheroes.mod.UHeroesMod;
 import net.minecraft.client.KeyMapping;
-import net.minecraftforge.client.settings.KeyConflictContext;
-import net.minecraftforge.client.ClientRegistry;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import org.lwjgl.glfw.GLFW;
 
+@Mod.EventBusSubscriber(modid = UHeroesMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ModKeybinds {
 
     private static final String CATEGORY = "key.categories.u_heroes";
 
-    // ─── AVA ─────────────────────────────────────────────────────────────────
-    /** Hold to expand AVA's shield sphere. */
     public static final KeyMapping AVA_SHIELD = new KeyMapping(
         "key.u_heroes.ava_shield",
-        KeyConflictContext.IN_GAME,
-        InputConstants.getKey("key.keyboard.r", -1),
+        com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM,
+        GLFW.GLFW_KEY_R,
         CATEGORY);
 
-    // ─── Boosters ─────────────────────────────────────────────────────────────
-    /** Tap for horizontal dash burst. */
     public static final KeyMapping BOOSTER_DASH = new KeyMapping(
         "key.u_heroes.booster_dash",
-        KeyConflictContext.IN_GAME,
-        InputConstants.getKey("key.keyboard.v", -1),
+        com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM,
+        GLFW.GLFW_KEY_V,
         CATEGORY);
 
-    /** Hold while airborne for jetpack flight. */
     public static final KeyMapping JETPACK = new KeyMapping(
         "key.u_heroes.jetpack",
-        KeyConflictContext.IN_GAME,
-        InputConstants.getKey("key.keyboard.space", -1),
+        com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM,
+        GLFW.GLFW_KEY_SPACE,
         CATEGORY);
 
-    /** Flux-charged power punch / gauntlet strike. */
     public static final KeyMapping POWER_PUNCH = new KeyMapping(
         "key.u_heroes.power_punch",
-        KeyConflictContext.IN_GAME,
-        InputConstants.getKey("key.keyboard.g", -1),
+        com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM,
+        GLFW.GLFW_KEY_G,
         CATEGORY);
 
-    // ─── Analysis ─────────────────────────────────────────────────────────────
-    /** Scan the targeted entity. */
     public static final KeyMapping SCANNER = new KeyMapping(
         "key.u_heroes.scanner",
-        KeyConflictContext.IN_GAME,
-        InputConstants.getKey("key.keyboard.z", -1),
+        com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM,
+        GLFW.GLFW_KEY_Z,
         CATEGORY);
 
-    public static void registerKeybinds() {
-        ClientRegistry.registerKeyBinding(AVA_SHIELD);
-        ClientRegistry.registerKeyBinding(BOOSTER_DASH);
-        ClientRegistry.registerKeyBinding(JETPACK);
-        ClientRegistry.registerKeyBinding(POWER_PUNCH);
-        ClientRegistry.registerKeyBinding(SCANNER);
+    @SubscribeEvent
+    public static void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {
+        event.register(AVA_SHIELD);
+        event.register(BOOSTER_DASH);
+        event.register(JETPACK);
+        event.register(POWER_PUNCH);
+        event.register(SCANNER);
     }
+
+    /** Called from UHeroesMod.clientSetup — kept for compatibility but now a no-op.
+     *  Registration happens via RegisterKeyMappingsEvent above. */
+    public static void registerKeybinds() { /* no-op — handled by event */ }
 }
