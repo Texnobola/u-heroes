@@ -1,5 +1,5 @@
-import com.uheroes.mod.heroes.nanotech.ability.BoosterHandler;
 package com.uheroes.mod.heroes.nanotech.armor;
+import com.uheroes.mod.heroes.nanotech.ability.BoosterHandler;
 
 import com.uheroes.mod.UHeroesMod;
 import com.uheroes.mod.core.flux.FluxCapability;
