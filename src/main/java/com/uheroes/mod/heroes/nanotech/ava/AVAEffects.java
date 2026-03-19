@@ -7,60 +7,34 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * AVA VFX — three Effekseer effects for the AI companion system.
+ * AVA VFX — Effekseer effects.
  *
- * <h2>Effect Sources (from official Effekseer sample pack)</h2>
- * <pre>
- * ava_orbit_trail.efkefc   = Aura01.efkefc   (4-layer glowing aura rings)
- *   └─ Textures/Aura02_T.png, Aura04_T.png, Normal01.png, Particle01.png
- *
- * ava_shield_pulse.efkefc  = Barrior02.efkefc (multi-layer animated barrier)
- *   └─ Textures/Aura01_T, Aura02_T, Aura04_T, Aura06_T, Normal01.png
- *
- * ava_block_deflect.efkefc = Simple_Ring_Shape1.efkefc (no-texture ring burst)
- *   └─ no textures needed
- * </pre>
- *
- * <h2>All textures</h2>
- * Copied to {@code assets/u_heroes/effeks/Textures/} — same relative folder
- * the .efkefc files expect. Effekseer resolves paths relative to the effect file.
- *
- * <h2>Usage</h2>
- * All methods are client-side only. Call inside {@code level.isClientSide()} guards
- * or from a {@code @Mod.EventBusSubscriber(value = Dist.CLIENT)} handler.
+ * Scale guide (empirical):
+ *  - Simple_Track1 (orbit trail):   0.04  → tiny sparkling comet tail
+ *  - Simple_Ring_Shape1 (deflect):  0.08  → compact ring flash
+ *  - Laser01 (blaster):             0.06  → tight beam shot
+ *  - Simple_Ring_Shape1 (shield):   0.15  → moderate barrier ring
  */
 public class AVAEffects {
 
-    // ─── Emitter descriptors ─────────────────────────────────────────────────
-
-    /** Aura01 — 4-layer glowing ring aura. Soft, persistent glow trail. */
     private static final ParticleEmitterInfo ORBIT_TRAIL = new ParticleEmitterInfo(
-        new ResourceLocation("u_heroes", "ava_orbit_trail")
+        new ResourceLocation("u_heroes", "ava_orbit_trail")   // Simple_Track1
     );
-
-    /** Barrior02 — multi-layer animated force barrier. Instantaneous ring burst. */
     private static final ParticleEmitterInfo SHIELD_PULSE = new ParticleEmitterInfo(
-        new ResourceLocation("u_heroes", "ava_shield_pulse")
+        new ResourceLocation("u_heroes", "ava_shield_pulse")  // Simple_Ring_Shape1
     );
-
-    /** Simple_Ring_Shape1 — clean geometric ring flash. Sharp deflect spark. */
     private static final ParticleEmitterInfo BLOCK_DEFLECT = new ParticleEmitterInfo(
-        new ResourceLocation("u_heroes", "ava_block_deflect")
+        new ResourceLocation("u_heroes", "ava_block_deflect") // Simple_Ring_Shape1
+    );
+    private static final ParticleEmitterInfo BLASTER = new ParticleEmitterInfo(
+        new ResourceLocation("u_heroes", "ava_blaster")       // Laser01
     );
 
-    // ─── Public spawn methods ─────────────────────────────────────────────────
+    // ─── Orbit trail ──────────────────────────────────────────────────────────
 
     /**
-     * Spawns AVA's orbital glow trail at her current position.
-     *
-     * <p>Based on Aura01 — a four-layer animated aura effect. Use scale 0.3–0.6
-     * so it fits around a single entity rather than filling a room.
-     *
-     * <p>Call every 4–6 ticks while AVA is moving (client-side).
-     *
-     * @param ava   the AVA entity (position source)
-     * @param yaw   AVA's current yaw in radians
-     * @param pitch AVA's current pitch in radians
+     * Small sparkling comet tail — spawned every 3 ticks while orbiting.
+     * Scale 0.04 keeps it tiny and tight around AVA's body.
      */
     public static void spawnOrbitTrail(LivingEntity ava, float yaw, float pitch) {
         Vec3 pos = ava.position().add(0, ava.getBbHeight() * 0.5, 0);
@@ -69,77 +43,88 @@ public class AVAEffects {
             ORBIT_TRAIL.clone()
                 .position(pos.x, pos.y, pos.z)
                 .rotation(pitch, yaw, 0f)
-                .scale(0.35f)   // Aura01 is large by default — scale down for entity-size
+                .scale(0.04f)
         );
     }
 
+    // ─── Shield pulse ─────────────────────────────────────────────────────────
+
     /**
-     * Spawns the shield activation burst at AVA's centre.
-     *
-     * <p>Based on Barrior02 — a multi-layered barrier ring with inner/outer
-     * glow. Fires four rings at 90° intervals to fake a sphere.
-     *
-     * <p>Call once when the shield key is pressed or the barrier expands.
-     *
-     * @param ava   the AVA entity
-     * @param scale 1.0 = default ring, 2.5 = full expanded barrier sphere
+     * Two perpendicular rings for a shield barrier feel.
+     * scale=0.15 on activation, 0.10 for sustained pulses.
      */
     public static void spawnShieldPulse(LivingEntity ava, float scale) {
         Vec3 pos = ava.position().add(0, ava.getBbHeight() * 0.5, 0);
-        // Four rings at 90° rotations → fakes a complete sphere
-        for (int i = 0; i < 4; i++) {
+        // Two rings at 0° and 90° — gives a cross/sphere hint without overdoing it
+        for (int i = 0; i < 2; i++) {
             float roll = (float) Math.toRadians(i * 90.0);
             AAALevel.addParticle(
                 ava.level(), false,
                 SHIELD_PULSE.clone()
                     .position(pos.x, pos.y, pos.z)
                     .rotation(0f, roll, roll)
-                    .scale(scale * 0.4f)  // Barrior02 is designed for large scenes
+                    .scale(scale * 0.15f)
             );
         }
     }
 
+    // ─── Block deflect ────────────────────────────────────────────────────────
+
     /**
-     * Spawns a sharp deflect ring at AVA's position when she intercepts
-     * a projectile or blocks an attack.
-     *
-     * <p>Based on Simple_Ring_Shape1 — a clean geometric ring flash with
-     * no texture dependency. The ring expands and fades instantly.
-     *
-     * <p>Primary ring fires in the direction of the blocked hit, plus three
-     * 45°-offset scatter rings for a burst feel.
-     *
-     * @param ava    the AVA entity
-     * @param hitDir normalised direction FROM AVA TOWARD the blocked threat
+     * Single compact ring facing the impact direction.
+     * Scale 0.08 — tight, sharp, doesn't fill the screen.
      */
     public static void spawnBlockDeflect(LivingEntity ava, Vec3 hitDir) {
-        Vec3 pos = ava.getEyePosition();
-
+        Vec3 pos  = ava.getEyePosition();
         float yaw   = (float) Math.atan2(hitDir.x, hitDir.z);
         float pitch = (float) -Math.asin(Math.max(-1, Math.min(1, hitDir.y)));
 
-        // Primary large ring facing the impact direction
         AAALevel.addParticle(
             ava.level(), false,
             BLOCK_DEFLECT.clone()
                 .position(pos.x, pos.y, pos.z)
                 .rotation(pitch, yaw, 0f)
-                .scale(1.5f)
+                .scale(0.08f)
         );
-
-        // Three smaller scatter rings at 45° / 90° / 135° roll offsets
-        for (int i = 1; i <= 3; i++) {
-            float roll = (float) Math.toRadians(i * 45.0);
-            AAALevel.addParticle(
-                ava.level(), false,
-                BLOCK_DEFLECT.clone()
-                    .position(pos.x, pos.y, pos.z)
-                    .rotation(pitch, yaw, roll)
-                    .scale(0.8f)
-            );
-        }
     }
 
-    // ─── Prevent instantiation ────────────────────────────────────────────────
+    // ─── Blaster shot ─────────────────────────────────────────────────────────
+
+    /**
+     * Laser beam shot from AVA toward her target.
+     * Laser01 is a straight beam with muzzle flash — fires in the look direction.
+     * Scale 0.06 = tight beam that looks like a blaster bolt.
+     *
+     * @param from  muzzle position (AVA eye)
+     * @param dir   normalised direction toward target
+     */
+    public static void spawnBlasterShot(LivingEntity ava, Vec3 from, Vec3 dir) {
+        float yaw   = (float) Math.atan2(dir.x, dir.z);
+        float pitch = (float) -Math.asin(Math.max(-1, Math.min(1, dir.y)));
+
+        AAALevel.addParticle(
+            ava.level(), false,
+            BLASTER.clone()
+                .position(from.x, from.y, from.z)
+                .rotation(pitch, yaw, 0f)
+                .scale(0.06f)
+        );
+    }
+
+    /**
+     * Impact ring at an explicit world position — used by the blaster bolt on hit.
+     */
+    public static void spawnBlockDeflect(Object unused, Vec3 hitDir, Vec3 pos, net.minecraft.world.level.Level level) {
+        float yaw   = (float) Math.atan2(hitDir.x, hitDir.z);
+        float pitch = (float) -Math.asin(Math.max(-1, Math.min(1, hitDir.y)));
+        AAALevel.addParticle(
+            level, false,
+            BLOCK_DEFLECT.clone()
+                .position(pos.x, pos.y, pos.z)
+                .rotation(pitch, yaw, 0f)
+                .scale(0.06f)
+        );
+    }
+
     private AVAEffects() {}
 }

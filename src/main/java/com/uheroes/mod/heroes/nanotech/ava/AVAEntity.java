@@ -14,7 +14,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.SmallFireball;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -323,25 +322,32 @@ public class AVAEntity extends Mob implements GeoEntity {
     }
 
     private void fireBlaster(LivingEntity target, Player owner) {
-        if (!(level() instanceof ServerLevel sl)) return;
-
-        // Direction from AVA to target eye
         Vec3 from = getEyePosition();
         Vec3 to   = target.getEyePosition();
         Vec3 dir  = to.subtract(from).normalize();
+        double dist = from.distanceTo(to);
 
-        // Create a small fireball as the blaster bolt
-        SmallFireball bolt = new SmallFireball(sl,
-            getX(), getEyeY(), getZ(),
-            dir.x, dir.y, dir.z);
-        bolt.setOwner(owner);  // owned by player so it doesn't hurt owner
-        bolt.setPos(from.x, from.y, from.z);
-        sl.addFreshEntity(bolt);
+        // Laser VFX — one shot from AVA to target
+        AVAEffects.spawnBlasterShot(this, from, dir);
 
-        // Sound
-        sl.playSound(null, blockPosition(),
-            net.minecraft.sounds.SoundEvents.FIRECHARGE_USE,
-            net.minecraft.sounds.SoundSource.NEUTRAL, 0.5f, 1.8f);
+        // Instant hit — no projectile needed, VFX IS the bolt
+        target.hurt(
+            level() instanceof ServerLevel sl
+                ? owner.damageSources().playerAttack(owner)
+                : damageSources().generic(),
+            8.0f
+        );
+
+        // Small ring at impact point
+        Vec3 impactPos = from.add(dir.scale(dist));
+        AVAEffects.spawnBlockDeflect(null, dir, impactPos, level());
+
+        // Blaster sound — high-pitched zap
+        if (level() instanceof ServerLevel sl) {
+            sl.playSound(null, blockPosition(),
+                net.minecraft.sounds.SoundEvents.LIGHTNING_BOLT_THUNDER,
+                net.minecraft.sounds.SoundSource.NEUTRAL, 0.12f, 3.8f);
+        }
     }
 
     // ─── Blaster ──────────────────────────────────────────────────────────────
