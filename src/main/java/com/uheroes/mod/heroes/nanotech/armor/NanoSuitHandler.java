@@ -112,10 +112,6 @@ public class NanoSuitHandler {
                 });
             }
 
-            // Jetpack: continuous thrust when player is jumping mid-air
-            // (player.jumping is the vanilla flag synced from client movement packets)
-            if (BoosterHandler.isJetpackActive(player) && !player.onGround()) {
-                com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.tickJetpack(player);
             }
         }
     }

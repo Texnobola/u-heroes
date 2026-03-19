@@ -29,7 +29,7 @@ public class ModKeybinds {
     public static final KeyMapping JETPACK = new KeyMapping(
         "key.u_heroes.jetpack",
         com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM,
-        GLFW.GLFW_KEY_SPACE, CATEGORY);
+        GLFW.GLFW_KEY_LEFT_ALT, CATEGORY);
 
     /** Flux-charged gauntlet power punch. */
     public static final KeyMapping POWER_PUNCH = new KeyMapping(
