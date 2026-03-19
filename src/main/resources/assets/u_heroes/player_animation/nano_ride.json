@@ -1,0 +1,33 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.nano.ride": {
+      "loop": true,
+      "bones": {
+        "torso": {
+          "rotation": { "vector": [15, 0, 0] }
+        },
+        "head": {
+          "rotation": { "vector": [-15, 0, 0] }
+        },
+        "right_arm": {
+          "rotation": { "vector": [-60, -20, 10] },
+          "position": { "vector": [0, 2, -1] }
+        },
+        "left_arm": {
+          "rotation": { "vector": [-60, 20, -10] },
+          "position": { "vector": [0, 2, -1] }
+        },
+        "right_leg": {
+          "rotation": { "vector": [0, 0, 8] },
+          "position": { "vector": [0, -2, 0] }
+        },
+        "left_leg": {
+          "rotation": { "vector": [0, 0, -8] },
+          "position": { "vector": [0, -2, 0] }
+        }
+      }
+    }
+  },
+  "geckolib_format_version": 2
+}

@@ -2,6 +2,9 @@ package com.uheroes.mod.heroes.nanotech.ava;
 
 import com.uheroes.mod.core.flux.FluxCapability;
 import com.uheroes.mod.heroes.nanotech.ability.BoosterHandler;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -28,33 +31,33 @@ public class AVAEntity extends Mob implements GeoEntity {
 
     private final AnimatableInstanceCache animCache = GeckoLibUtil.createInstanceCache(this);
 
+    // ── Synced data (sent server→client every update interval) ────────────────
+    private static final EntityDataAccessor<Boolean> SHIELD_ACTIVE =
+        SynchedEntityData.defineId(AVAEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> SIZE_INDEX =
+        SynchedEntityData.defineId(AVAEntity.class, EntityDataSerializers.INT);
+
     private static final String NBT_OWNER       = "AVAOwnerUUID";
     private static final String NBT_ORBIT_ANGLE = "AVAOrbitAngle";
-    private static final String NBT_SHIELD      = "AVAShieldActive";
-    private static final String NBT_SIZE_IDX    = "AVASizeIndex";
 
-    // Size presets — renderScale used by AVARenderer
     public static final float[] RENDER_SCALES = { 0.18f, 0.28f, 0.42f };
     public static final float[] ORBIT_RADII   = { 1.2f,  1.6f,  2.2f  };
     public static final String[] SIZE_NAMES   = { "§7Small", "§bMedium", "§6Large" };
 
     private static final float ORBIT_SPEED    = 0.030f;
-    private static final float LERP_T         = 0.20f;
+    private static final float LERP_T         = 0.18f;
     private static final float RIDE_SPEED     = 0.28f;
     private static final float RIDE_VERT      = 0.22f;
     private static final int   FLUX_RIDE_TICK = 1;
 
     @Nullable private UUID ownerUUID;
-    private float   orbitAngle   = 0f;
-    private boolean shieldActive = false;
-    private int     sizeIndex    = 0;
-    private int     vfxTimer     = 0;
+    private float orbitAngle = 0f;
+    private int   vfxTimer   = 0;
 
-    // ── Target orbit angle when R is held (AVA moves toward threat) ───────────
     private boolean interceptMode = false;
-    private float   targetAngle   = 0f;  // angle to interpose between player + threat
+    private float   targetAngle   = 0f;
 
-    // ─── Constructor & Attributes ─────────────────────────────────────────────
+    // ─── Constructor ──────────────────────────────────────────────────────────
 
     public AVAEntity(EntityType<? extends Mob> type, Level level) {
         super(type, level);
@@ -70,29 +73,46 @@ public class AVAEntity extends Mob implements GeoEntity {
             .add(Attributes.FOLLOW_RANGE, 16.0);
     }
 
-    // ─── Never take damage (fixes growing-on-hit bug) ─────────────────────────
+    // ── Synched data definition ───────────────────────────────────────────────
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        entityData.define(SHIELD_ACTIVE, false);
+        entityData.define(SIZE_INDEX, 0);
+    }
+
+    // ── Getters/setters for synced fields ─────────────────────────────────────
+
+    public boolean isShieldActive()    { return entityData.get(SHIELD_ACTIVE); }
+    public void setShieldActive(boolean v) { entityData.set(SHIELD_ACTIVE, v); }
+
+    public int  getSizeIndex()         { return entityData.get(SIZE_INDEX); }
+    public float getRenderScale()      { return RENDER_SCALES[getSizeIndex()]; }
+    public float getOrbitRadius()      { return ORBIT_RADII[getSizeIndex()]; }
+    public float getShieldRadius()     { return isShieldActive() ? 2.5f : 0f; }
+
+    // ─── Hurt override — fixes growing bug ────────────────────────────────────
     @Override public boolean hurt(DamageSource s, float a) { return false; }
     @Override public boolean isInvulnerableTo(DamageSource s) { return true; }
 
     // ─── Size cycling ─────────────────────────────────────────────────────────
 
     public static void cycleSize(Player player) {
+        if (!(player.level() instanceof net.minecraft.server.level.ServerLevel sl)) return;
         player.getCapability(AVACapability.INSTANCE).ifPresent(data ->
             data.getAvaUUID().ifPresent(id -> {
-                if (!(player.level() instanceof net.minecraft.server.level.ServerLevel sl)) return;
                 for (Entity e : sl.getEntities().getAll()) {
                     if (e instanceof AVAEntity ava && e.getUUID().equals(id)) {
-                        ava.sizeIndex = (ava.sizeIndex + 1) % RENDER_SCALES.length;
+                        int next = (ava.getSizeIndex() + 1) % RENDER_SCALES.length;
+                        ava.entityData.set(SIZE_INDEX, next);
                         player.displayClientMessage(
-                            Component.literal("§b[AVA] §7Size: " + SIZE_NAMES[ava.sizeIndex]), true);
+                            Component.literal("§b[AVA] §7Size: " + SIZE_NAMES[next]), true);
                         break;
                     }
                 }
             }));
     }
-
-    public float getRenderScale()  { return RENDER_SCALES[sizeIndex]; }
-    public float getOrbitRadius()  { return ORBIT_RADII[sizeIndex]; }
 
     // ─── NBT ──────────────────────────────────────────────────────────────────
 
@@ -101,37 +121,34 @@ public class AVAEntity extends Mob implements GeoEntity {
         super.addAdditionalSaveData(tag);
         if (ownerUUID != null) tag.putUUID(NBT_OWNER, ownerUUID);
         tag.putFloat(NBT_ORBIT_ANGLE, orbitAngle);
-        tag.putBoolean(NBT_SHIELD, shieldActive);
-        tag.putInt(NBT_SIZE_IDX, sizeIndex);
+        tag.putBoolean("AVAShieldActive", isShieldActive());
+        tag.putInt("AVASizeIndex", getSizeIndex());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         if (tag.hasUUID(NBT_OWNER)) ownerUUID = tag.getUUID(NBT_OWNER);
-        orbitAngle   = tag.getFloat(NBT_ORBIT_ANGLE);
-        shieldActive = tag.getBoolean(NBT_SHIELD);
-        sizeIndex    = Mth.clamp(tag.contains(NBT_SIZE_IDX) ? tag.getInt(NBT_SIZE_IDX) : 0,
-                                  0, RENDER_SCALES.length - 1);
+        orbitAngle = tag.getFloat(NBT_ORBIT_ANGLE);
+        setShieldActive(tag.getBoolean("AVAShieldActive"));
+        entityData.set(SIZE_INDEX,
+            Mth.clamp(tag.contains("AVASizeIndex") ? tag.getInt("AVASizeIndex") : 0,
+                      0, RENDER_SCALES.length - 1));
     }
 
-    // ─── Main tick ────────────────────────────────────────────────────────────
+    // ─── Tick ─────────────────────────────────────────────────────────────────
 
     @Override
     public void tick() {
         super.tick();
-
         if (isVehicle()) {
             if (getFirstPassenger() instanceof Player rider) tickRide(rider);
             return;
         }
-
         Player owner = resolveOwner();
         if (owner == null) return;
-
         updateOrbit(owner);
         tickIntercept(owner);
-
         if (level().isClientSide()) tickVFX();
     }
 
@@ -147,7 +164,6 @@ public class AVAEntity extends Mob implements GeoEntity {
         fn.accept(passenger, getX(), getY() + getBbHeight() + 0.15, getZ());
     }
 
-    /** Must return LivingEntity in 1.20.1 */
     @Override @Nullable
     public LivingEntity getControllingPassenger() {
         Entity p = getFirstPassenger();
@@ -157,25 +173,17 @@ public class AVAEntity extends Mob implements GeoEntity {
     private void tickRide(Player rider) {
         setYRot(rider.getYRot());
         yRotO = getYRot();
-
-        float fw = rider.zza;
-        float st = rider.xxa;
+        float fw = rider.zza, st = rider.xxa;
         double yawRad = Math.toRadians(rider.getYRot());
         double mx = -Math.sin(yawRad) * fw + -Math.cos(yawRad) * st;
         double mz =  Math.cos(yawRad) * fw +  -Math.sin(yawRad) * st;
         Vec3 h = new Vec3(mx, 0, mz);
         if (h.lengthSqr() > 1.0) h = h.normalize();
         h = h.scale(RIDE_SPEED);
-
-        // Vertical: use BoosterHandler jetpack flag (Space) for up,
-        // isCrouching() for down — avoids protected rider.jumping field
-        double vy = 0;
-        if (BoosterHandler.isJetpackActive(rider)) vy =  RIDE_VERT;
-        else if (rider.isCrouching())              vy = -RIDE_VERT;
-
+        double vy = BoosterHandler.isJetpackActive(rider) ? RIDE_VERT
+                  : rider.isCrouching()                   ? -RIDE_VERT : 0;
         if (!level().isClientSide() && (h.lengthSqr() > 0.001 || Math.abs(vy) > 0.001))
             FluxCapability.consume(rider, FLUX_RIDE_TICK);
-
         setDeltaMovement(h.x, vy, h.z);
         fallDistance = 0;
         resetFallDistance();
@@ -187,134 +195,97 @@ public class AVAEntity extends Mob implements GeoEntity {
         float r = getOrbitRadius();
 
         if (interceptMode) {
-            // Lerp orbit angle toward the intercept angle so AVA slides smoothly
-            float diff = Mth.wrapDegrees(
-                (float) Math.toDegrees(targetAngle) -
-                (float) Math.toDegrees(orbitAngle));
-            orbitAngle += (float) Math.toRadians(diff) * 0.15f;
+            float diff = targetAngle - orbitAngle;
+            while (diff >  Math.PI) diff -= (float)(2 * Math.PI);
+            while (diff < -Math.PI) diff += (float)(2 * Math.PI);
+            orbitAngle += diff * 0.10f;
         } else {
             orbitAngle += ORBIT_SPEED;
-            if (orbitAngle > Math.PI * 2) orbitAngle -= (float)(Math.PI * 2);
+            if (orbitAngle > Math.PI * 2) orbitAngle -= (float)(2 * Math.PI);
         }
 
         double tx = owner.getX() + Math.sin(orbitAngle) * r;
-        double ty = owner.getY() + 1.5;
+        double ty = owner.getY() + 1.6;
         double tz = owner.getZ() + Math.cos(orbitAngle) * r;
 
-        setPos(
-            Mth.lerp(LERP_T, getX(), tx),
-            Mth.lerp(LERP_T, getY(), ty),
-            Mth.lerp(LERP_T, getZ(), tz)
-        );
+        // Smooth movement via velocity, not teleport — avoids jitter
+        double dx = tx - getX();
+        double dy = ty - getY();
+        double dz = tz - getZ();
+        setDeltaMovement(dx * 0.4, dy * 0.4, dz * 0.4);
+        move(net.minecraft.world.entity.MoverType.SELF, getDeltaMovement());
+
+        // Face orbit direction
+        if (dx * dx + dz * dz > 0.0001) {
+            setYRot((float) Math.toDegrees(Math.atan2(-dx, dz)));
+        }
     }
 
-    // ─── Intercept mode (R key = AVA moves toward threat) ────────────────────
+    // ─── R key: intercept mode ────────────────────────────────────────────────
 
-    /**
-     * Activates intercept mode: AVA slides to the orbital position between
-     * the player and the nearest threat/projectile.
-     *
-     * @param held true = R pressed, false = R released → resume orbit
-     */
     public void setInterceptMode(boolean held, Player owner) {
         interceptMode = held;
         if (!held) return;
-
-        // Find the direction the biggest threat is coming from
-        Vec3 threatDir = findThreatDirection(owner);
-        if (threatDir == null) return;
-
-        // Compute the orbit angle that puts AVA between player and threat
-        // Threat is at angle φ from player → AVA goes to angle φ (opposite side)
-        targetAngle = (float) Math.atan2(threatDir.x, threatDir.z);
+        Vec3 dir = findThreatDirection(owner);
+        if (dir != null) targetAngle = (float) Math.atan2(dir.x, dir.z);
     }
 
-    @Nullable
-    private Vec3 findThreatDirection(Player owner) {
-        Vec3 ownerPos = owner.position();
-
-        // Priority 1: incoming projectile (closest)
-        var projectiles = level().getEntitiesOfClass(Projectile.class,
-            owner.getBoundingBox().inflate(16.0),
-            p -> !(p.getOwner() instanceof Player));
-
-        if (!projectiles.isEmpty()) {
-            Entity closest = projectiles.stream()
-                .min((a, b) -> Double.compare(a.distanceToSqr(owner), b.distanceToSqr(owner)))
-                .orElse(null);
-            if (closest != null)
-                return closest.position().subtract(ownerPos).normalize();
+    @Nullable private Vec3 findThreatDirection(Player owner) {
+        var projs = level().getEntitiesOfClass(Projectile.class,
+            owner.getBoundingBox().inflate(16.0), p -> !(p.getOwner() instanceof Player));
+        if (!projs.isEmpty()) {
+            return projs.stream().min((a,b)->Double.compare(a.distanceToSqr(owner),b.distanceToSqr(owner)))
+                .map(p -> p.position().subtract(owner.position()).normalize()).orElse(null);
         }
-
-        // Priority 2: nearest hostile mob
-        var hostiles = level().getEntitiesOfClass(LivingEntity.class,
+        var mobs = level().getEntitiesOfClass(LivingEntity.class,
             owner.getBoundingBox().inflate(12.0),
             e -> e != owner && e != this && e.isAlive() && !e.isAlliedTo(owner));
-
-        if (!hostiles.isEmpty()) {
-            LivingEntity nearest = hostiles.stream()
-                .min((a, b) -> Double.compare(a.distanceToSqr(owner), b.distanceToSqr(owner)))
-                .orElse(null);
-            if (nearest != null)
-                return nearest.position().subtract(ownerPos).normalize();
+        if (!mobs.isEmpty()) {
+            return mobs.stream().min((a,b)->Double.compare(a.distanceToSqr(owner),b.distanceToSqr(owner)))
+                .map(e -> e.position().subtract(owner.position()).normalize()).orElse(null);
         }
-
         return null;
     }
 
-    // ─── Shield / intercept ────────────────────────────────────────────────────
+    // ─── Intercept / shield ───────────────────────────────────────────────────
 
     private void tickIntercept(Player owner) {
         if (FluxCapability.getCurrent(owner) >= 5) {
-            AABB box = getBoundingBox().inflate(1.8f);
-            level().getEntitiesOfClass(Projectile.class, box,
+            level().getEntitiesOfClass(Projectile.class, getBoundingBox().inflate(1.8f),
                 p -> !(p.getOwner() instanceof Player)
             ).forEach(p -> {
-                if (!level().isClientSide() && FluxCapability.consume(owner, 2)) {
-                    // Deflect! Show VFX facing incoming direction
-                    if (level().isClientSide()) {
-                        Vec3 hitDir = p.position().subtract(position()).normalize();
-                        AVAEffects.spawnBlockDeflect(this, hitDir);
-                    }
-                    p.discard();
-                }
+                if (!level().isClientSide() && FluxCapability.consume(owner, 2)) p.discard();
             });
         }
         if (tickCount % 20 == 0 && !level().isClientSide()) {
             boolean threat = !level().getEntitiesOfClass(LivingEntity.class,
                 getBoundingBox().inflate(12f),
-                e -> e != owner && e != this && e.isAlive() && !e.isAlliedTo(owner)
-            ).isEmpty();
+                e -> e != owner && e != this && e.isAlive() && !e.isAlliedTo(owner)).isEmpty();
             if (threat) FluxCapability.consume(owner, 1);
         }
     }
-
-    public void setShieldActive(boolean v) { shieldActive = v; }
 
     // ─── VFX ──────────────────────────────────────────────────────────────────
 
     private void tickVFX() {
         vfxTimer++;
-        if (vfxTimer % 5 == 0)
-            AVAEffects.spawnOrbitTrail(this, (float) Math.toRadians(getYRot()), 0f);
-        if (shieldActive && vfxTimer % 20 == 0)
-            AVAEffects.spawnShieldPulse(this, 1.0f);
+        if (vfxTimer % 5 == 0) AVAEffects.spawnOrbitTrail(this, (float)Math.toRadians(getYRot()), 0f);
+        if (isShieldActive() && vfxTimer % 20 == 0) AVAEffects.spawnShieldPulse(this, 1.0f);
     }
 
     // ─── Getters ──────────────────────────────────────────────────────────────
 
     public void setOwnerUUID(UUID uuid)  { this.ownerUUID = uuid; }
     public Optional<UUID> getOwnerUUID() { return Optional.ofNullable(ownerUUID); }
-    public boolean isShieldActive()      { return shieldActive; }
-    public float getShieldRadius()       { return shieldActive ? 2.5f : 0f; }
     public float getOrbitAngle()         { return orbitAngle; }
 
-    @Nullable
-    private Player resolveOwner() {
+    @Nullable private Player resolveOwner() {
         return ownerUUID == null ? null : level().getPlayerByUUID(ownerUUID);
     }
 
     @Override public boolean removeWhenFarAway(double d) { return false; }
+    @Override
+
     @Override protected void registerGoals() { }
 
     // ─── GeckoLib ─────────────────────────────────────────────────────────────
@@ -322,12 +293,10 @@ public class AVAEntity extends Mob implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar reg) {
         reg.add(new AnimationController<>(this, "ava_ctrl", 4, state -> {
-            state.getController().setAnimation(
-                RawAnimation.begin().thenLoop("animation.ava.idle"));
+            state.getController().setAnimation(RawAnimation.begin().thenLoop("animation.ava.idle"));
             return PlayState.CONTINUE;
         }));
     }
 
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() { return animCache; }
+    @Override public AnimatableInstanceCache getAnimatableInstanceCache() { return animCache; }
 }

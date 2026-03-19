@@ -1,8 +1,6 @@
-package com.uheroes.mod.client.renderer;
+package com.uheroes.mod.heroes.nanotech.ava;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.uheroes.mod.heroes.nanotech.ava.AVAEntity;
-import com.uheroes.mod.heroes.nanotech.ava.AVAModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -10,10 +8,14 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 /**
- * Renders AVA with:
- * - Dynamic scale from entity (Small / Medium / Large presets)
- * - Shield active → scale up model to 2× to visually show barrier expansion
- * - Translucent render type for holo transparency
+ * AVA renderer.
+ *
+ * <p>Scale is applied by wrapping super.render() in a pushPose/scale/popPose.
+ * This is the most reliable approach across GeckoLib versions — preRender
+ * signatures change between minor releases.
+ *
+ * <p>isShieldActive() and getRenderScale() both read SynchedEntityData, so
+ * they return correct values on the client side.
  */
 public class AVARenderer extends GeoEntityRenderer<AVAEntity> {
 
@@ -29,23 +31,23 @@ public class AVARenderer extends GeoEntityRenderer<AVAEntity> {
 
     @Override
     public RenderType getRenderType(AVAEntity entity, ResourceLocation texture,
-                                    MultiBufferSource buffer, float partialTick) {
+                                    MultiBufferSource bufferSource, float partialTick) {
         return RenderType.entityTranslucent(texture);
     }
 
     @Override
-    public void render(AVAEntity entity, float entityYaw, float partialTick,
+    public void render(AVAEntity entity, float yaw, float partialTick,
                        PoseStack poseStack, MultiBufferSource buffer, int light) {
         poseStack.pushPose();
 
-        // Base size from entity preset (Small / Medium / Large)
+        // Base size preset (Small/Medium/Large) read from synced data
         float base = entity.getRenderScale();
-        // When shield is active, grow the visual model to show the barrier
-        float shieldMult = entity.isShieldActive() ? 2.2f : 1.0f;
-        float scale = base * shieldMult;
+        // Expand model when shield is active — synced from server
+        float mult  = entity.isShieldActive() ? 2.2f : 1.0f;
+        float scale = base * mult;
 
         poseStack.scale(scale, scale, scale);
-        super.render(entity, entityYaw, partialTick, poseStack, buffer, light);
+        super.render(entity, yaw, partialTick, poseStack, buffer, light);
         poseStack.popPose();
     }
 }

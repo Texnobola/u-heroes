@@ -2,6 +2,7 @@ package com.uheroes.mod.init;
 
 import com.uheroes.mod.UHeroesMod;
 import com.uheroes.mod.heroes.nanotech.armor.NanoSuitArmorItem;
+import com.uheroes.mod.heroes.nanotech.ava.AVAShieldItem;
 import com.uheroes.mod.heroes.nanotech.weapon.LaserSwordItem;
 import com.uheroes.mod.origin.NanoCreatureItem;
 import net.minecraft.world.item.ArmorItem;
@@ -25,6 +26,9 @@ public class ModItems {
         () -> new NanoSuitArmorItem(ArmorItem.Type.BOOTS, new Item.Properties()));
     public static final RegistryObject<Item> LASER_SWORD = ITEMS.register("laser_sword",
         () -> new LaserSwordItem(new Item.Properties()));
+
+    public static final RegistryObject<Item> AVA_SHIELD = ITEMS.register("ava_shield",
+        () -> new AVAShieldItem(new Item.Properties()));
 
     public static final RegistryObject<Item> NANO_ALLOY_FRAGMENT = ITEMS.register("nano_alloy_fragment",
         () -> new Item(new Item.Properties()));
