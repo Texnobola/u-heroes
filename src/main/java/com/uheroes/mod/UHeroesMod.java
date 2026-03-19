@@ -66,11 +66,7 @@ public class UHeroesMod {
             // AVA uses Minecraft's default invisible renderer until GeckoLib model is ready
             event.registerEntityRenderer(
                 ModEntities.AVA.get(),
-                com.uheroes.mod.client.renderer.AVARenderer::new
-            );
-            event.registerEntityRenderer(
-                ModEntities.AVA_BLASTER.get(),
-                net.minecraft.client.renderer.entity.NoopRenderer::new
+                com.uheroes.mod.heroes.nanotech.ava.AVARenderer::new
             );
         }
     }

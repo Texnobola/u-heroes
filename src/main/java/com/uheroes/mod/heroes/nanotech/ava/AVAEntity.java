@@ -1,9 +1,6 @@
 package com.uheroes.mod.heroes.nanotech.ava;
 
 import com.uheroes.mod.core.flux.FluxCapability;
-import com.uheroes.mod.core.network.AVAVfxPacket;
-import com.uheroes.mod.core.network.ModNetwork;
-import com.uheroes.mod.heroes.nanotech.ava.AVABlasterEntity;
 import com.uheroes.mod.heroes.nanotech.ability.BoosterHandler;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -17,6 +14,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.SmallFireball;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -144,10 +143,6 @@ public class AVAEntity extends Mob implements GeoEntity {
     @Override
     public void tick() {
         super.tick();
-
-        // VFX always ticks client-side regardless of mode
-        if (level().isClientSide()) tickVFX();
-
         if (isVehicle()) {
             if (getFirstPassenger() instanceof Player rider) tickRide(rider);
             return;
@@ -156,7 +151,9 @@ public class AVAEntity extends Mob implements GeoEntity {
         if (owner == null) return;
         updateOrbit(owner);
         tickIntercept(owner);
-        if (!level().isClientSide()) tickBlasterAttack(owner);
+        if (!level().isClientSide()) tickBlaster(owner);
+        // VFX: run on BOTH sides — server call syncs to all clients via AAAParticles network
+        tickVFX();
     }
 
     // ─── Riding ───────────────────────────────────────────────────────────────
@@ -259,19 +256,14 @@ public class AVAEntity extends Mob implements GeoEntity {
     private void tickIntercept(Player owner) {
         if (FluxCapability.getCurrent(owner) >= 5) {
             level().getEntitiesOfClass(Projectile.class, getBoundingBox().inflate(1.8f),
-                p -> !(p.getOwner() instanceof Player) && !(p instanceof AVABlasterEntity)
+                p -> !(p.getOwner() instanceof Player)
             ).forEach(p -> {
+                Vec3 hitDir = p.position().subtract(position()).normalize();
                 if (!level().isClientSide() && FluxCapability.consume(owner, 2)) {
-                    // Send VFX to all nearby clients BEFORE discarding
-                    Vec3 hitDir = p.getDeltaMovement().normalize();
-                    Vec3 pos = getEyePosition();
-                    ModNetwork.sendToAllTracking(
-                        new AVAVfxPacket(AVAVfxPacket.Type.BLOCK_DEFLECT,
-                            (float) pos.x, (float) pos.y, (float) pos.z,
-                            (float) hitDir.x, (float) hitDir.y, (float) hitDir.z),
-                        this);
                     p.discard();
                 }
+                // Deflect VFX — called on both sides so all clients see it
+                AVAEffects.spawnBlockDeflect(this, hitDir);
             });
         }
         if (tickCount % 20 == 0 && !level().isClientSide()) {
@@ -282,46 +274,28 @@ public class AVAEntity extends Mob implements GeoEntity {
         }
     }
 
-    // ─── Blaster Attack ───────────────────────────────────────────────────────
-
-    private static final int BLASTER_COOLDOWN = 60; // ticks between shots (3s)
-    private int blasterTimer = 0;
-
-    private void tickBlasterAttack(Player owner) {
-        blasterTimer++;
-        if (blasterTimer < BLASTER_COOLDOWN) return;
-
-        // Find nearest threat in 16-block range
-        LivingEntity target = level().getEntitiesOfClass(LivingEntity.class,
-            getBoundingBox().inflate(16.0),
-            e -> e != owner && e != this && e.isAlive() && !e.isAlliedTo(owner)
-        ).stream()
-            .min((a, b) -> Double.compare(a.distanceToSqr(this), b.distanceToSqr(this)))
-            .orElse(null);
-
-        if (target == null) return;
-        blasterTimer = 0;
-
-        // Spawn blaster bolt
-        AVABlasterEntity bolt = new AVABlasterEntity(level(), this, target);
-        level().addFreshEntity(bolt);
-
-        // Muzzle flash VFX
-        Vec3 muzzle = position().add(0, getBbHeight() * 0.5, 0);
-        Vec3 dir = target.getEyePosition().subtract(muzzle).normalize();
-        ModNetwork.sendToAllTracking(
-            new AVAVfxPacket(AVAVfxPacket.Type.BLASTER_MUZZLE,
-                (float) muzzle.x, (float) muzzle.y, (float) muzzle.z,
-                (float) dir.x, (float) dir.y, (float) dir.z),
-            this);
-    }
-
     // ─── VFX ──────────────────────────────────────────────────────────────────
+
+    private boolean prevShieldActive = false;
 
     private void tickVFX() {
         vfxTimer++;
-        if (vfxTimer % 5 == 0) AVAEffects.spawnOrbitTrail(this, (float)Math.toRadians(getYRot()), 0f);
-        if (isShieldActive() && vfxTimer % 20 == 0) AVAEffects.spawnShieldPulse(this, 1.0f);
+
+        // Orbit trail — every 3 ticks while not riding
+        if (!isVehicle() && vfxTimer % 3 == 0) {
+            AVAEffects.spawnOrbitTrail(this, (float)Math.toRadians(getYRot()), 0f);
+        }
+
+        // Shield pulse — burst when first activated, then every 15 ticks
+        boolean shieldNow = isShieldActive();
+        if (shieldNow && !prevShieldActive) {
+            // Just activated — big burst
+            AVAEffects.spawnShieldPulse(this, 1.8f);
+        } else if (shieldNow && vfxTimer % 15 == 0) {
+            // Sustained pulse while held
+            AVAEffects.spawnShieldPulse(this, 1.0f);
+        }
+        prevShieldActive = shieldNow;
     }
 
     // ─── Getters ──────────────────────────────────────────────────────────────
@@ -335,7 +309,55 @@ public class AVAEntity extends Mob implements GeoEntity {
     }
 
     @Override public boolean removeWhenFarAway(double d) { return false; }
-    @Override
+
+    // ─── Blaster attack ───────────────────────────────────────────────────────
+
+    @javax.annotation.Nullable
+    private LivingEntity findNearestHostile(Player owner) {
+        return level().getEntitiesOfClass(LivingEntity.class,
+            getBoundingBox().inflate(14.0),
+            e -> e != owner && e != this && e.isAlive() && !e.isAlliedTo(owner)
+        ).stream().min((a, b) ->
+            Double.compare(a.distanceToSqr(this), b.distanceToSqr(this))
+        ).orElse(null);
+    }
+
+    private void fireBlaster(LivingEntity target, Player owner) {
+        if (!(level() instanceof ServerLevel sl)) return;
+
+        // Direction from AVA to target eye
+        Vec3 from = getEyePosition();
+        Vec3 to   = target.getEyePosition();
+        Vec3 dir  = to.subtract(from).normalize();
+
+        // Create a small fireball as the blaster bolt
+        SmallFireball bolt = new SmallFireball(sl,
+            getX(), getEyeY(), getZ(),
+            dir.x, dir.y, dir.z);
+        bolt.setOwner(owner);  // owned by player so it doesn't hurt owner
+        bolt.setPos(from.x, from.y, from.z);
+        sl.addFreshEntity(bolt);
+
+        // Sound
+        sl.playSound(null, blockPosition(),
+            net.minecraft.sounds.SoundEvents.FIRECHARGE_USE,
+            net.minecraft.sounds.SoundSource.NEUTRAL, 0.5f, 1.8f);
+    }
+
+    // ─── Blaster ──────────────────────────────────────────────────────────────
+
+    private int blasterCooldown = 0;
+
+    private void tickBlaster(Player owner) {
+        if (blasterCooldown > 0) { blasterCooldown--; return; }
+        if (!isShieldActive()) return;  // only fires when shield is active (R held)
+
+        LivingEntity target = findNearestHostile(owner);
+        if (target != null && target.distanceTo(this) < 14.0) {
+            fireBlaster(target, owner);
+            blasterCooldown = 25;  // fire every 1.25 seconds
+        }
+    }
 
     @Override protected void registerGoals() { }
 
