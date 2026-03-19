@@ -34,6 +34,12 @@ public class ModNetwork {
             .consumerMainThread(AVAShieldPacket::handle)
             .add();
 
+        CHANNEL.messageBuilder(AVAVfxPacket.class, nextId(), NetworkDirection.PLAY_TO_CLIENT)
+            .encoder(AVAVfxPacket::encode)
+            .decoder(AVAVfxPacket::decode)
+            .consumerMainThread(AVAVfxPacket::handle)
+            .add();
+
         CHANNEL.messageBuilder(BoosterPacket.class, nextId(), NetworkDirection.PLAY_TO_SERVER)
             .encoder(BoosterPacket::encode)
             .decoder(BoosterPacket::decode)

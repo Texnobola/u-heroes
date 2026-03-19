@@ -1,6 +1,7 @@
 package com.uheroes.mod.init;
 
 import com.uheroes.mod.UHeroesMod;
+import com.uheroes.mod.heroes.nanotech.ava.AVABlasterEntity;
 import com.uheroes.mod.heroes.nanotech.ava.AVAEntity;
 import com.uheroes.mod.origin.AsteroidEntity;
 import com.uheroes.mod.origin.NanoCreatureEntity;
@@ -29,6 +30,15 @@ public class ModEntities {
             .updateInterval(1)
             .noSummon()
             .build("ava"));
+
+    public static final RegistryObject<EntityType<AVABlasterEntity>> AVA_BLASTER =
+        ENTITIES.register("ava_blaster", () -> EntityType.Builder
+            .<AVABlasterEntity>of(AVABlasterEntity::new, MobCategory.MISC)
+            .sized(0.25f, 0.25f)
+            .clientTrackingRange(32)
+            .updateInterval(1)
+            .noSummon()
+            .build("ava_blaster"));
 
     public static final RegistryObject<EntityType<AsteroidEntity>> ASTEROID =
         ENTITIES.register("asteroid", () -> EntityType.Builder

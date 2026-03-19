@@ -1,6 +1,9 @@
 package com.uheroes.mod.heroes.nanotech.ava;
 
 import com.uheroes.mod.core.flux.FluxCapability;
+import com.uheroes.mod.core.network.AVAVfxPacket;
+import com.uheroes.mod.core.network.ModNetwork;
+import com.uheroes.mod.heroes.nanotech.ava.AVABlasterEntity;
 import com.uheroes.mod.heroes.nanotech.ability.BoosterHandler;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -141,6 +144,10 @@ public class AVAEntity extends Mob implements GeoEntity {
     @Override
     public void tick() {
         super.tick();
+
+        // VFX always ticks client-side regardless of mode
+        if (level().isClientSide()) tickVFX();
+
         if (isVehicle()) {
             if (getFirstPassenger() instanceof Player rider) tickRide(rider);
             return;
@@ -149,7 +156,7 @@ public class AVAEntity extends Mob implements GeoEntity {
         if (owner == null) return;
         updateOrbit(owner);
         tickIntercept(owner);
-        if (level().isClientSide()) tickVFX();
+        if (!level().isClientSide()) tickBlasterAttack(owner);
     }
 
     // ─── Riding ───────────────────────────────────────────────────────────────
@@ -252,9 +259,19 @@ public class AVAEntity extends Mob implements GeoEntity {
     private void tickIntercept(Player owner) {
         if (FluxCapability.getCurrent(owner) >= 5) {
             level().getEntitiesOfClass(Projectile.class, getBoundingBox().inflate(1.8f),
-                p -> !(p.getOwner() instanceof Player)
+                p -> !(p.getOwner() instanceof Player) && !(p instanceof AVABlasterEntity)
             ).forEach(p -> {
-                if (!level().isClientSide() && FluxCapability.consume(owner, 2)) p.discard();
+                if (!level().isClientSide() && FluxCapability.consume(owner, 2)) {
+                    // Send VFX to all nearby clients BEFORE discarding
+                    Vec3 hitDir = p.getDeltaMovement().normalize();
+                    Vec3 pos = getEyePosition();
+                    ModNetwork.sendToAllTracking(
+                        new AVAVfxPacket(AVAVfxPacket.Type.BLOCK_DEFLECT,
+                            (float) pos.x, (float) pos.y, (float) pos.z,
+                            (float) hitDir.x, (float) hitDir.y, (float) hitDir.z),
+                        this);
+                    p.discard();
+                }
             });
         }
         if (tickCount % 20 == 0 && !level().isClientSide()) {
@@ -263,6 +280,40 @@ public class AVAEntity extends Mob implements GeoEntity {
                 e -> e != owner && e != this && e.isAlive() && !e.isAlliedTo(owner)).isEmpty();
             if (threat) FluxCapability.consume(owner, 1);
         }
+    }
+
+    // ─── Blaster Attack ───────────────────────────────────────────────────────
+
+    private static final int BLASTER_COOLDOWN = 60; // ticks between shots (3s)
+    private int blasterTimer = 0;
+
+    private void tickBlasterAttack(Player owner) {
+        blasterTimer++;
+        if (blasterTimer < BLASTER_COOLDOWN) return;
+
+        // Find nearest threat in 16-block range
+        LivingEntity target = level().getEntitiesOfClass(LivingEntity.class,
+            getBoundingBox().inflate(16.0),
+            e -> e != owner && e != this && e.isAlive() && !e.isAlliedTo(owner)
+        ).stream()
+            .min((a, b) -> Double.compare(a.distanceToSqr(this), b.distanceToSqr(this)))
+            .orElse(null);
+
+        if (target == null) return;
+        blasterTimer = 0;
+
+        // Spawn blaster bolt
+        AVABlasterEntity bolt = new AVABlasterEntity(level(), this, target);
+        level().addFreshEntity(bolt);
+
+        // Muzzle flash VFX
+        Vec3 muzzle = position().add(0, getBbHeight() * 0.5, 0);
+        Vec3 dir = target.getEyePosition().subtract(muzzle).normalize();
+        ModNetwork.sendToAllTracking(
+            new AVAVfxPacket(AVAVfxPacket.Type.BLASTER_MUZZLE,
+                (float) muzzle.x, (float) muzzle.y, (float) muzzle.z,
+                (float) dir.x, (float) dir.y, (float) dir.z),
+            this);
     }
 
     // ─── VFX ──────────────────────────────────────────────────────────────────

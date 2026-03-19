@@ -68,6 +68,10 @@ public class UHeroesMod {
                 ModEntities.AVA.get(),
                 com.uheroes.mod.client.renderer.AVARenderer::new
             );
+            event.registerEntityRenderer(
+                ModEntities.AVA_BLASTER.get(),
+                net.minecraft.client.renderer.entity.NoopRenderer::new
+            );
         }
     }
 }
