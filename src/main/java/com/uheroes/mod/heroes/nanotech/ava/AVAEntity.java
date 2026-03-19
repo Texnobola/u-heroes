@@ -1,6 +1,8 @@
 package com.uheroes.mod.heroes.nanotech.ava;
 
 import com.uheroes.mod.core.flux.FluxCapability;
+import com.uheroes.mod.core.network.AVAVfxPacket;
+import com.uheroes.mod.core.network.ModNetwork;
 import com.uheroes.mod.heroes.nanotech.ability.BoosterHandler;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -16,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -32,7 +33,6 @@ public class AVAEntity extends Mob implements GeoEntity {
 
     private final AnimatableInstanceCache animCache = GeckoLibUtil.createInstanceCache(this);
 
-    // ── Synced data (sent server→client every update interval) ────────────────
     private static final EntityDataAccessor<Boolean> SHIELD_ACTIVE =
         SynchedEntityData.defineId(AVAEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> SIZE_INDEX =
@@ -41,12 +41,11 @@ public class AVAEntity extends Mob implements GeoEntity {
     private static final String NBT_OWNER       = "AVAOwnerUUID";
     private static final String NBT_ORBIT_ANGLE = "AVAOrbitAngle";
 
-    public static final float[] RENDER_SCALES = { 0.18f, 0.28f, 0.42f };
-    public static final float[] ORBIT_RADII   = { 1.2f,  1.6f,  2.2f  };
-    public static final String[] SIZE_NAMES   = { "§7Small", "§bMedium", "§6Large" };
+    public static final float[]  RENDER_SCALES = { 0.18f, 0.28f, 0.42f };
+    public static final float[]  ORBIT_RADII   = { 1.2f,  1.6f,  2.2f  };
+    public static final String[] SIZE_NAMES    = { "§7Small", "§bMedium", "§6Large" };
 
     private static final float ORBIT_SPEED    = 0.030f;
-    private static final float LERP_T         = 0.18f;
     private static final float RIDE_SPEED     = 0.28f;
     private static final float RIDE_VERT      = 0.22f;
     private static final int   FLUX_RIDE_TICK = 1;
@@ -74,8 +73,6 @@ public class AVAEntity extends Mob implements GeoEntity {
             .add(Attributes.FOLLOW_RANGE, 16.0);
     }
 
-    // ── Synched data definition ───────────────────────────────────────────────
-
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
@@ -83,24 +80,20 @@ public class AVAEntity extends Mob implements GeoEntity {
         entityData.define(SIZE_INDEX, 0);
     }
 
-    // ── Getters/setters for synced fields ─────────────────────────────────────
-
-    public boolean isShieldActive()    { return entityData.get(SHIELD_ACTIVE); }
+    public boolean isShieldActive()        { return entityData.get(SHIELD_ACTIVE); }
     public void setShieldActive(boolean v) { entityData.set(SHIELD_ACTIVE, v); }
+    public int   getSizeIndex()            { return entityData.get(SIZE_INDEX); }
+    public float getRenderScale()          { return RENDER_SCALES[getSizeIndex()]; }
+    public float getOrbitRadius()          { return ORBIT_RADII[getSizeIndex()]; }
+    public float getShieldRadius()         { return isShieldActive() ? 2.5f : 0f; }
 
-    public int  getSizeIndex()         { return entityData.get(SIZE_INDEX); }
-    public float getRenderScale()      { return RENDER_SCALES[getSizeIndex()]; }
-    public float getOrbitRadius()      { return ORBIT_RADII[getSizeIndex()]; }
-    public float getShieldRadius()     { return isShieldActive() ? 2.5f : 0f; }
+    @Override public boolean hurt(DamageSource s, float a)          { return false; }
+    @Override public boolean isInvulnerableTo(DamageSource s)       { return true; }
 
-    // ─── Hurt override — fixes growing bug ────────────────────────────────────
-    @Override public boolean hurt(DamageSource s, float a) { return false; }
-    @Override public boolean isInvulnerableTo(DamageSource s) { return true; }
-
-    // ─── Size cycling ─────────────────────────────────────────────────────────
+    // ─── Size cycling (server-side) ───────────────────────────────────────────
 
     public static void cycleSize(Player player) {
-        if (!(player.level() instanceof net.minecraft.server.level.ServerLevel sl)) return;
+        if (!(player.level() instanceof ServerLevel sl)) return;
         player.getCapability(AVACapability.INSTANCE).ifPresent(data ->
             data.getAvaUUID().ifPresent(id -> {
                 for (Entity e : sl.getEntities().getAll()) {
@@ -151,8 +144,8 @@ public class AVAEntity extends Mob implements GeoEntity {
         updateOrbit(owner);
         tickIntercept(owner);
         if (!level().isClientSide()) tickBlaster(owner);
-        // VFX: run on BOTH sides — server call syncs to all clients via AAAParticles network
-        tickVFX();
+        // VFX: CLIENT-SIDE ONLY — AAALevel.addParticle is a client API
+        if (level().isClientSide()) tickVFX();
     }
 
     // ─── Riding ───────────────────────────────────────────────────────────────
@@ -211,20 +204,18 @@ public class AVAEntity extends Mob implements GeoEntity {
         double ty = owner.getY() + 1.6;
         double tz = owner.getZ() + Math.cos(orbitAngle) * r;
 
-        // Smooth movement via velocity, not teleport — avoids jitter
         double dx = tx - getX();
         double dy = ty - getY();
         double dz = tz - getZ();
         setDeltaMovement(dx * 0.4, dy * 0.4, dz * 0.4);
         move(net.minecraft.world.entity.MoverType.SELF, getDeltaMovement());
 
-        // Face orbit direction
         if (dx * dx + dz * dz > 0.0001) {
             setYRot((float) Math.toDegrees(Math.atan2(-dx, dz)));
         }
     }
 
-    // ─── R key: intercept mode ────────────────────────────────────────────────
+    // ─── Intercept mode ───────────────────────────────────────────────────────
 
     public void setInterceptMode(boolean held, Player owner) {
         interceptMode = held;
@@ -260,9 +251,14 @@ public class AVAEntity extends Mob implements GeoEntity {
                 Vec3 hitDir = p.position().subtract(position()).normalize();
                 if (!level().isClientSide() && FluxCapability.consume(owner, 2)) {
                     p.discard();
+                    // SERVER: send deflect VFX packet to all nearby clients
+                    Vec3 pos = getEyePosition();
+                    ModNetwork.sendToAllTracking(
+                        new AVAVfxPacket(AVAVfxPacket.Type.BLOCK_DEFLECT,
+                            (float)pos.x, (float)pos.y, (float)pos.z,
+                            (float)hitDir.x, (float)hitDir.y, (float)hitDir.z),
+                        this);
                 }
-                // Deflect VFX — called on both sides so all clients see it
-                AVAEffects.spawnBlockDeflect(this, hitDir);
             });
         }
         if (tickCount % 20 == 0 && !level().isClientSide()) {
@@ -273,11 +269,12 @@ public class AVAEntity extends Mob implements GeoEntity {
         }
     }
 
-    // ─── VFX ──────────────────────────────────────────────────────────────────
+    // ─── VFX (CLIENT-SIDE ONLY) ───────────────────────────────────────────────
 
     private boolean prevShieldActive = false;
 
     private void tickVFX() {
+        // This method is ONLY called when level().isClientSide() is true
         vfxTimer++;
 
         // Orbit trail — every 3 ticks while not riding
@@ -285,13 +282,11 @@ public class AVAEntity extends Mob implements GeoEntity {
             AVAEffects.spawnOrbitTrail(this, (float)Math.toRadians(getYRot()), 0f);
         }
 
-        // Shield pulse — burst when first activated, then every 15 ticks
+        // Shield pulse
         boolean shieldNow = isShieldActive();
         if (shieldNow && !prevShieldActive) {
-            // Just activated — big burst
             AVAEffects.spawnShieldPulse(this, 1.8f);
         } else if (shieldNow && vfxTimer % 15 == 0) {
-            // Sustained pulse while held
             AVAEffects.spawnShieldPulse(this, 1.0f);
         }
         prevShieldActive = shieldNow;
@@ -309,9 +304,9 @@ public class AVAEntity extends Mob implements GeoEntity {
 
     @Override public boolean removeWhenFarAway(double d) { return false; }
 
-    // ─── Blaster attack ───────────────────────────────────────────────────────
+    // ─── Blaster (SERVER-SIDE ONLY) ───────────────────────────────────────────
 
-    @javax.annotation.Nullable
+    @Nullable
     private LivingEntity findNearestHostile(Player owner) {
         return level().getEntitiesOfClass(LivingEntity.class,
             getBoundingBox().inflate(14.0),
@@ -327,22 +322,25 @@ public class AVAEntity extends Mob implements GeoEntity {
         Vec3 dir  = to.subtract(from).normalize();
         double dist = from.distanceTo(to);
 
-        // Laser VFX — one shot from AVA to target
-        AVAEffects.spawnBlasterShot(this, from, dir);
+        // SERVER: send blaster muzzle VFX to all clients
+        ModNetwork.sendToAllTracking(
+            new AVAVfxPacket(AVAVfxPacket.Type.BLASTER_MUZZLE,
+                (float)from.x, (float)from.y, (float)from.z,
+                (float)dir.x,  (float)dir.y,  (float)dir.z),
+            this);
 
-        // Instant hit — no projectile needed, VFX IS the bolt
-        target.hurt(
-            level() instanceof ServerLevel sl
-                ? owner.damageSources().playerAttack(owner)
-                : damageSources().generic(),
-            8.0f
-        );
+        // Instant hit
+        target.hurt(owner.damageSources().playerAttack(owner), 8.0f);
 
-        // Small ring at impact point
+        // SERVER: send blaster impact VFX to all clients
         Vec3 impactPos = from.add(dir.scale(dist));
-        AVAEffects.spawnBlockDeflect(null, dir, impactPos, level());
+        ModNetwork.sendToAllTracking(
+            new AVAVfxPacket(AVAVfxPacket.Type.BLASTER_HIT,
+                (float)impactPos.x, (float)impactPos.y, (float)impactPos.z,
+                (float)dir.x,       (float)dir.y,       (float)dir.z),
+            this);
 
-        // Blaster sound — high-pitched zap
+        // Blaster sound
         if (level() instanceof ServerLevel sl) {
             sl.playSound(null, blockPosition(),
                 net.minecraft.sounds.SoundEvents.LIGHTNING_BOLT_THUNDER,
@@ -350,18 +348,16 @@ public class AVAEntity extends Mob implements GeoEntity {
         }
     }
 
-    // ─── Blaster ──────────────────────────────────────────────────────────────
-
     private int blasterCooldown = 0;
 
     private void tickBlaster(Player owner) {
         if (blasterCooldown > 0) { blasterCooldown--; return; }
-        if (!isShieldActive()) return;  // only fires when shield is active (R held)
+        if (!isShieldActive()) return;
 
         LivingEntity target = findNearestHostile(owner);
         if (target != null && target.distanceTo(this) < 14.0) {
             fireBlaster(target, owner);
-            blasterCooldown = 25;  // fire every 1.25 seconds
+            blasterCooldown = 25;
         }
     }
 
