@@ -90,6 +90,18 @@ public class NanoSuitWalkAnimHandler {
                     }
                 }
             }
+
+            // ── Punch animation cleanup ────────────────────────────────────────
+            // Clear the layer once the animation finishes so the player isn't frozen
+            var punchData = PlayerAnimationAccess.getPlayerAssociatedData(player);
+            ModifierLayer<IAnimation> punchLayer =
+                (ModifierLayer<IAnimation>) punchData.get(PUNCH_LAYER_ID);
+            if (punchLayer != null) {
+                IAnimation current = punchLayer.getAnimation();
+                if (current != null && !current.isActive()) {
+                    punchLayer.setAnimation(null);
+                }
+            }
                 }
     }
 

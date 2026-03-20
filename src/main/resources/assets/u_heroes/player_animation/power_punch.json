@@ -2,7 +2,6 @@
 	"format_version": "1.8.0",
 	"animations": {
 		"animation.nano.power_punch": {
-			"loop": "hold_on_last_frame",
 			"animation_length": 0.5,
 			"bones": {
 				"torso": {
