@@ -58,10 +58,6 @@ public class NanoSuitArmorRenderer extends GeoArmorRenderer<NanoSuitArmorItem> {
             bone.setRotX(part.xRot);
             bone.setRotY(part.yRot);
             bone.setRotZ(part.zRot);
-            // Also copy position offsets so translate keyframes work too
-            bone.setPosX(part.x);
-            bone.setPosY(part.y);
-            bone.setPosZ(part.z);
         });
     }
 
