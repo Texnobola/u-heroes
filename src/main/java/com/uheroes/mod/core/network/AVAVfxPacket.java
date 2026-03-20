@@ -1,10 +1,10 @@
 package com.uheroes.mod.core.network;
 
-import mod.chloeprime.aaaparticles.api.common.AAALevel;
-import mod.chloeprime.aaaparticles.api.common.ParticleEmitterInfo;
+import com.uheroes.mod.heroes.nanotech.ava.AVAEffects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
@@ -13,7 +13,6 @@ import java.util.function.Supplier;
 
 /**
  * S2C: tells the client to spawn an AVA VFX effect at a given world position.
- * Used for block-deflect and blaster-hit effects that are triggered server-side.
  */
 public class AVAVfxPacket {
 
@@ -21,9 +20,10 @@ public class AVAVfxPacket {
 
     private final Type  type;
     private final float x, y, z;
-    private final float dirX, dirY, dirZ; // normalized hit direction
+    private final float dirX, dirY, dirZ;
 
-    public AVAVfxPacket(Type type, float x, float y, float z, float dirX, float dirY, float dirZ) {
+    public AVAVfxPacket(Type type, float x, float y, float z,
+                        float dirX, float dirY, float dirZ) {
         this.type = type;
         this.x = x; this.y = y; this.z = z;
         this.dirX = dirX; this.dirY = dirY; this.dirZ = dirZ;
@@ -31,7 +31,7 @@ public class AVAVfxPacket {
 
     public static void encode(AVAVfxPacket pkt, FriendlyByteBuf buf) {
         buf.writeEnum(pkt.type);
-        buf.writeFloat(pkt.x);  buf.writeFloat(pkt.y);  buf.writeFloat(pkt.z);
+        buf.writeFloat(pkt.x);    buf.writeFloat(pkt.y);    buf.writeFloat(pkt.z);
         buf.writeFloat(pkt.dirX); buf.writeFloat(pkt.dirY); buf.writeFloat(pkt.dirZ);
     }
 
@@ -43,59 +43,26 @@ public class AVAVfxPacket {
 
     public static void handle(AVAVfxPacket pkt, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() ->
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHandler.handle(pkt)));
-        ctx.get().setPacketHandled(true);
-    }
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+                Level level = Minecraft.getInstance().level;
+                if (level == null) return;
 
-    // Client-only handler in inner class to avoid classloading on server
-    private static class ClientHandler {
-        static void handle(AVAVfxPacket pkt) {
-            var level = Minecraft.getInstance().level;
-            if (level == null) return;
+                Vec3 pos = new Vec3(pkt.x, pkt.y, pkt.z);
+                Vec3 dir = new Vec3(pkt.dirX, pkt.dirY, pkt.dirZ);
 
-            float yaw   = (float) Math.atan2(pkt.dirX, pkt.dirZ);
-            float pitch = (float) -Math.asin(Math.max(-1, Math.min(1, pkt.dirY)));
+                switch (pkt.type) {
+                    case BLOCK_DEFLECT ->
+                        AVAEffects.spawnDeflect(level, pos, dir, 0.08f);
 
-            switch (pkt.type) {
-                case BLOCK_DEFLECT -> {
-                    // Primary deflect ring
-                    AAALevel.addParticle(level, false,
-                        new ParticleEmitterInfo(new ResourceLocation("u_heroes", "ava_block_deflect"))
-                            .position(pkt.x, pkt.y, pkt.z)
-                            .rotation(pitch, yaw, 0f)
-                            .scale(1.5f));
-                    // Scatter rings
-                    for (int i = 1; i <= 3; i++) {
-                        float roll = (float) Math.toRadians(i * 45.0);
-                        AAALevel.addParticle(level, false,
-                            new ParticleEmitterInfo(new ResourceLocation("u_heroes", "ava_block_deflect"))
-                                .position(pkt.x, pkt.y, pkt.z)
-                                .rotation(pitch, yaw, roll)
-                                .scale(0.8f));
+                    case BLASTER_MUZZLE ->
+                        AVAEffects.spawnBlaster(level, pos, dir);
+
+                    case BLASTER_HIT -> {
+                        AVAEffects.spawnDeflect(level, pos, dir, 0.10f);
                     }
                 }
-                case BLASTER_MUZZLE -> {
-                    // Small bright ring at muzzle
-                    AAALevel.addParticle(level, false,
-                        new ParticleEmitterInfo(new ResourceLocation("u_heroes", "ava_block_deflect"))
-                            .position(pkt.x, pkt.y, pkt.z)
-                            .rotation(pitch, yaw, 0f)
-                            .scale(0.6f));
-                }
-                case BLASTER_HIT -> {
-                    // Impact burst
-                    AAALevel.addParticle(level, false,
-                        new ParticleEmitterInfo(new ResourceLocation("u_heroes", "ava_shield_pulse"))
-                            .position(pkt.x, pkt.y, pkt.z)
-                            .rotation(0, 0, 0)
-                            .scale(0.3f));
-                    AAALevel.addParticle(level, false,
-                        new ParticleEmitterInfo(new ResourceLocation("u_heroes", "ava_block_deflect"))
-                            .position(pkt.x, pkt.y, pkt.z)
-                            .rotation(pitch, yaw, 0f)
-                            .scale(0.9f));
-                }
-            }
-        }
+            })
+        );
+        ctx.get().setPacketHandled(true);
     }
 }
