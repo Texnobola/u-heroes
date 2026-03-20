@@ -15,7 +15,7 @@ public class ScreenShakeHandler {
     
     public static float shakeIntensity = 0f;
     public static int shakeTicks = 0;
-    private static int totalShakeTicks = 0;
+    public static int totalShakeTicks = 0;
     
     @SubscribeEvent
     public static void onLivingHurt(LivingHurtEvent event) {

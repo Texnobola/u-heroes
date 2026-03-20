@@ -38,6 +38,13 @@ public class ModKeybinds {
         GLFW.GLFW_KEY_G, CATEGORY);
 
     /** Scan target entity for combat analysis. */
+    public static final KeyMapping SEISMIC_SLAM = new KeyMapping(
+        "key.u_heroes.seismic_slam",
+        com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM,
+        com.mojang.blaze3d.platform.InputConstants.KEY_C,
+        "key.categories.u_heroes"
+    );
+
     public static final KeyMapping SCANNER = new KeyMapping(
         "key.u_heroes.scanner",
         com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM,
@@ -55,6 +62,7 @@ public class ModKeybinds {
         event.register(BOOSTER_DASH);
         event.register(JETPACK);
         event.register(POWER_PUNCH);
+        event.register(SEISMIC_SLAM);
         event.register(SCANNER);
         event.register(AVA_RESIZE);
     }

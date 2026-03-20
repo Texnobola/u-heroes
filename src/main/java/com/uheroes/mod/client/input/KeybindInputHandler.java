@@ -1,6 +1,9 @@
 package com.uheroes.mod.client.input;
 
 import com.uheroes.mod.UHeroesMod;
+import com.uheroes.mod.client.hud.ScannerHUD;
+import com.uheroes.mod.core.network.ScannerPacket;
+import com.uheroes.mod.event.ScannerGlowEvents;
 import com.uheroes.mod.core.network.AVAShieldPacket;
 import com.uheroes.mod.core.network.BoosterPacket;
 import com.uheroes.mod.core.network.ModNetwork;
@@ -16,6 +19,8 @@ import net.minecraftforge.fml.common.Mod;
 public class KeybindInputHandler {
 
     private static boolean prevShieldHeld  = false;
+    private static boolean prevScannerHeld = false;
+    private static int      scanTickTimer   = 0;
     private static boolean prevJetpackHeld = false;
 
     @SubscribeEvent
@@ -54,6 +59,27 @@ public class KeybindInputHandler {
             ModNetwork.sendToServer(new AVAShieldPacket(shieldNow));
             prevShieldHeld = shieldNow;
         }
+
+        // Seismic Slam (tap C)
+        while (ModKeybinds.SEISMIC_SLAM.consumeClick())
+            ModNetwork.sendToServer(new BoosterPacket(BoosterPacket.Action.SEISMIC_SLAM));
+
+        // Scanner (hold Z)
+        boolean scannerNow = ModKeybinds.SCANNER.isDown()
+            && NanoSuitHandler.isWearingFullNanoSuit(mc.player);
+        if (scannerNow != prevScannerHeld) {
+            prevScannerHeld = scannerNow;
+            ScannerHUD.scannerActive = scannerNow;
+            ModNetwork.sendToServer(new ScannerPacket(scannerNow));
+            if (!scannerNow) ScannerHUD.clearTargets();
+            scanTickTimer = 0;
+        }
+        if (scannerNow) {
+            scanTickTimer++;
+            if (scanTickTimer % 10 == 0)
+                ModNetwork.sendToServer(new ScannerPacket(true));
+        }
+        ScannerGlowEvents.tickGlow();
 
         // Jetpack (hold → change only)
         boolean jetpackNow = ModKeybinds.JETPACK.isDown();

@@ -40,6 +40,24 @@ public class ModNetwork {
             .consumerMainThread(AVAVfxPacket::handle)
             .add();
 
+        CHANNEL.messageBuilder(ScannerPacket.class, nextId(), NetworkDirection.PLAY_TO_SERVER)
+            .encoder(ScannerPacket::encode)
+            .decoder(ScannerPacket::decode)
+            .consumerMainThread(ScannerPacket::handle)
+            .add();
+
+        CHANNEL.messageBuilder(SeismicSlamVfxPacket.class, nextId(), NetworkDirection.PLAY_TO_CLIENT)
+            .encoder(SeismicSlamVfxPacket::encode)
+            .decoder(SeismicSlamVfxPacket::decode)
+            .consumerMainThread(SeismicSlamVfxPacket::handle)
+            .add();
+
+        CHANNEL.messageBuilder(ScannerDataPacket.class, nextId(), NetworkDirection.PLAY_TO_CLIENT)
+            .encoder(ScannerDataPacket::encode)
+            .decoder(ScannerDataPacket::decode)
+            .consumerMainThread(ScannerDataPacket::handle)
+            .add();
+
         CHANNEL.messageBuilder(BoosterPacket.class, nextId(), NetworkDirection.PLAY_TO_SERVER)
             .encoder(BoosterPacket::encode)
             .decoder(BoosterPacket::decode)

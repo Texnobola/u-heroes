@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 
 public class BoosterPacket {
 
-    public enum Action { DASH, POWER_PUNCH, JETPACK_ON, JETPACK_OFF, AVA_RESIZE }
+    public enum Action { DASH, POWER_PUNCH, JETPACK_ON, JETPACK_OFF, AVA_RESIZE, SEISMIC_SLAM }
 
     private final Action action;
     public BoosterPacket(Action action) { this.action = action; }

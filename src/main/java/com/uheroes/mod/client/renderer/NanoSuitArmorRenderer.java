@@ -22,14 +22,6 @@ public class NanoSuitArmorRenderer extends GeoArmorRenderer<NanoSuitArmorItem> {
         this.storedBaseModel = model;
     }
 
-    /**
-     * GeckoLib's prepForRender() copies HumanoidModel bones to GeckoLib bones
-     * using vanilla names: "head", "body", "rightArm", "leftArm".
-     * Our geo.json uses "armorHead", "armorBody", "armorRightArm", "armorLeftArm", etc.
-     * so prepForRender finds nothing. We manually copy ALL bones here instead.
-     *
-     * This is what makes PlayerAnimator poses (attack, punch, ride) apply to the armor.
-     */
     @Override
     public void preRender(PoseStack poseStack, NanoSuitArmorItem animatable,
                          BakedGeoModel model, MultiBufferSource bufferSource,
@@ -41,12 +33,6 @@ public class NanoSuitArmorRenderer extends GeoArmorRenderer<NanoSuitArmorItem> {
                 red, green, blue, alpha);
         if (storedBaseModel == null) return;
 
-        // Copy every animated bone from the PlayerAnimator-modified HumanoidModel
-        // to the correct "armorXxx" bones in our GeckoLib model
-        applyPartToBone(storedBaseModel.head,     "armorHead");
-        applyPartToBone(storedBaseModel.body,     "armorBody");
-        applyPartToBone(storedBaseModel.rightArm, "armorRightArm");
-        applyPartToBone(storedBaseModel.leftArm,  "armorLeftArm");
         applyPartToBone(storedBaseModel.rightLeg, "armorRightLeg");
         applyPartToBone(storedBaseModel.leftLeg,  "armorLeftLeg");
         applyPartToBone(storedBaseModel.rightLeg, "armorRightBoot");
@@ -71,7 +57,6 @@ public class NanoSuitArmorRenderer extends GeoArmorRenderer<NanoSuitArmorItem> {
                 case BOOTS      -> new ResourceLocation("u_heroes", "geo/nanosuit_boots.geo.json");
             };
         }
-
         @Override
         public ResourceLocation getTextureResource(NanoSuitArmorItem animatable) {
             return switch (animatable.getType()) {
@@ -81,10 +66,7 @@ public class NanoSuitArmorRenderer extends GeoArmorRenderer<NanoSuitArmorItem> {
                 case BOOTS      -> new ResourceLocation("u_heroes", "textures/entity/armor/nanosuit_boots.png");
             };
         }
-
         @Override
-        public ResourceLocation getAnimationResource(NanoSuitArmorItem animatable) {
-            return null;
-        }
+        public ResourceLocation getAnimationResource(NanoSuitArmorItem animatable) { return null; }
     }
 }

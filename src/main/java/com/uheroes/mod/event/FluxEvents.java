@@ -70,6 +70,10 @@ public class FluxEvents {
 
         Player player = event.player;
 
+        // Seismic Slam dive tick
+        if (player instanceof net.minecraft.server.level.ServerPlayer sp)
+            com.uheroes.mod.heroes.nanotech.ability.SeismicSlamHandler.tickDiving(sp);
+
         // Flux tick + sync
         player.getCapability(FluxCapability.INSTANCE).ifPresent(flux -> {
             flux.tick();

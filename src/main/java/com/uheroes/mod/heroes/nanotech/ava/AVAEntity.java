@@ -309,14 +309,6 @@ public class AVAEntity extends Mob implements GeoEntity {
     // ─── Blaster (SERVER-SIDE ONLY) ───────────────────────────────────────────
 
     @Nullable
-    private LivingEntity findNearestHostile(Player owner) {
-        return level().getEntitiesOfClass(LivingEntity.class,
-            getBoundingBox().inflate(14.0),
-            e -> e != owner && e != this && e.isAlive() && !e.isAlliedTo(owner)
-        ).stream().min((a, b) ->
-            Double.compare(a.distanceToSqr(this), b.distanceToSqr(this))
-        ).orElse(null);
-    }
 
     private void fireBlaster(LivingEntity target, Player owner) {
         Vec3 from = getEyePosition();
@@ -392,4 +384,19 @@ public class AVAEntity extends Mob implements GeoEntity {
     }
 
     @Override public AnimatableInstanceCache getAnimatableInstanceCache() { return animCache; }
+    @javax.annotation.Nullable
+    private LivingEntity findNearestHostile(Player owner) {
+        java.util.Set<Integer> marked =
+            com.uheroes.mod.heroes.nanotech.ability.ScannerHandler.getMarked(owner);
+
+        return level().getEntitiesOfClass(LivingEntity.class,
+            getBoundingBox().inflate(14.0),
+            e -> e != owner && e != this && e.isAlive() && !e.isAlliedTo(owner)
+        ).stream().min((a, b) -> {
+            boolean aM = marked.contains(a.getId());
+            boolean bM = marked.contains(b.getId());
+            if (aM != bM) return aM ? -1 : 1;
+            return Double.compare(a.distanceToSqr(this), b.distanceToSqr(this));
+        }).orElse(null);
+    }
 }
