@@ -68,6 +68,10 @@ public class BoosterHandler {
      * Horizontal scale 4.5, upward component 1.2 — throws them across the arena.
      */
     public static void triggerPowerPunch(Player player) {
+        // Play punch animation on the local client
+        if (player.level().isClientSide() && player instanceof net.minecraft.client.player.LocalPlayer lp) {
+            com.uheroes.mod.client.animation.NanoSuitWalkAnimHandler.triggerPunchAnim(lp);
+        }
         if (!NanoSuitHandler.isWearingFullNanoSuit(player)) return;
         if (onCooldown(punchCooldowns, player)) return;
         if (!FluxCapability.consume(player, FLUX_PUNCH)) return;

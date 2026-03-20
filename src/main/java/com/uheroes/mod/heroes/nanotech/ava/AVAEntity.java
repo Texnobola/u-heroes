@@ -250,6 +250,8 @@ public class AVAEntity extends Mob implements GeoEntity {
             ).forEach(p -> {
                 Vec3 hitDir = p.position().subtract(position()).normalize();
                 if (!level().isClientSide() && FluxCapability.consume(owner, 2)) {
+                    // Face the incoming threat before deflect VFX fires
+                    faceTarget(p.position());
                     p.discard();
                     // SERVER: send deflect VFX packet to all nearby clients
                     Vec3 pos = getEyePosition();
@@ -322,6 +324,9 @@ public class AVAEntity extends Mob implements GeoEntity {
         Vec3 dir  = to.subtract(from).normalize();
         double dist = from.distanceTo(to);
 
+        // Snap AVA to face the target cleanly — no more "qiyshiq" shooting
+        faceTarget(to);
+
         // SERVER: send blaster muzzle VFX to all clients
         ModNetwork.sendToAllTracking(
             new AVAVfxPacket(AVAVfxPacket.Type.BLASTER_MUZZLE,
@@ -359,6 +364,19 @@ public class AVAEntity extends Mob implements GeoEntity {
             fireBlaster(target, owner);
             blasterCooldown = 25;
         }
+    }
+
+    /** Instantly snap yaw/pitch to face a world position — looks crisp, not "qiyshiq". */
+    private void faceTarget(Vec3 target) {
+        Vec3 diff  = target.subtract(getEyePosition());
+        float yaw  = (float) Math.toDegrees(Math.atan2(-diff.x, diff.z));
+        float pitch = (float) Math.toDegrees(-Math.asin(
+            Math.max(-1, Math.min(1, diff.normalize().y))
+        ));
+        setYRot(yaw);
+        setXRot(pitch);
+        yRotO  = yaw;
+        xRotO  = pitch;
     }
 
     @Override protected void registerGoals() { }
