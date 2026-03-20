@@ -36,8 +36,13 @@ public class KeybindInputHandler {
             ModNetwork.sendToServer(new BoosterPacket(BoosterPacket.Action.DASH));
 
         // Power Punch (tap)
-        while (ModKeybinds.POWER_PUNCH.consumeClick())
+        while (ModKeybinds.POWER_PUNCH.consumeClick()) {
             ModNetwork.sendToServer(new BoosterPacket(BoosterPacket.Action.POWER_PUNCH));
+            // Trigger punch animation immediately on the client — packet goes to server,
+            // but animation must fire here since BoosterHandler runs server-side
+            if (mc.player != null)
+                com.uheroes.mod.client.animation.NanoSuitWalkAnimHandler.triggerPunchAnim(mc.player);
+        }
 
         // AVA resize cycle (tap) — N key
         while (ModKeybinds.AVA_RESIZE.consumeClick())
