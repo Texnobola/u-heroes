@@ -17,11 +17,19 @@ public class NanoSuitArmorRenderer extends GeoArmorRenderer<NanoSuitArmorItem> {
     public NanoSuitArmorRenderer() {
         super(new NanoSuitGeoModel());
     }
-    
+
     public void setBaseModel(HumanoidModel<?> model) {
         this.storedBaseModel = model;
     }
-    
+
+    /**
+     * GeckoLib's prepForRender() copies HumanoidModel bones to GeckoLib bones
+     * using vanilla names: "head", "body", "rightArm", "leftArm".
+     * Our geo.json uses "armorHead", "armorBody", "armorRightArm", "armorLeftArm", etc.
+     * so prepForRender finds nothing. We manually copy ALL bones here instead.
+     *
+     * This is what makes PlayerAnimator poses (attack, punch, ride) apply to the armor.
+     */
     @Override
     public void preRender(PoseStack poseStack, NanoSuitArmorItem animatable,
                          BakedGeoModel model, MultiBufferSource bufferSource,
@@ -32,24 +40,31 @@ public class NanoSuitArmorRenderer extends GeoArmorRenderer<NanoSuitArmorItem> {
                 isReRender, partialTick, packedLight, packedOverlay,
                 red, green, blue, alpha);
         if (storedBaseModel == null) return;
-        
-        // Legs — prepForRender() does not sync these, we must do it manually
+
+        // Copy every animated bone from the PlayerAnimator-modified HumanoidModel
+        // to the correct "armorXxx" bones in our GeckoLib model
+        applyPartToBone(storedBaseModel.head,     "armorHead");
+        applyPartToBone(storedBaseModel.body,     "armorBody");
+        applyPartToBone(storedBaseModel.rightArm, "armorRightArm");
+        applyPartToBone(storedBaseModel.leftArm,  "armorLeftArm");
         applyPartToBone(storedBaseModel.rightLeg, "armorRightLeg");
         applyPartToBone(storedBaseModel.leftLeg,  "armorLeftLeg");
-        
-        // Boots — different bone names from leggings, also not synced by prepForRender()
         applyPartToBone(storedBaseModel.rightLeg, "armorRightBoot");
         applyPartToBone(storedBaseModel.leftLeg,  "armorLeftBoot");
     }
-    
+
     private void applyPartToBone(ModelPart part, String boneName) {
         getGeoModel().getBone(boneName).ifPresent(bone -> {
             bone.setRotX(part.xRot);
             bone.setRotY(part.yRot);
             bone.setRotZ(part.zRot);
+            // Also copy position offsets so translate keyframes work too
+            bone.setPosX(part.x);
+            bone.setPosY(part.y);
+            bone.setPosZ(part.z);
         });
     }
-    
+
     private static class NanoSuitGeoModel extends GeoModel<NanoSuitArmorItem> {
         @Override
         public ResourceLocation getModelResource(NanoSuitArmorItem animatable) {
@@ -60,7 +75,7 @@ public class NanoSuitArmorRenderer extends GeoArmorRenderer<NanoSuitArmorItem> {
                 case BOOTS      -> new ResourceLocation("u_heroes", "geo/nanosuit_boots.geo.json");
             };
         }
-        
+
         @Override
         public ResourceLocation getTextureResource(NanoSuitArmorItem animatable) {
             return switch (animatable.getType()) {
@@ -70,7 +85,7 @@ public class NanoSuitArmorRenderer extends GeoArmorRenderer<NanoSuitArmorItem> {
                 case BOOTS      -> new ResourceLocation("u_heroes", "textures/entity/armor/nanosuit_boots.png");
             };
         }
-        
+
         @Override
         public ResourceLocation getAnimationResource(NanoSuitArmorItem animatable) {
             return null;
