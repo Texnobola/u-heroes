@@ -46,7 +46,7 @@ public class BoosterHandler {
     // ─── Dash ─────────────────────────────────────────────────────────────────
 
     public static void triggerDash(Player player) {
-        if (!NanoSuitHandler.isWearingFullNanoSuit(player)) return;
+        if (!NanoSuitHandler.isWearingNanoLeggings(player)) return;
         if (onCooldown(dashCooldowns, player)) return;
         if (!FluxCapability.consume(player, FLUX_DASH)) return;
 
@@ -68,7 +68,7 @@ public class BoosterHandler {
      * Horizontal scale 4.5, upward component 1.2 — throws them across the arena.
      */
     public static void triggerPowerPunch(Player player) {
-        if (!NanoSuitHandler.isWearingFullNanoSuit(player)) return;
+        if (!NanoSuitHandler.isWearingNanoLeggings(player)) return;
         if (onCooldown(punchCooldowns, player)) return;
         if (!FluxCapability.consume(player, FLUX_PUNCH)) return;
 
@@ -100,28 +100,75 @@ public class BoosterHandler {
 
     // ─── Jetpack ──────────────────────────────────────────────────────────────
 
+    // Tracks how long the player has been thrusting (for acceleration feel)
+    private static final java.util.Map<java.util.UUID, Integer> jetpackThrustTicks =
+        new java.util.concurrent.ConcurrentHashMap<>();
+
     /**
-     * Direct Y-velocity override every tick — no lerp, no gravity accumulation.
-     * Player holds Jetpack key (Space) → stays at fixed upward velocity.
-     * Sneak → descend. Gravity is defeated by overriding Y each tick directly.
+     * Super nano-jetpack on chestplate.
+     * - Chestplate only (not full suit required)
+     * - Works from ground (takes off)
+     * - Hold Space = thrust upward, gaining speed over first 8 ticks
+     * - Look direction adds horizontal boost while thrusting
+     * - Sneak = controlled descent
+     * - No gravity, no fall damage while active
+     * - Consumes flux per tick
      */
     public static void tickJetpack(Player player) {
-        if (!NanoSuitHandler.isWearingFullNanoSuit(player)) return;
-        if (player.onGround()) return;
+        if (!NanoSuitHandler.isWearingNanoChestplate(player)) return;
 
         if (!FluxCapability.consume(player, FLUX_JETPACK_TICK)) {
-            // Out of flux — graceful deceleration
+            // Out of flux — kill thrust, let gravity take over
+            jetpackThrustTicks.remove(player.getUUID());
             Vec3 m = player.getDeltaMovement();
-            player.setDeltaMovement(m.x * 0.90, m.y * 0.80, m.z * 0.90);
+            player.setDeltaMovement(m.x * 0.92, Math.max(m.y - 0.06, -1.0), m.z * 0.92);
             return;
         }
 
+        // Ramp up thrust over 10 ticks for satisfying acceleration
+        int ticks = jetpackThrustTicks.merge(player.getUUID(), 1, Integer::sum);
+        float ramp = Math.min(ticks / 10f, 1.0f);
+
         Vec3 m = player.getDeltaMovement();
-        // Direct set — overrides gravity completely each tick
-        double vy = player.isCrouching() ? -0.20 : 0.28;
-        player.setDeltaMovement(m.x, vy, m.z);
+        Vec3 look = player.getLookAngle();
+
+        double targetVy;
+        double hBoost;
+
+        if (player.isCrouching()) {
+            // Sneak = controlled descent
+            targetVy = -0.25;
+            hBoost = 0;
+        } else {
+            // Full thrust upward, max speed increases with ramp
+            double maxUp = 0.45 + ramp * 0.35; // 0.45 → 0.80 over 10 ticks
+            targetVy = maxUp;
+            // Add horizontal boost in look direction while thrusting up
+            hBoost = 0.12 * ramp;
+        }
+
+        double nx = m.x * 0.80 + look.x * hBoost;
+        double ny = targetVy;
+        double nz = m.z * 0.80 + look.z * hBoost;
+
+        player.setDeltaMovement(nx, ny, nz);
+        player.setNoGravity(true);   // gravity disabled while key held
         player.fallDistance = 0;
         player.resetFallDistance();
+        player.hurtMarked = true;
+
+        // Play thruster sound every 8 ticks
+        if (ticks % 8 == 1 && player.level() instanceof net.minecraft.server.level.ServerLevel sl) {
+            sl.playSound(null, player.blockPosition(),
+                net.minecraft.sounds.SoundEvents.TRIDENT_THROW,
+                net.minecraft.sounds.SoundSource.PLAYERS, 0.3f, 1.8f + (float)(Math.random() * 0.2));
+        }
+    }
+
+    /** Called when jetpack is turned OFF — restore gravity. */
+    public static void stopJetpack(Player player) {
+        jetpackThrustTicks.remove(player.getUUID());
+        player.setNoGravity(false);
     }
 
     // ─── Cooldown tick ────────────────────────────────────────────────────────

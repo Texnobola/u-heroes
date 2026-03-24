@@ -1,19 +1,12 @@
 package com.uheroes.mod.client.hud;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.uheroes.mod.UHeroesMod;
 import com.uheroes.mod.core.network.ScannerDataPacket;
 import com.uheroes.mod.heroes.nanotech.armor.NanoSuitHandler;
 import com.uheroes.mod.init.ModKeybinds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

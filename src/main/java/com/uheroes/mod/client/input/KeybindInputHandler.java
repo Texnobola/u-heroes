@@ -2,11 +2,11 @@ package com.uheroes.mod.client.input;
 
 import com.uheroes.mod.UHeroesMod;
 import com.uheroes.mod.client.hud.ScannerHUD;
-import com.uheroes.mod.core.network.ScannerPacket;
-import com.uheroes.mod.event.ScannerGlowEvents;
 import com.uheroes.mod.core.network.AVAShieldPacket;
 import com.uheroes.mod.core.network.BoosterPacket;
 import com.uheroes.mod.core.network.ModNetwork;
+import com.uheroes.mod.core.network.ScannerPacket;
+import com.uheroes.mod.event.ScannerGlowEvents;
 import com.uheroes.mod.heroes.nanotech.armor.NanoSuitHandler;
 import com.uheroes.mod.init.ModKeybinds;
 import net.minecraft.client.Minecraft;
@@ -19,54 +19,71 @@ import net.minecraftforge.fml.common.Mod;
 public class KeybindInputHandler {
 
     private static boolean prevShieldHeld  = false;
-    private static boolean prevScannerHeld = false;
-    private static int      scanTickTimer   = 0;
     private static boolean prevJetpackHeld = false;
+    private static boolean prevScannerHeld = false;
+    private static int     scanTickTimer   = 0;
 
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
-
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.level == null || mc.screen != null) return;
 
-        if (!NanoSuitHandler.isWearingFullNanoSuit(mc.player)) {
-            if (prevShieldHeld)  { ModNetwork.sendToServer(new AVAShieldPacket(false)); prevShieldHeld = false; }
-            if (prevJetpackHeld) { ModNetwork.sendToServer(new BoosterPacket(BoosterPacket.Action.JETPACK_OFF)); prevJetpackHeld = false; }
-            return;
-        }
+        boolean fullSuit     = NanoSuitHandler.isWearingFullNanoSuit(mc.player);
+        boolean hasChest     = NanoSuitHandler.isWearingNanoChestplate(mc.player);
+        boolean hasLeggings  = NanoSuitHandler.isWearingNanoLeggings(mc.player);
+        boolean hasHelmet    = NanoSuitHandler.isWearingNanoHelmet(mc.player);
+        boolean hasBoots     = NanoSuitHandler.isWearingNanoBoots(mc.player);
 
-        // Dash (tap)
-        while (ModKeybinds.BOOSTER_DASH.consumeClick())
-            ModNetwork.sendToServer(new BoosterPacket(BoosterPacket.Action.DASH));
+        // ── Dash (V) — leggings ───────────────────────────────────────────────
+        if (hasLeggings)
+            while (ModKeybinds.BOOSTER_DASH.consumeClick())
+                ModNetwork.sendToServer(new BoosterPacket(BoosterPacket.Action.DASH));
 
-        // Power Punch (tap)
-        while (ModKeybinds.POWER_PUNCH.consumeClick()) {
-            ModNetwork.sendToServer(new BoosterPacket(BoosterPacket.Action.POWER_PUNCH));
-            // Trigger punch animation immediately on the client — packet goes to server,
-            // but animation must fire here since BoosterHandler runs server-side
-            if (mc.player != null)
-                com.uheroes.mod.client.animation.NanoSuitWalkAnimHandler.triggerPunchAnim(mc.player);
-        }
+        // ── Power Punch (G) — leggings ────────────────────────────────────────
+        if (hasLeggings)
+            while (ModKeybinds.POWER_PUNCH.consumeClick()) {
+                ModNetwork.sendToServer(new BoosterPacket(BoosterPacket.Action.POWER_PUNCH));
+                if (mc.player != null)
+                    com.uheroes.mod.client.animation.NanoSuitWalkAnimHandler.triggerPunchAnim(mc.player);
+            }
 
-        // AVA resize cycle (tap) — N key
-        while (ModKeybinds.AVA_RESIZE.consumeClick())
-            ModNetwork.sendToServer(new BoosterPacket(BoosterPacket.Action.AVA_RESIZE));
+        // ── Seismic Slam (C) — boots ──────────────────────────────────────────
+        if (hasBoots)
+            while (ModKeybinds.SEISMIC_SLAM.consumeClick())
+                ModNetwork.sendToServer(new BoosterPacket(BoosterPacket.Action.SEISMIC_SLAM));
 
-        // AVA Shield (hold → change only)
-        boolean shieldNow = ModKeybinds.AVA_SHIELD.isDown();
+        // ── AVA resize (N) — full suit ────────────────────────────────────────
+        if (fullSuit)
+            while (ModKeybinds.AVA_RESIZE.consumeClick())
+                ModNetwork.sendToServer(new BoosterPacket(BoosterPacket.Action.AVA_RESIZE));
+
+        // ── AVA Shield (R hold) — full suit ───────────────────────────────────
+        boolean shieldNow = ModKeybinds.AVA_SHIELD.isDown() && fullSuit;
         if (shieldNow != prevShieldHeld) {
             ModNetwork.sendToServer(new AVAShieldPacket(shieldNow));
             prevShieldHeld = shieldNow;
         }
+        if (!fullSuit && prevShieldHeld) {
+            ModNetwork.sendToServer(new AVAShieldPacket(false));
+            prevShieldHeld = false;
+        }
 
-        // Seismic Slam (tap C)
-        while (ModKeybinds.SEISMIC_SLAM.consumeClick())
-            ModNetwork.sendToServer(new BoosterPacket(BoosterPacket.Action.SEISMIC_SLAM));
+        // ── Jetpack (Space hold) — CHESTPLATE ONLY ────────────────────────────
+        boolean jetpackNow = ModKeybinds.JETPACK.isDown() && hasChest;
+        if (jetpackNow != prevJetpackHeld) {
+            ModNetwork.sendToServer(new BoosterPacket(
+                jetpackNow ? BoosterPacket.Action.JETPACK_ON : BoosterPacket.Action.JETPACK_OFF));
+            prevJetpackHeld = jetpackNow;
+        }
+        // Make sure jetpack turns off if chestplate removed while held
+        if (!hasChest && prevJetpackHeld) {
+            ModNetwork.sendToServer(new BoosterPacket(BoosterPacket.Action.JETPACK_OFF));
+            prevJetpackHeld = false;
+        }
 
-        // Scanner (hold Z)
-        boolean scannerNow = ModKeybinds.SCANNER.isDown()
-            && NanoSuitHandler.isWearingFullNanoSuit(mc.player);
+        // ── Scanner (Z hold) — helmet ─────────────────────────────────────────
+        boolean scannerNow = ModKeybinds.SCANNER.isDown() && hasHelmet;
         if (scannerNow != prevScannerHeld) {
             prevScannerHeld = scannerNow;
             ScannerHUD.scannerActive = scannerNow;
@@ -80,13 +97,5 @@ public class KeybindInputHandler {
                 ModNetwork.sendToServer(new ScannerPacket(true));
         }
         ScannerGlowEvents.tickGlow();
-
-        // Jetpack (hold → change only)
-        boolean jetpackNow = ModKeybinds.JETPACK.isDown();
-        if (jetpackNow != prevJetpackHeld) {
-            ModNetwork.sendToServer(new BoosterPacket(
-                jetpackNow ? BoosterPacket.Action.JETPACK_ON : BoosterPacket.Action.JETPACK_OFF));
-            prevJetpackHeld = jetpackNow;
-        }
     }
 }

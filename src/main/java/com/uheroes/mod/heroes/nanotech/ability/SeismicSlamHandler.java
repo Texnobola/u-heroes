@@ -48,6 +48,8 @@ public class SeismicSlamHandler {
 
     /** Called by BoosterPacket on the server. */
     public static void triggerSlam(ServerPlayer player) {
+        // Must be wearing nano boots
+        if (!com.uheroes.mod.heroes.nanotech.armor.NanoSuitHandler.isWearingNanoBoots(player)) return;
         // Cooldown check
         int cd = diveCooldowns.getOrDefault(player.getUUID(), 0);
         if (cd > 0) return;

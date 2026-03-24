@@ -26,7 +26,8 @@ public class BoosterPacket {
                 case POWER_PUNCH -> com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.triggerPowerPunch(player);
                 case JETPACK_ON  -> com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.setJetpackActive(player.getUUID(), true);
                 case JETPACK_OFF -> com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.setJetpackActive(player.getUUID(), false);
-                case AVA_RESIZE  -> com.uheroes.mod.heroes.nanotech.ava.AVAEntity.cycleSize(player);
+                case AVA_RESIZE   -> com.uheroes.mod.heroes.nanotech.ava.AVAEntity.cycleSize(player);
+                case SEISMIC_SLAM -> com.uheroes.mod.heroes.nanotech.ability.SeismicSlamHandler.triggerSlam(player);
             }
         });
         ctx.get().setPacketHandled(true);

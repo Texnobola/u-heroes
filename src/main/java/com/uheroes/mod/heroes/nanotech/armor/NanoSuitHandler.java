@@ -40,6 +40,26 @@ public class NanoSuitHandler {
     /**
      * Checks if player is wearing full Nano Suit.
      */
+    public static boolean isWearingNanoHelmet(Player player) {
+        return player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD).getItem()
+               instanceof NanoSuitArmorItem;
+    }
+
+    public static boolean isWearingNanoLeggings(Player player) {
+        return player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.LEGS).getItem()
+               instanceof NanoSuitArmorItem;
+    }
+
+        public static boolean isWearingNanoChestplate(Player player) {
+        return player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST).getItem()
+               instanceof NanoSuitArmorItem;
+    }
+
+    public static boolean isWearingNanoBoots(Player player) {
+        return player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.FEET).getItem()
+               instanceof NanoSuitArmorItem;
+    }
+
     public static boolean isWearingFullNanoSuit(Player player) {
         return getNanoSuitPieceCount(player) == 4;
     }
