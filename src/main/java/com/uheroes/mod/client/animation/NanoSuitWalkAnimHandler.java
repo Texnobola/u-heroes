@@ -36,6 +36,13 @@ public class NanoSuitWalkAnimHandler {
     private static final ResourceLocation RIDE_ANIM_ID =
         new ResourceLocation(UHeroesMod.MOD_ID, "animation.nano.ride");
 
+    private static final ResourceLocation FLIGHT_LAYER_ID =
+        new ResourceLocation(UHeroesMod.MOD_ID, "nano_flight_layer");
+    private static final ResourceLocation FLIGHT_CHARGE_ANIM_ID =
+        new ResourceLocation(UHeroesMod.MOD_ID, "animation.nano.flight_charge");
+    private static final ResourceLocation FLIGHT_CRUISE_ANIM_ID =
+        new ResourceLocation(UHeroesMod.MOD_ID, "animation.nano.flight_cruise");
+
     private static final ResourceLocation PUNCH_LAYER_ID =
         new ResourceLocation(UHeroesMod.MOD_ID, "nano_punch_layer");
     private static final ResourceLocation PUNCH_ANIM_ID =
@@ -46,6 +53,11 @@ public class NanoSuitWalkAnimHandler {
         // Ride layer — priority 22 (above walk)
         PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(
             RIDE_LAYER_ID, 22,
+            (AbstractClientPlayer p) -> new ModifierLayer<>()
+        );
+        // Flight layer — priority 25, holds on last frame during flight
+        PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(
+            FLIGHT_LAYER_ID, 25,
             (AbstractClientPlayer p) -> new ModifierLayer<>()
         );
         // Punch layer — priority 30, plays once on power punch
@@ -91,6 +103,43 @@ public class NanoSuitWalkAnimHandler {
                 }
             }
 
+            // ── Flight animation ───────────────────────────────────────────────
+            com.uheroes.mod.heroes.nanotech.armor.NanoSuitHandler.isWearingNanoChestplate(player);
+            var flightData2 = PlayerAnimationAccess.getPlayerAssociatedData(player);
+            ModifierLayer<IAnimation> flightLayer =
+                (ModifierLayer<IAnimation>) flightData2.get(FLIGHT_LAYER_ID);
+            if (flightLayer != null) {
+                boolean spaceHeld = com.uheroes.mod.init.ModKeybinds.JETPACK.isDown();
+                boolean hasChest  = com.uheroes.mod.heroes.nanotech.armor.NanoSuitHandler
+                    .isWearingNanoChestplate(player);
+                com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.FlightPhase phase;
+                if (!hasChest) {
+                    phase = com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.FlightPhase.IDLE;
+                } else if (spaceHeld && player.onGround()) {
+                    phase = com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.FlightPhase.CHARGING;
+                } else if (!player.onGround() && spaceHeld) {
+                    phase = com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.FlightPhase.CRUISING;
+                } else if (!player.onGround() && !spaceHeld) {
+                    phase = com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.FlightPhase.GLIDING;
+                } else {
+                    phase = com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.FlightPhase.IDLE;
+                }
+                if (phase != lastFlightPhase) {
+                    lastFlightPhase = phase;
+                    switch (phase) {
+                        case CHARGING -> {
+                            KeyframeAnimation a = PlayerAnimationRegistry.getAnimation(FLIGHT_CHARGE_ANIM_ID);
+                            if (a != null) flightLayer.setAnimation(new KeyframeAnimationPlayer(a));
+                        }
+                        case THRUSTING, CRUISING, GLIDING -> {
+                            KeyframeAnimation a = PlayerAnimationRegistry.getAnimation(FLIGHT_CRUISE_ANIM_ID);
+                            if (a != null) flightLayer.setAnimation(new KeyframeAnimationPlayer(a));
+                        }
+                        case IDLE -> flightLayer.setAnimation(null);
+                    }
+                }
+            }
+
             // ── Punch animation cleanup ────────────────────────────────────────
             // Clear the layer once the animation finishes so the player isn't frozen
             var punchData = PlayerAnimationAccess.getPlayerAssociatedData(player);
@@ -116,5 +165,13 @@ public class NanoSuitWalkAnimHandler {
             dev.kosmx.playerAnim.minecraftApi.PlayerAnimationRegistry.getAnimation(PUNCH_ANIM_ID);
         if (anim == null) return;
         layer.setAnimation(new dev.kosmx.playerAnim.api.layered.KeyframeAnimationPlayer(anim));
+    }
+
+    // Track last set flight anim to avoid redundant setAnimation calls
+    private static com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.FlightPhase lastFlightPhase =
+        com.uheroes.mod.heroes.nanotech.ability.BoosterHandler.FlightPhase.IDLE;
+
+    private static boolean isAnimKey(IAnimation anim, ResourceLocation id) {
+        return anim != null; // simplified — we track by phase
     }
 }

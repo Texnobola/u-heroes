@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -87,5 +88,20 @@ public class FluxEvents {
 
         // AVA cooldown tick
         player.getCapability(AVACapability.INSTANCE).ifPresent(AVAData::tickCooldown);
+    }
+
+    /** Prevent fall damage for seismic slam divers and jetpack users. */
+    @SubscribeEvent
+    public static void onLivingFall(LivingFallEvent event) {
+        if (!(event.getEntity() instanceof net.minecraft.server.level.ServerPlayer sp)) return;
+        // No fall damage during seismic slam
+        if (com.uheroes.mod.heroes.nanotech.ability.SeismicSlamHandler.isDiving(sp)) {
+            event.setCanceled(true);
+            return;
+        }
+        // No fall damage while jetpack chestplate worn
+        if (com.uheroes.mod.heroes.nanotech.armor.NanoSuitHandler.isWearingNanoChestplate(sp)) {
+            event.setCanceled(true);
+        }
     }
 }

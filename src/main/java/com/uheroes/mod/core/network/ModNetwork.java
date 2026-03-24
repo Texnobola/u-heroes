@@ -46,6 +46,12 @@ public class ModNetwork {
             .consumerMainThread(ScannerPacket::handle)
             .add();
 
+        CHANNEL.messageBuilder(JetpackVfxPacket.class, nextId(), NetworkDirection.PLAY_TO_CLIENT)
+            .encoder(JetpackVfxPacket::encode)
+            .decoder(JetpackVfxPacket::decode)
+            .consumerMainThread(JetpackVfxPacket::handle)
+            .add();
+
         CHANNEL.messageBuilder(SeismicSlamVfxPacket.class, nextId(), NetworkDirection.PLAY_TO_CLIENT)
             .encoder(SeismicSlamVfxPacket::encode)
             .decoder(SeismicSlamVfxPacket::decode)

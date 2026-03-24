@@ -82,10 +82,18 @@ public class SeismicSlamHandler {
 
         if (!divingPlayers.contains(player.getUUID())) return;
 
+        // Prevent fall damage accumulation during dive
+        player.fallDistance = 0;
+
         if (player.onGround()) {
             divingPlayers.remove(player.getUUID());
             doImpact(player, player.position());
         }
+    }
+
+    /** Check if a player is currently diving. */
+    public static boolean isDiving(ServerPlayer player) {
+        return divingPlayers.contains(player.getUUID());
     }
 
     // ── Impact ────────────────────────────────────────────────────────────────
